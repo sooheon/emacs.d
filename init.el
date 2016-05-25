@@ -64,7 +64,7 @@
 (use-package server
   :config (or (server-running-p) (server-mode)))
 
-(progn ;     startup
+(progn ; startup
   (message "Loading early birds...done (%.3fs)"
            (float-time (time-subtract (current-time)
                                       before-user-init-time))))
@@ -80,25 +80,26 @@
   (global-set-key [remap goto-line] 'evil-avy-goto-line))
 
 (use-package company
-:disabled t
+  :disabled t
   :bind (:map company-active-map
-	      ("C-w" . nil)
-	      ("M-." . company-show-location)
-	      ("C-s" . company-filter-candidates)
-	      ("C-d" . nil)             ; company-show-doc-buffer
-	      ("C-/" . nil)             ; 'company-search-candidates
-	      ("C-M-/" . nil)           ; 'company-filter-candidates
-	      ("C-n" . nil)
-	      ("C-p" . nil)
-	      ("C-f" .  nil))
+              ("C-w" . nil)
+              ("M-." . company-show-location)
+              ("C-s" . company-filter-candidates)
+              ("C-d" . nil)             ; company-show-doc-buffer
+              ("C-/" . nil)             ; 'company-search-candidates
+              ("C-M-/" . nil)           ; 'company-filter-candidates
+              ("C-n" . nil)
+              ("C-p" . nil)
+              ("C-f" .  nil))
   :init (setq company-idle-delay 0.2
               company-minimum-prefix-length 2)
   :config
   (global-company-mode)
 
-(with-eval-after-load 'company  (define-key company-active-map [escape] (lambda () (interactive)
-					    (company-abort)
-					    (evil-normal-state)))))
+  (with-eval-after-load 'company
+    (define-key company-active-map [escape] (lambda () (interactive)
+                                              (company-abort)
+                                              (evil-normal-state)))))
 
 (use-package dash
   :config (dash-enable-font-lock))
@@ -131,13 +132,13 @@
   :defer t
   :config (temp-buffer-resize-mode))
 
-(progn ;    `isearch'
+(progn ;; `isearch'
   (setq isearch-allow-scroll t))
 
 (use-package ivy
   :bind (("s-f" . swiper)
-         ;;:map ivy-minibuffer-map
-         ;([escape] . minibuffer-keyboard-quit)
+	 ;; :map ivy-minibuffer-map
+	 ;; ([escape] . minibuffer-keyboard-quit)
          )
   :config (ivy-mode 1))
 
@@ -152,10 +153,10 @@
 (use-package lispy
   :config
   (lispy-set-key-theme '(special
-                           c-digits
-                           paredit
-                           ;; parinfer
-                           ))
+                         c-digits
+                         paredit
+                         ;; parinfer
+                         ))
   (add-hook 'emacs-lisp-mode-hook #'lispy-mode))
 
 (use-package magit
@@ -187,10 +188,7 @@
   :config (show-paren-mode))
 
 (use-package prog-mode
-  :config (global-prettify-symbols-mode)
-  (defun indicate-buffer-boundaries-left ()
-    (setq indicate-buffer-boundaries 'left))
-  (add-hook 'prog-mode-hook #'indicate-buffer-boundaries-left))
+  :config (global-prettify-symbols-mode))
 
 (use-package recentf
   :demand t
@@ -205,9 +203,6 @@
 (use-package simple
   :config (column-number-mode))
 
-(progn `text-mode'
-       (add-hook 'test-mode-hook #'indicate-buffer-boundaries-left))
-
 (use-package tramp
   :defer t
   :config
@@ -216,7 +211,7 @@
   (add-to-list 'tramp-default-proxies-alist
                (list (regexp-quote (system-name)) nil nil)))
 
-(progn ;     startup
+(progn ;; startup
   (message "Loading %s...done (%.3fs)" user-init-file
            (float-time (time-subtract (current-time)
                                       before-user-init-time)))
@@ -228,7 +223,7 @@
                                           before-user-init-time))))
             t))
 
-(progn ;     personalize
+(progn ;; personalize
   (let ((file (expand-file-name (concat (user-real-login-name) ".el")
                                 user-emacs-directory)))
     (when (file-exists-p file)
