@@ -21,10 +21,6 @@
   (tool-bar-mode 0)
   (menu-bar-mode 0))
 
-(defun sooheon--config ()
-  (setq ring-bell-function 'ignore))
-(sooheon--config)
-
 (progn ;; `borg'
   (add-to-list 'load-path (expand-file-name "lib/borg" user-emacs-directory))
   (require 'borg)
@@ -128,6 +124,10 @@
                       evil-disable-insert-state-bindings t)
   :config (evil-mode 1))
 
+(use-package evil-leader
+  :config
+  (global-evil-leader-mode))
+
 (use-package help
   :defer t
   :config (temp-buffer-resize-mode))
@@ -140,7 +140,9 @@
 	 ;; :map ivy-minibuffer-map
 	 ;; ([escape] . minibuffer-keyboard-quit)
          )
-  :config (ivy-mode 1))
+  :config (ivy-mode 1)
+  (evil-leader/set-key
+   "f" 'counsel-find-file))
 
 (use-package lisp-mode
   :config

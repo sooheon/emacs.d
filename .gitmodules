@@ -33,6 +33,9 @@
 [submodule "evil"]
 	path = lib/evil
 	url = git@github.com:emacsmirror/evil.git
+[submodule "evil-leader"]
+	path = lib/evil-leader
+	url = git@github.com:cofi/evil-leader.git
 [submodule "finalize"]
 	path = lib/finalize
 	url = git@github.com:skeeto/elisp-finalize.git
