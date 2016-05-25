@@ -1,6 +1,7 @@
 ;;; init.el --- user-init-file                    -*- lexical-binding: t -*-
 ;;; Early birds
-(progn ;     startup
+
+(progn                                  ;     startup
   (defvar before-user-init-time (current-time)
     "Value of `current-time' when Emacs begins loading `user-init-file'.")
   (message "Loading Emacs...done (%.3fs)"
@@ -20,13 +21,20 @@
   (tool-bar-mode 0)
   (menu-bar-mode 0))
 
-(progn ;    `borg'
+(defun sooheon--config ()
+  (setq ring-bell-function 'ignore))
+(sooheon--config)
+
+(progn ;; `borg'
   (add-to-list 'load-path (expand-file-name "lib/borg" user-emacs-directory))
-  (require  'borg)
+  (require 'borg)
   (borg-initialize))
 
-(progn ;    `use-package'
-  (require  'use-package)
+(progn ;; `use-package'
+  (eval-when-compile
+    (require 'use-package))
+  (require 'diminish)
+  (require 'bind-key)
   (setq use-package-verbose t))
 
 (use-package auto-compile
@@ -71,6 +79,27 @@
   (setq avy-keys sooheon--avy-keys)
   (global-set-key [remap goto-line] 'evil-avy-goto-line))
 
+(use-package company
+:disabled t
+  :bind (:map company-active-map
+	      ("C-w" . nil)
+	      ("M-." . company-show-location)
+	      ("C-s" . company-filter-candidates)
+	      ("C-d" . nil)             ; company-show-doc-buffer
+	      ("C-/" . nil)             ; 'company-search-candidates
+	      ("C-M-/" . nil)           ; 'company-filter-candidates
+	      ("C-n" . nil)
+	      ("C-p" . nil)
+	      ("C-f" .  nil))
+  :init (setq company-idle-delay 0.2
+              company-minimum-prefix-length 2)
+  :config
+  (global-company-mode)
+
+(with-eval-after-load 'company  (define-key company-active-map [escape] (lambda () (interactive)
+					    (company-abort)
+					    (evil-normal-state)))))
+
 (use-package dash
   :config (dash-enable-font-lock))
 
@@ -86,6 +115,17 @@
 
 (use-package eldoc
   :config (global-eldoc-mode))
+
+(use-package evil
+  :init (setq-default evil-want-C-u-scroll t
+                      evil-want-C-w-delete t
+                      evil-want-fine-undo nil
+                      evil-cross-lines t
+                      evil-symbol-word-search t
+                      evil-move-cursor-back nil
+                      evil-want-C-i-jump t
+                      evil-disable-insert-state-bindings t)
+  :config (evil-mode 1))
 
 (use-package help
   :defer t
