@@ -63,6 +63,14 @@
 
 ;;; Long tail
 
+(defvar sooheon--avy-keys '(?w ?e ?r ?s ?d ?x ?c ?u ?i ?o ?v ?n ?m ?l ?k ?j ?f))
+
+(use-package avy
+  :bind (("s-g" . evil-avy-goto-word-1))
+  :config
+  (setq avy-keys sooheon--avy-keys)
+  (global-set-key [remap goto-line] 'evil-avy-goto-line))
+
 (use-package dash
   :config (dash-enable-font-lock))
 
@@ -86,6 +94,13 @@
 (progn ;    `isearch'
   (setq isearch-allow-scroll t))
 
+(use-package ivy
+  :bind (("s-f" . swiper)
+         ;;:map ivy-minibuffer-map
+         ;([escape] . minibuffer-keyboard-quit)
+         )
+  :config (ivy-mode 1))
+
 (use-package lisp-mode
   :config
   (add-hook 'emacs-lisp-mode-hook 'outline-minor-mode)
@@ -93,6 +108,15 @@
   (defun indent-spaces-mode ()
     (setq indent-tabs-mode nil))
   (add-hook 'lisp-interaction-mode-hook #'indent-spaces-mode))
+
+(use-package lispy
+  :config
+  (lispy-set-key-theme '(special
+                           c-digits
+                           paredit
+                           ;; parinfer
+                           ))
+  (add-hook 'emacs-lisp-mode-hook #'lispy-mode))
 
 (use-package magit
   :defer t
@@ -141,8 +165,8 @@
 (use-package simple
   :config (column-number-mode))
 
-(progn      `text-mode'
-  (add-hook 'test-mode-hook #'indicate-buffer-boundaries-left))
+(progn `text-mode'
+       (add-hook 'test-mode-hook #'indicate-buffer-boundaries-left))
 
 (use-package tramp
   :defer t
