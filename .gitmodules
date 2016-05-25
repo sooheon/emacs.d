@@ -54,6 +54,9 @@
 [submodule "lispy"]
 	path = lib/lispy
 	url = git@github.com:abo-abo/lispy.git
+[submodule "lispyville"]
+	path = lib/lispyville
+	url = git@github.com:noctuid/lispyville.git
 [submodule "magit"]
 	path = lib/magit
 	url = git@github.com:magit/magit.git
@@ -61,6 +64,9 @@
 [submodule "packed"]
 	path = lib/packed
 	url = git@github.com:tarsius/packed.git
+[submodule "smartparens"]
+	path = lib/smartparens
+	url = git@github.com:Fuco1/smartparens.git
 [submodule "use-package"]
 	path = lib/use-package
 	url = git@github.com:jwiegley/use-package.git

@@ -1,7 +1,7 @@
 ;;; init.el --- user-init-file                    -*- lexical-binding: t -*-
 ;;; Early birds
 
-(progn                                  ;     startup
+(progn ;; startup
   (defvar before-user-init-time (current-time)
     "Value of `current-time' when Emacs begins loading `user-init-file'.")
   (message "Loading Emacs...done (%.3fs)"
@@ -76,26 +76,24 @@
   (global-set-key [remap goto-line] 'evil-avy-goto-line))
 
 (use-package company
-  :disabled t
-  :bind (:map company-active-map
-              ("C-w" . nil)
-              ("M-." . company-show-location)
-              ("C-s" . company-filter-candidates)
-              ("C-d" . nil)             ; company-show-doc-buffer
-              ("C-/" . nil)             ; 'company-search-candidates
-              ("C-M-/" . nil)           ; 'company-filter-candidates
-              ("C-n" . nil)
-              ("C-p" . nil)
-              ("C-f" .  nil))
-  :init (setq company-idle-delay 0.2
-              company-minimum-prefix-length 2)
+  :diminish company-mode
+  ;; :bind (:map company-active-map
+  ;;             ("C-w" . nil)
+  ;;             ("M-." . company-show-location)
+  ;;             ("C-s" . company-filter-candidates)
+  ;;             ("C-d" . nil)             ; company-show-doc-buffer
+  ;;             ("C-/" . nil)             ; 'company-search-candidates
+  ;;             ("C-M-/" . nil)           ; 'company-filter-candidates
+  ;;             ("C-n" . nil)
+  ;;             ("C-p" . nil)
+  ;;             ("C-f" .  nil))
   :config
+  (setq company-idle-delay 0.2
+        company-minimum-prefix-length 2)
   (global-company-mode)
-
-  (with-eval-after-load 'company
-    (define-key company-active-map [escape] (lambda () (interactive)
-                                              (company-abort)
-                                              (evil-normal-state)))))
+  (define-key company-active-map [escape] (lambda () (interactive)
+					    (company-abort)
+					    (evil-normal-state))))
 
 (use-package dash
   :config (dash-enable-font-lock))
@@ -114,19 +112,30 @@
   :config (global-eldoc-mode))
 
 (use-package evil
-  :init (setq-default evil-want-C-u-scroll t
-                      evil-want-C-w-delete t
-                      evil-want-fine-undo nil
-                      evil-cross-lines t
-                      evil-symbol-word-search t
-                      evil-move-cursor-back nil
-                      evil-want-C-i-jump t
-                      evil-disable-insert-state-bindings t)
-  :config (evil-mode 1))
+  :init
+  (setq-default evil-want-C-u-scroll t
+                evil-want-fine-undo nil
+                evil-cross-lines t
+                evil-symbol-word-search t
+                evil-move-cursor-back nil
+                evil-want-C-i-jump t
+                evil-disable-insert-state-bindings t)
+  :config
+  (evil-mode 1)
+  (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word))
 
 (use-package evil-leader
   :config
-  (global-evil-leader-mode))
+  (global-evil-leader-mode)
+  (defun spacemacs/alternate-buffer ()
+    "Switch back and forth between current and last buffer in the
+current window."
+    (interactive)
+    (if (evil-alternate-buffer)
+	(switch-to-buffer (car (evil-alternate-buffer)))
+      (switch-to-buffer (other-buffer (current-buffer) t))))
+  (evil-leader/set-key
+    "TAB" 'spacemacs/alternate-buffer))
 
 (use-package help
   :defer t
@@ -136,30 +145,87 @@
   (setq isearch-allow-scroll t))
 
 (use-package ivy
+  :diminish ivy-mode
   :bind (("s-f" . swiper)
-	 ;; :map ivy-minibuffer-map
-	 ;; ([escape] . minibuffer-keyboard-quit)
-         )
-  :config (ivy-mode 1)
-  (evil-leader/set-key
-   "f" 'counsel-find-file))
-
-(use-package lisp-mode
+	 ;;:map ivy-minibuffer-map
+	 ;;(([escape] . minibuffer-keyboard-quit)
+	 )
   :config
-  (add-hook 'emacs-lisp-mode-hook 'outline-minor-mode)
-  (add-hook 'emacs-lisp-mode-hook 'reveal-mode)
-  (defun indent-spaces-mode ()
-    (setq indent-tabs-mode nil))
-  (add-hook 'lisp-interaction-mode-hook #'indent-spaces-mode))
+  (setq ivy-use-virtual-buffers t)
+  (ivy-mode 1)
+  (evil-leader/set-key
+    "f" 'counsel-find-file
+    "r" 'ivy-recentf
+    "b" 'ivy-switch-buffer
+    "/" 'counsel-ag)
+  (define-key ivy-minibuffer-map [escape] 'minibuffer-keyboard-quit)
+  (global-set-key "\C-ck" 'counsel-ag)
+  (global-set-key "\M-x" 'counsel-M-x)
+  (global-set-key "\C-hf" 'counsel-describe-function)
+  (global-set-key "\C-hv" 'counsel-describe-variable)
+  ;; (global-set-key "\C-hl" 'counsel-load-library)
+  ;; (global-set-key "\C-hi" 'counsel-info-lookup-symbol)
+  ;; (global-set-key "\C-hu" 'counsel-unicode-char)
+  (global-set-key "\C-cg" 'counsel-git)
+  (global-set-key "\C-cj" 'counsel-git-grep)
+  (global-set-key "\C-xl" 'counsel-locate)
+  (global-set-key "\C-c\C-r" 'ivy-resume))
 
 (use-package lispy
+  :diminish lispy-mode
+  :init (setq lispy-compat '(edebug cider)
+	      ;; Use the same keys as avy for ace jump
+	      lispy-avy-keys sooheon--avy-keys
+	      ;; Don't push around code I want to jump to!
+	      lispy-avy-style-paren 'at-full
+	      ;; lispy-eval-display-style 'overlay
+	      lispy-delete-backward-recenter nil
+	      lispy-safe-paste t)
+  (add-hook 'emacs-lisp-mode-hook #'lispy-mode)
   :config
   (lispy-set-key-theme '(special
-                         c-digits
-                         paredit
-                         ;; parinfer
-                         ))
-  (add-hook 'emacs-lisp-mode-hook #'lispy-mode))
+			 c-digits
+			 paredit
+			 ;; parinfer
+			 ))
+  (dolist (map (list lispy-mode-map-paredit lispy-mode-map-parinfer))
+    (define-key map (kbd "C-a") nil)
+    (define-key map "\M-j" 'lispy-split)
+    (define-key map "\M-k" 'lispy-kill-sentence)
+    (define-key map [M-up] 'sp-splice-sexp-killing-backward)
+    (define-key map [M-down] 'sp-splice-sexp-killing-forward)
+    (define-key map (kbd "C-,") 'lispy-kill-at-point))
+  (let ((map lispy-mode-map-paredit))
+    (define-key map "\M-n" nil)		; lispy left
+    (define-key map "\M-p" nil)
+    (define-key map "\"" nil)		; lispy-quotes
+    (define-key map (kbd "C-d") 'lispy-delete)
+    (define-key map (kbd "M-)") nil)
+    (evil-define-key 'insert map [backspace] 'lispy-delete-backward)
+    (evil-define-key 'normal map [backspace] nil))
+  (let ((map lispy-mode-map-parinfer))
+    (define-key map (kbd "\"") nil)
+    (define-key map (kbd "M-r") 'lispy-raise)
+    (define-key map (kbd "#") nil)
+    (define-key map (kbd ":") nil))
+
+  ;; Unbind M-k and M-. in evil normal state and use lispy
+  (define-key evil-normal-state-map "\M-k" nil)
+  (define-key evil-normal-state-map "\M-." nil) ; evil-repeat-pop-next
+  )
+
+(use-package lispyville
+  :diminish lispyville-mode
+  :bind (:map lispyville-mode-map
+              ("M-n" . lispyville-drag-forward)
+              ("M-p" . lispyville-drag-backward))
+  :init
+  (add-hook 'lispy-mode-hook #'lispyville-mode)
+  (setq lispyville-key-theme '(operators
+                               (escape insert hybrid emacs)
+                               slurp/barf-cp)
+        lispyville-motions-put-into-special t
+        lispyville-barf-stay-with-closing t))
 
 (use-package magit
   :defer t
@@ -201,6 +267,21 @@
 
 (use-package saveplace
   :config (save-place-mode))
+
+(use-package smartparens
+  :init (setq sp-cancel-autoskip-on-backward-movement nil)
+  :config
+  (progn
+    (smartparens-global-mode 1)
+    (show-smartparens-global-mode 1)
+    (let ((m smartparens-mode-map))
+      (define-key m [C-backspace] 'sp-backward-kill-sexp)
+      (define-key m (kbd "C-)") 'sp-forward-slurp-sexp)
+      (define-key m (kbd "C-(") 'sp-backward-slurp-sexp)
+      (define-key m (kbd "C-{") 'sp-backward-barf-sexp)
+      (define-key m (kbd "C-}") 'sp-forward-barf-sexp))
+    (setq sp-show-pair-from-inside nil
+	  sp-show-pair-delay 0)))
 
 (use-package simple
   :config (column-number-mode))
