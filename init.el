@@ -337,7 +337,9 @@ current window."
   (define-key evil-normal-state-map "gs" 'magit-status)
   (evil-leader/set-key "g" 'magit-status "G" 'magit-dispatch-popup)
   :config
-  (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
+  (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1
+        magit-refresh-verbose t
+        magit-git-executable "/usr/local/bin/git")
   (magit-add-section-hook 'magit-status-sections-hook
                           'magit-insert-modules-unpulled-from-upstream
                           'magit-insert-unpulled-from-upstream)
@@ -403,7 +405,6 @@ current window."
   :bind (("s-`" . shell-pop))
   :init
   (define-key evil-normal-state-map "got" 'shell-pop)
-  :config
   (setq shell-pop-window-position 'bottom
         shell-pop-window-height 30
         shell-pop-full-span t
