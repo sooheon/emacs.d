@@ -180,11 +180,21 @@ current window."
   (evil-define-key 'normal elisp-slime-nav-mode-map
     "K" 'elisp-slime-nav-describe-elisp-thing-at-point))
 
-(use-package evil-matchit
-  :defer t)
+(use-package evil-commentary
+  :diminish evil-commentary-mode
+  :commands (evil-commentary evil-commentary-line evil-commentary-yank)
+  :config (evil-commentary-mode))
+
+(use-package evil-matchit :defer t)
+
+(use-package flx :defer t)
 
 (use-package help
-  :config (temp-buffer-resize-mode))
+  :config
+  (setq help-window-select t))
+
+(use-package info
+  :config (evil-leader/set-key "hi" 'info))
 
 (use-package ivy
   :diminish ivy-mode

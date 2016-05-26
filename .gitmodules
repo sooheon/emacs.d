@@ -39,6 +39,9 @@
 [submodule "evil"]
 	path = lib/evil
 	url = git@github.com:emacsmirror/evil.git
+[submodule "evil-commentary"]
+	path = lib/evil-commentary
+	url = git@github.com:linktohack/evil-commentary.git
 [submodule "evil-leader"]
 	path = lib/evil-leader
 	url = git@github.com:cofi/evil-leader.git
