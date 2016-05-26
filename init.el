@@ -13,6 +13,8 @@
   (progn ;; Themes
     (add-to-list 'custom-theme-load-path
                  (expand-file-name "themes" user-emacs-directory))
+    (add-to-list 'custom-theme-load-path
+                 (expand-file-name "lib/zenburn-theme" user-emacs-directory))
     (setq custom-safe-themes t)
     (load-theme 'eclipse2 t))
   (setq package-enable-at-startup nil
@@ -331,9 +333,9 @@ current window."
   :defer t
   :bind (("C-x g"   . magit-status)
          ("C-x M-g" . magit-dispatch-popup))
-  :init (evil-leader/set-key
-          "g" 'magit-status
-          "G" 'magit-dispatch-popup)
+  :init
+  (define-key evil-normal-state-map "gs" 'magit-status)
+  (evil-leader/set-key "g" 'magit-status "G" 'magit-dispatch-popup)
   :config
   (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
   (magit-add-section-hook 'magit-status-sections-hook
