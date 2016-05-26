@@ -38,17 +38,16 @@
 (use-package no-littering :demand t)
 
 (use-package evil
-  :init
-  (setq-default evil-want-C-u-scroll t
+  :bind (:map evil-insert-state-map
+              ("C-w" . evil-delete-backward-word))
+  :init (setq-default evil-want-C-u-scroll t
                 evil-want-fine-undo nil
                 evil-cross-lines t
                 evil-symbol-word-search t
                 evil-move-cursor-back nil
                 evil-want-C-i-jump t
                 evil-disable-insert-state-bindings t)
-  :config
-  (evil-mode 1)
-  (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word))
+  :config (evil-mode 1))
 
 (use-package evil-leader
   :commands spacemacs/alternate-buffer
@@ -114,13 +113,17 @@ current window."
 
 ;;; Long tail
 
+(add-to-list 'load-path (expand-file-name "modules" user-emacs-directory))
+
+(require 'soo-evil)
+
 (defvar sooheon--avy-keys '(?w ?e ?r ?s ?d ?x ?c ?u ?i ?o ?v ?n ?m ?l ?k ?j ?f))
 
 (use-package avy
-  :bind (("s-g" . evil-avy-goto-word-1))
+  :bind (("s-g" . evil-avy-goto-word-1)
+         ([remap goto-line] . evil-avy-goto-line))
   :config
-  (setq avy-keys sooheon--avy-keys)
-  (global-set-key [remap goto-line] 'evil-avy-goto-line))
+  (setq avy-keys sooheon--avy-keys))
 
 (use-package ace-link
   :commands (ace-link-info ace-link-eww ace-link-help)
