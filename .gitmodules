@@ -1,3 +1,6 @@
+[submodule "ace-link"]
+	path = lib/ace-link
+	url = git@github.com:abo-abo/ace-link.git
 [submodule "auto-compile"]
 	path = lib/auto-compile
 	url = git@github.com:tarsius/auto-compile.git
@@ -23,6 +26,9 @@
 [submodule "diminish"]
 	path = lib/diminish
 	url = git@github.com:myrjola/diminish.el.git
+[submodule "elisp-slime-nav"]
+	path = lib/elisp-slime-nav
+	url = git@github.com:purcell/elisp-slime-nav.git
 [submodule "emacsql"]
 	path = lib/emacsql
 	url = git@github.com:skeeto/emacsql.git
@@ -36,6 +42,9 @@
 [submodule "evil-leader"]
 	path = lib/evil-leader
 	url = git@github.com:cofi/evil-leader.git
+[submodule "evil-matchit"]
+	path = lib/evil-matchit
+	url = git@github.com:redguardtoo/evil-matchit.git
 [submodule "finalize"]
 	path = lib/finalize
 	url = git@github.com:skeeto/elisp-finalize.git
@@ -67,9 +76,18 @@
 [submodule "smartparens"]
 	path = lib/smartparens
 	url = git@github.com:Fuco1/smartparens.git
+[submodule "undo-tree"]
+	path = lib/undo-tree
+	url = git@github.com:emacsmirror/undo-tree.git
 [submodule "use-package"]
 	path = lib/use-package
 	url = git@github.com:jwiegley/use-package.git
+[submodule "which-key"]
+	path = lib/which-key
+	url = git@github.com:justbur/emacs-which-key.git
+[submodule "window-numbering"]
+	path = lib/window-numbering
+	url = git@github.com:nschum/window-numbering.el.git
 [submodule "with-editor"]
 	path = lib/with-editor
 	url = git@github.com:magit/with-editor.git
