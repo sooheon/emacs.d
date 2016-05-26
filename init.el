@@ -272,11 +272,8 @@ current window."
 
 (use-package lispy
   :init (setq lispy-compat '(edebug cider)
-              ;; Use the same keys as avy for ace jump
               lispy-avy-keys sooheon--avy-keys
-              ;; Don't push around code I want to jump to!
               lispy-avy-style-paren 'at-full
-              ;; lispy-eval-display-style 'overlay
               lispy-delete-backward-recenter nil
               lispy-safe-paste t)
   (add-hook 'smartparens-enabled-hook
