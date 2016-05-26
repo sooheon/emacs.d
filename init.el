@@ -10,13 +10,20 @@
   (setq user-init-file (or load-file-name buffer-file-name))
   (setq user-emacs-directory (file-name-directory user-init-file))
   (message "Loading %s..." user-init-file)
-  (setq package-enable-at-startup nil)
-  (setq inhibit-startup-buffer-menu t)
-  (setq inhibit-startup-screen t)
-  (setq inhibit-startup-echo-area-message "locutus")
-  (setq initial-buffer-choice t)
-  (setq initial-scratch-message "")
-  (setq load-prefer-newer t)
+  (progn ;; Themes
+    (add-to-list 'custom-theme-load-path
+                 (expand-file-name "themes" user-emacs-directory))
+    (setq custom-safe-themes t)
+    (load-theme 'eclipse2 t))
+  (setq package-enable-at-startup nil
+        inhibit-startup-buffer-menu t
+        inhibit-startup-screen t
+        inhibit-startup-echo-area-message "locutus"
+        initial-buffer-choice t
+        initial-major-mode 'emacs-lisp-mode
+        initial-scratch-message ""
+        load-prefer-newer t)
+  (fset 'yes-or-no-p 'y-or-n-p)
   (scroll-bar-mode 0)
   (tool-bar-mode 0)
   (menu-bar-mode 0))
@@ -26,42 +33,12 @@
   (require 'borg)
   (borg-initialize))
 
-(progn ;; themes
-  (add-to-list 'custom-theme-load-path (expand-file-name "themes" user-emacs-directory)))
-
 (progn ;; `use-package'
   (eval-when-compile
     (require 'use-package))
   (require 'diminish)
   (require 'bind-key)
   (setq use-package-verbose t))
-
-(use-package auto-compile
-  :demand t
-  :config
-  (auto-compile-on-load-mode)
-  (auto-compile-on-save-mode)
-  (setq auto-compile-display-buffer               nil)
-  (setq auto-compile-mode-line-counter            t)
-  (setq auto-compile-source-recreate-deletes-dest t)
-  (setq auto-compile-toggle-deletes-nonlib-dest   t)
-  (setq auto-compile-update-autoloads             t)
-  (add-hook 'auto-compile-inhibit-compile-hook
-            'auto-compile-inhibit-compile-detached-git-head))
-
-(use-package epkg
-  :defer t
-  :init (setq epkg-repository
-              (expand-file-name "var/epkgs/" user-emacs-directory)))
-
-(use-package custom
-  :config
-  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-  (when (file-exists-p custom-file)
-    (load custom-file)))
-
-(use-package server
-  :config (or (server-running-p) (server-mode)))
 
 (use-package evil
   :init
@@ -83,7 +60,7 @@
 current window."
     (interactive)
     (if (evil-alternate-buffer)
-	(switch-to-buffer (car (evil-alternate-buffer)))
+        (switch-to-buffer (car (evil-alternate-buffer)))
       (switch-to-buffer (other-buffer (current-buffer) t))))
   (evil-leader/set-key
     "TAB" 'spacemacs/alternate-buffer
@@ -103,6 +80,34 @@ current window."
     "wv" 'evil-window-vsplit)
   :config
   (global-evil-leader-mode))
+
+(use-package auto-compile
+  :demand t
+  :config
+  (auto-compile-on-load-mode)
+  (auto-compile-on-save-mode)
+  (setq auto-compile-display-buffer               nil)
+  (setq auto-compile-mode-line-counter            t)
+  (setq auto-compile-source-recreate-deletes-dest t)
+  (setq auto-compile-toggle-deletes-nonlib-dest   t)
+  (setq auto-compile-update-autoloads             t)
+  (add-hook 'auto-compile-inhibit-compile-hook
+            'auto-compile-inhibit-compile-detached-git-head))
+
+(use-package epkg
+  :defer t
+  :init (setq epkg-repository
+              (expand-file-name "var/epkgs/" user-emacs-directory))
+  (evil-leader/set-key "ak" 'epkg-describe-package))
+
+(use-package custom
+  :config
+  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+  (when (file-exists-p custom-file)
+    (load custom-file)))
+
+(use-package server
+  :config (or (server-running-p) (server-mode)))
 
 (use-package which-key
   :diminish which-key-mode
@@ -128,8 +133,9 @@ current window."
 (use-package ace-link
   :commands (ace-link-info ace-link-eww ace-link-help)
   :init
-  (with-eval-after-load 'info (define-key Info-mode-map "o" 'ace-link-info))
-  (with-eval-after-load 'help-mode (define-key help-mode-map "o" 'ace-link-help)))
+  (ace-link-setup-default)
+  (with-eval-after-load 'org
+    (define-key org-mode-map "\M-o" 'ace-link-org)))
 
 (use-package autorevert
   :diminish auto-revert-mode
@@ -137,16 +143,6 @@ current window."
 
 (use-package company
   :diminish (company-mode . "co")
-  ;; :bind (:map company-active-map
-  ;;             ("C-w" . nil)
-  ;;             ("M-." . company-show-location)
-  ;;             ("C-s" . company-filter-candidates)
-  ;;             ("C-d" . nil)             ; company-show-doc-buffer
-  ;;             ("C-/" . nil)             ; 'company-search-candidates
-  ;;             ("C-M-/" . nil)           ; 'company-filter-candidates
-  ;;             ("C-n" . nil)
-  ;;             ("C-p" . nil)
-  ;;             ("C-f" .  nil))
   :config
   (setq company-idle-delay 0.2
         company-minimum-prefix-length 2)
@@ -154,7 +150,10 @@ current window."
   (let ((m company-active-map))
     (define-key m [escape] (lambda () (interactive)
                              (company-abort)
-                             (evil-normal-state)))))
+                             (evil-normal-state)))
+    (define-key m "\C-n" 'company-select-next)
+    (define-key m "\C-p" 'company-select-previous)
+    (define-key m [tab] 'company-complete-common)))
 
 (use-package dash
   :config (dash-enable-font-lock))
@@ -209,18 +208,23 @@ current window."
          ("C-c j" . counsel-git-grep)
          ("C-x l" . counsel-locate)
          ("C-c C-r" . ivy-resume))
-  :config
-  (setq ivy-use-virtual-buffers t
-        ivy-extra-directories '("./")
-        ivy-count-format "%d "
-        ivy-height 12)
-  (ivy-mode 1)
+  :init
   (evil-leader/set-key
+    "hv" 'counsel-describe-variable
+    "hf" 'counsel-describe-function
     "f" 'counsel-find-file
     "r" 'ivy-recentf
     "b" 'ivy-switch-buffer
     "/" 'counsel-ag
     "Th" 'counsel-load-theme)
+  :config
+  (setq ivy-use-virtual-buffers t
+        ivy-extra-directories '("./")
+        ivy-count-format "%d "
+        ivy-height 12
+        ivy-re-builders-alist '((t . ivy--regex-fuzzy))
+        ivy-initial-inputs-alist nil)
+  (ivy-mode 1)
   (let ((m ivy-minibuffer-map))
     (define-key m [escape] 'minibuffer-keyboard-quit)
     (define-key m (kbd "<s-backspace>") (lambda () (interactive) (kill-line 0))))
@@ -269,20 +273,23 @@ current window."
 
 (use-package lispy
   :init (setq lispy-compat '(edebug cider)
-	      ;; Use the same keys as avy for ace jump
-	      lispy-avy-keys sooheon--avy-keys
-	      ;; Don't push around code I want to jump to!
-	      lispy-avy-style-paren 'at-full
-	      ;; lispy-eval-display-style 'overlay
-	      lispy-delete-backward-recenter nil
-	      lispy-safe-paste t)
-  (add-hook 'emacs-lisp-mode-hook #'lispy-mode)
+              ;; Use the same keys as avy for ace jump
+              lispy-avy-keys sooheon--avy-keys
+              ;; Don't push around code I want to jump to!
+              lispy-avy-style-paren 'at-full
+              ;; lispy-eval-display-style 'overlay
+              lispy-delete-backward-recenter nil
+              lispy-safe-paste t)
+  (add-hook 'smartparens-enabled-hook
+            (lambda () (when (member major-mode sp-lisp-modes) (lispy-mode))))
+  (add-hook 'smartparens-disabled-hook
+            (lambda () (when (member major-mode sp-lisp-modes) (lispy-mode -1))))
   :config
   (lispy-set-key-theme '(special
-			 c-digits
-			 paredit
-			 ;; parinfer
-			 ))
+                         c-digits
+                         paredit
+                         ;; parinfer
+                         ))
   (dolist (map (list lispy-mode-map-paredit lispy-mode-map-parinfer))
     (define-key map (kbd "C-a") nil)
     (define-key map "\M-j" 'lispy-split)
@@ -291,13 +298,12 @@ current window."
     (define-key map [M-down] 'sp-splice-sexp-killing-forward)
     (define-key map (kbd "C-,") 'lispy-kill-at-point))
   (let ((map lispy-mode-map-paredit))
-    (define-key map "\M-n" nil)		; lispy left
+    (define-key map "\M-n" nil)         ; lispy left
     (define-key map "\M-p" nil)
-    (define-key map "\"" nil)		; lispy-quotes
+    (define-key map "\"" nil)           ; lispy-quotes
     (define-key map (kbd "C-d") 'lispy-delete)
     (define-key map (kbd "M-)") nil)
-    (evil-define-key 'insert map [backspace] 'lispy-delete-backward)
-    (evil-define-key 'normal map [backspace] nil))
+    (evil-define-key 'insert map [backspace] 'lispy-delete-backward))
   (let ((map lispy-mode-map-parinfer))
     (define-key map (kbd "\"") nil)
     (define-key map (kbd "M-r") 'lispy-raise)
@@ -305,9 +311,8 @@ current window."
     (define-key map (kbd ":") nil))
 
   ;; Unbind M-k and M-. in evil normal state and use lispy
-  (define-key evil-normal-state-map "\M-k" nil)
   (define-key evil-normal-state-map "\M-." nil) ; evil-repeat-pop-next
-  )
+  (define-key evil-normal-state-map "\M-k" nil))
 
 (use-package lispyville
   :diminish lispyville-mode
@@ -326,7 +331,11 @@ current window."
   :defer t
   :bind (("C-x g"   . magit-status)
          ("C-x M-g" . magit-dispatch-popup))
+  :init (evil-leader/set-key
+          "g" 'magit-status
+          "G" 'magit-dispatch-popup)
   :config
+  (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
   (magit-add-section-hook 'magit-status-sections-hook
                           'magit-insert-modules-unpulled-from-upstream
                           'magit-insert-unpulled-from-upstream)
@@ -343,12 +352,32 @@ current window."
                           'magit-insert-submodules
                           'magit-insert-unpulled-from-upstream))
 
-(use-package man
+(use-package org
   :defer t
-  :config (setq Man-width 80))
+  :init
+  (setq org-src-fontify-natively t)
+  :config
+  (evil-define-key 'normal org-mode-map [return] 'org-open-at-point))
 
 (use-package paren
   :config (show-paren-mode))
+
+(use-package popwin
+  :config
+  (popwin-mode 1)
+  (setq popwin:special-display-config nil)
+  (evil-leader/set-key
+    "wpm" 'popwin:messages
+    "wpp" 'popwin:close-popup-window)
+  (push '("*Help*"                 :dedicated t :position bottom :stick t :noselect t :height 0.4) popwin:special-display-config)
+  (push '("*compilation*"          :dedicated t :position bottom :stick t :noselect t :height 0.4) popwin:special-display-config)
+  (push '("*Shell Command Output*" :dedicated t :position bottom :stick t :noselect nil) popwin:special-display-config)
+  (push '("*Async Shell Command*"  :dedicated t :position bottom :stick t :noselect nil) popwin:special-display-config)
+  (push '(" *undo-tree*"           :dedicated t :position bottom :stick t :noselect nil :height 0.4) popwin:special-display-config)
+  (push '("*ert*"                  :dedicated t :position bottom :stick t :noselect nil) popwin:special-display-config)
+  (push '("*grep*"                 :dedicated t :position bottom :stick t :noselect nil) popwin:special-display-config)
+  (push '("*nosetests*"            :dedicated t :position bottom :stick t :noselect nil) popwin:special-display-config)
+  (push '("^\*WoMan.+\*$"          :regexp t :position bottom) popwin:special-display-config))
 
 (use-package prog-mode
   :config (global-prettify-symbols-mode))
@@ -363,23 +392,42 @@ current window."
 (use-package saveplace
   :config (save-place-mode))
 
-(use-package smartparens
-  :init (setq sp-cancel-autoskip-on-backward-movement nil)
+(use-package shell-pop
+  :bind (("C-s-1" . shell-pop))
   :config
-  (progn
-    (smartparens-global-mode 1)
-    (show-smartparens-global-mode 1)
-    (let ((m smartparens-mode-map))
-      (define-key m [C-backspace] 'sp-backward-kill-sexp)
-      (define-key m (kbd "C-)") 'sp-forward-slurp-sexp)
-      (define-key m (kbd "C-(") 'sp-backward-slurp-sexp)
-      (define-key m (kbd "C-{") 'sp-backward-barf-sexp)
-      (define-key m (kbd "C-}") 'sp-forward-barf-sexp))
-    (setq sp-show-pair-from-inside nil
-	  sp-show-pair-delay 0)))
+  (setq shell-pop-window-position 'bottom
+        shell-pop-window-height 30
+        shell-pop-full-span t
+        shell-pop-shell-type '("terminal" "*terminal*"
+                               (lambda () (term shell-pop-term-shell)))))
+
+(use-package smartparens
+  :init
+  (setq sp-cancel-autoskip-on-backward-movement nil
+        sp-show-pair-from-inside nil
+        sp-show-pair-delay 0)
+  (defun conditionally-enable-smartparens-mode ()
+    "Enable `smartparens-mode' in the minibuffer, during `eval-expression'."
+    (if (eq this-command 'eval-expression)
+        (smartparens-mode)))
+  (add-hook 'minibuffer-setup-hook 'conditionally-enable-smartparens-mode)
+  (smartparens-global-mode 1)
+  :config
+  (require 'smartparens-config)
+  (show-smartparens-global-mode 1)
+  (let ((m smartparens-mode-map))
+    (define-key m [C-backspace] 'sp-backward-kill-sexp)
+    (define-key m (kbd "C-)") 'sp-forward-slurp-sexp)
+    (define-key m (kbd "C-(") 'sp-backward-slurp-sexp)
+    (define-key m (kbd "C-{") 'sp-backward-barf-sexp)
+    (define-key m (kbd "C-}") 'sp-forward-barf-sexp)))
+
+(use-package smex
+  :defer t)
 
 (use-package simple
-  :config (column-number-mode))
+  :config
+  (define-key messages-buffer-mode-map (kbd "s-k") 'bury-buffer))
 
 (use-package tramp
   :defer t
@@ -393,8 +441,7 @@ current window."
   :diminish undo-tree-mode
   :init
   (global-undo-tree-mode)
-  (setq undo-tree-visualizer-timestamps t
-        undo-tree-visualizer-diff t))
+  (setq undo-tree-visualizer-timestamps t))
 
 (use-package window-numbering
   :bind (("s-0" . select-window-0)
@@ -437,10 +484,22 @@ current window."
   (add-to-list 'default-frame-alist
                '(font . "Input Mono Narrow-12"))
   (let ((f "fontset-default"))
-    (set-fontset-font f 'hangul '("NanumGothic" . "unicode-bmp"))))
+    (set-fontset-font f 'hangul '("NanumGothic" . "unicode-bmp")))
+  (setq-default fringe-indicator-alist '((truncation left-arrow right-arrow)
+                                         (continuation
+                                          nil ;; left-curly-arrow
+                                          right-curly-arrow)
+                                         (overlay-arrow . right-triangle)
+                                         (up . up-arrow)
+                                         (down . down-arrow)
+                                         (top top-left-angle top-right-angle)
+                                         (bottom bottom-left-angle bottom-right-angle top-right-angle top-left-angle)
+                                         (top-bottom left-bracket right-bracket top-right-angle top-left-angle)
+                                         (empty-line . empty-line)
+                                         (unknown . question-mark))))
 (sooheon--config)
 
-(progn ;; startup
+(progn ;; Startup
   (message "Loading %s...done (%.3fs)" user-init-file
            (float-time (time-subtract (current-time)
                                       before-user-init-time)))

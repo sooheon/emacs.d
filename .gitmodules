@@ -51,6 +51,9 @@
 [submodule "finalize"]
 	path = lib/finalize
 	url = git@github.com:skeeto/elisp-finalize.git
+[submodule "flx"]
+	path = lib/flx
+	url = git@github.com:lewang/flx.git
 [submodule "git-modes"]
 	path = lib/git-modes
 	url = git@github.com:magit/git-modes.git
@@ -73,12 +76,24 @@
 	path = lib/magit
 	url = git@github.com:magit/magit.git
 	info-path = Documentation
+[submodule "org"]
+	path = lib/org
+	url = git://orgmode.org/org-mode.git
 [submodule "packed"]
 	path = lib/packed
 	url = git@github.com:tarsius/packed.git
+[submodule "popwin"]
+	path = lib/popwin
+	url = git@github.com:m2ym/popwin-el.git
+[submodule "shell-pop"]
+	path = lib/shell-pop
+	url = git@github.com:kyagi/shell-pop-el.git
 [submodule "smartparens"]
 	path = lib/smartparens
 	url = git@github.com:Fuco1/smartparens.git
+[submodule "smex"]
+	path = lib/smex
+	url = git@github.com:nonsequitur/smex.git
 [submodule "undo-tree"]
 	path = lib/undo-tree
 	url = git@github.com:emacsmirror/undo-tree.git

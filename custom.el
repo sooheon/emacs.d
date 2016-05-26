@@ -9,6 +9,7 @@
  '(frame-resize-pixelwise t)
  '(indent-tabs-mode nil)
  '(indicate-empty-lines t)
+ '(magit-branch-arguments nil)
  '(ring-bell-function (quote ignore))
  '(tab-always-indent (quote complete)))
 (custom-set-faces
