@@ -42,6 +42,8 @@
   (require 'bind-key)
   (setq use-package-verbose t))
 
+(use-package no-littering :demand t)
+
 (use-package evil
   :init
   (setq-default evil-want-C-u-scroll t
@@ -111,12 +113,6 @@ current window."
 
 (use-package server
   :config (or (server-running-p) (server-mode)))
-
-(use-package which-key
-  :diminish which-key-mode
-  :init
-  (which-key-mode)
-  (setq which-key-idle-delay 0.5))
 
 (progn ; startup
   (message "Loading early birds...done (%.3fs)"
@@ -355,6 +351,10 @@ current window."
                           'magit-insert-submodules
                           'magit-insert-unpulled-from-upstream))
 
+(use-package morlock
+  :commands global-morlock-mode
+  :init (global-morlock-mode))
+
 (use-package org
   :defer t
   :init
@@ -508,6 +508,12 @@ current window."
   :init
   (global-undo-tree-mode)
   (setq undo-tree-visualizer-timestamps t))
+
+(use-package which-key
+  :diminish which-key-mode
+  :init
+  (which-key-mode)
+  (setq which-key-idle-delay 0.5))
 
 (use-package window-numbering
   :bind (("s-0" . select-window-0)

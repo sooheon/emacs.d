@@ -79,6 +79,9 @@
 [submodule "morlock"]
 	path = lib/morlock
 	url = git@github.com:tarsius/morlock.git
+[submodule "no-littering"]
+	path = lib/no-littering
+	url = git@github.com:tarsius/no-littering.git
 [submodule "org"]
 	path = lib/org
 	url = git://orgmode.org/org-mode.git
