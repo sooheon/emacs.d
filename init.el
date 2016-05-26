@@ -10,18 +10,11 @@
   (setq user-init-file (or load-file-name buffer-file-name))
   (setq user-emacs-directory (file-name-directory user-init-file))
   (message "Loading %s..." user-init-file)
-  (progn ;; Themes
-    (add-to-list 'custom-theme-load-path
-                 (expand-file-name "themes" user-emacs-directory))
-    (add-to-list 'custom-theme-load-path
-                 (expand-file-name "lib/zenburn-theme" user-emacs-directory))
-    (setq custom-safe-themes t)
-    (load-theme 'zenburn t))
   (setq package-enable-at-startup nil
         inhibit-startup-buffer-menu t
         inhibit-startup-screen t
         initial-buffer-choice t
-        initial-major-mode 'emacs-lisp-mode
+        initial-major-mode 'fundamental-mode
         initial-scratch-message ""
         load-prefer-newer t)
   (eval '(setq inhibit-startup-echo-area-message "sooheon"))
@@ -91,16 +84,17 @@ current window."
   :config
   (auto-compile-on-load-mode)
   (auto-compile-on-save-mode)
-  (setq auto-compile-display-buffer               nil)
-  (setq auto-compile-mode-line-counter            t)
+  (setq auto-compile-display-buffer nil)
+  (setq auto-compile-mode-line-counter t)
   (setq auto-compile-source-recreate-deletes-dest t)
-  (setq auto-compile-toggle-deletes-nonlib-dest   t)
-  (setq auto-compile-update-autoloads             t)
+  (setq auto-compile-toggle-deletes-nonlib-dest t)
+  (setq auto-compile-update-autoloads t)
   (add-hook 'auto-compile-inhibit-compile-hook
             'auto-compile-inhibit-compile-detached-git-head))
 
 (use-package epkg
   :defer t
+  :commands epkg-describe-package
   :init (setq epkg-repository
               (expand-file-name "var/epkgs/" user-emacs-directory))
   (evil-leader/set-key "ak" 'epkg-describe-package))
@@ -111,8 +105,7 @@ current window."
   (when (file-exists-p custom-file)
     (load custom-file)))
 
-(use-package server
-  :config (or (server-running-p) (server-mode)))
+(use-package server :config (or (server-running-p) (server-mode)))
 
 (progn ; startup
   (message "Loading early birds...done (%.3fs)"
@@ -483,8 +476,7 @@ current window."
     (define-key m (kbd "C-{") 'sp-backward-barf-sexp)
     (define-key m (kbd "C-}") 'sp-forward-barf-sexp)))
 
-(use-package smex
-  :defer t)
+(use-package smex :defer t)
 
 (use-package simple
   :config
@@ -519,7 +511,17 @@ current window."
          ("s-3" . select-window-3)
          ("s-4" . select-window-4)
          ("s-5" . select-window-5)
-         ("s-6" . select-window-6))
+         ("s-6" . select-window-6)
+         ("M-0" . nil)
+         ("M-1" . nil)
+         ("M-2" . nil)
+         ("M-3" . nil)
+         ("M-4" . nil)
+         ("M-5" . nil)
+         ("M-6" . nil)
+         ("M-7" . nil)
+         ("M-8" . nil)
+         ("M-9" . nil))
   :config
   (window-numbering-mode 1))
 

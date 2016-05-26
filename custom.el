@@ -11,6 +11,10 @@
  '(indicate-empty-lines t)
  '(magit-branch-arguments nil)
  '(ring-bell-function (quote ignore))
+ '(solarized-distinct-doc-face t)
+ '(solarized-high-contrast-mode-line t)
+ '(solarized-use-more-italic t)
+ '(solarized-use-variable-pitch nil)
  '(tab-always-indent (quote complete)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

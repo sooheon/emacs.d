@@ -18,3 +18,11 @@
                                        (top-bottom left-bracket right-bracket top-right-angle top-left-angle)
                                        (empty-line . empty-line)
                                        (unknown . question-mark)))
+
+(progn ;; Themes
+  (dolist (elt '("themes" "lib/zenburn-theme" "lib/solarized-theme"
+                 "lib/ample-theme" "lib/spacemacs-theme"))
+    (add-to-list 'custom-theme-load-path
+                 (expand-file-name elt user-emacs-directory)))
+  (setq custom-safe-themes t)
+  (load-theme 'eclipse2 t))
