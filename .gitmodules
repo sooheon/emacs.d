@@ -76,6 +76,9 @@
 	path = lib/magit
 	url = git@github.com:magit/magit.git
 	info-path = Documentation
+[submodule "morlock"]
+	path = lib/morlock
+	url = git@github.com:tarsius/morlock.git
 [submodule "org"]
 	path = lib/org
 	url = git://orgmode.org/org-mode.git
@@ -85,6 +88,9 @@
 [submodule "popwin"]
 	path = lib/popwin
 	url = git@github.com:m2ym/popwin-el.git
+[submodule "projectile"]
+	path = lib/projectile
+	url = git@github.com:bbatsov/projectile.git
 [submodule "reveal-in-osx-finder"]
 	path = lib/reveal-in-osx-finder
 	url = git@github.com:kaz-yos/reveal-in-osx-finder.git

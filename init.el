@@ -1,7 +1,7 @@
 ;;; init.el --- user-init-file                    -*- lexical-binding: t -*-
 ;;; Early birds
 
-(progn ;; startup
+(progn ;; Startup
   (defvar before-user-init-time (current-time)
     "Value of `current-time' when Emacs begins loading `user-init-file'.")
   (message "Loading Emacs...done (%.3fs)"
@@ -16,15 +16,15 @@
     (add-to-list 'custom-theme-load-path
                  (expand-file-name "lib/zenburn-theme" user-emacs-directory))
     (setq custom-safe-themes t)
-    (load-theme 'eclipse2 t))
+    (load-theme 'zenburn t))
   (setq package-enable-at-startup nil
         inhibit-startup-buffer-menu t
         inhibit-startup-screen t
-        inhibit-startup-echo-area-message "locutus"
         initial-buffer-choice t
         initial-major-mode 'emacs-lisp-mode
         initial-scratch-message ""
         load-prefer-newer t)
+  (eval '(setq inhibit-startup-echo-area-message "sooheon"))
   (fset 'yes-or-no-p 'y-or-n-p)
   (scroll-bar-mode 0)
   (tool-bar-mode 0)
@@ -56,14 +56,8 @@
   (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word))
 
 (use-package evil-leader
+  :commands spacemacs/alternate-buffer
   :init
-  (defun spacemacs/alternate-buffer ()
-    "Switch back and forth between current and last buffer in the
-current window."
-    (interactive)
-    (if (evil-alternate-buffer)
-        (switch-to-buffer (car (evil-alternate-buffer)))
-      (switch-to-buffer (other-buffer (current-buffer) t))))
   (evil-leader/set-key
     "TAB" 'spacemacs/alternate-buffer
     "u" 'universal-argument
@@ -81,6 +75,13 @@ current window."
     "ws" 'evil-window-split
     "wv" 'evil-window-vsplit)
   :config
+  (defun spacemacs/alternate-buffer ()
+    "Switch back and forth between current and last buffer in the
+current window."
+    (interactive)
+    (if (evil-alternate-buffer)
+        (switch-to-buffer (car (evil-alternate-buffer)))
+      (switch-to-buffer (other-buffer (current-buffer) t))))
   (global-evil-leader-mode))
 
 (use-package auto-compile
@@ -289,9 +290,7 @@ current window."
   :config
   (lispy-set-key-theme '(special
                          c-digits
-                         paredit
-                         ;; parinfer
-                         ))
+                         paredit))
   (dolist (map (list lispy-mode-map-paredit lispy-mode-map-parinfer))
     (define-key map (kbd "C-a") nil)
     (define-key map "\M-j" 'lispy-split)
@@ -303,9 +302,9 @@ current window."
     (define-key map "\M-n" nil)         ; lispy left
     (define-key map "\M-p" nil)
     (define-key map "\"" nil)           ; lispy-quotes
-    (define-key map (kbd "C-d") 'lispy-delete)
+    (define-key map "C-d" 'lispy-delete)
     (define-key map (kbd "M-)") nil)
-    (evil-define-key 'insert map [backspace] 'lispy-delete-backward))
+    (define-key map (kbd "DEL") 'lispy-delete-backward))
   (let ((map lispy-mode-map-parinfer))
     (define-key map (kbd "\"") nil)
     (define-key map (kbd "M-r") 'lispy-raise)
@@ -385,6 +384,61 @@ current window."
 
 (use-package prog-mode
   :config (global-prettify-symbols-mode))
+
+(use-package projectile
+  :diminish projectile-mode
+  :commands (projectile-ack
+             projectile-ag
+             projectile-compile-project
+             projectile-dired
+             projectile-find-dir
+             projectile-find-file
+             projectile-find-tag
+             projectile-test-project
+             projectile-grep
+             projectile-invalidate-cache
+             projectile-kill-buffers
+             projectile-multi-occur
+             projectile-project-p
+             projectile-project-root
+             projectile-recentf
+             projectile-regenerate-tags
+             projectile-replace
+             projectile-replace-regexp
+             projectile-run-async-shell-command-in-root
+             projectile-run-shell-command-in-root
+             projectile-switch-project
+             projectile-switch-to-buffer
+             projectile-vc)
+  :init
+  ;; (setq
+  ;;  projectile-sort-order 'recentf
+  ;;  projectile-cache-file (concat spacemacs-cache-directory
+  ;;                                "projectile.cache")
+  ;;  projectile-known-projects-file (concat spacemacs-cache-directory
+  ;;                                         "projectile-bookmarks.eld"))
+  (evil-leader/set-key
+    "pb" 'projectile-switch-to-buffer
+    "pd" 'projectile-find-dir
+    "pf" 'projectile-find-file
+    "pF" 'projectile-find-file-dwim
+    "ph" 'helm-projectile
+    "pr" 'projectile-recentf
+    "ps" 'projectile-switch-project)
+  (evil-leader/set-key
+    "p!" 'projectile-run-shell-command-in-root
+    "p&" 'projectile-run-async-shell-command-in-root
+    "p%" 'projectile-replace-regexp
+    "pk" 'projectile-kill-buffers
+    "pa" 'projectile-find-other-file
+    "pt" 'projectile-toggle-between-implementation-and-test
+    "po" 'projectile-multi-occur
+    "pR" 'projectile-replace
+    "pT" 'projectile-find-test-file
+    "pP" 'projectile-test-project
+    "pm" 'projectile-commander)
+  :config
+  (projectile-global-mode))
 
 (use-package recentf
   :demand t
@@ -473,44 +527,16 @@ current window."
   (setq winner-boring-buffers
         (append winner-boring-buffers '("*Compile-Log*"
                                         "*inferior-lisp*"
-                                        "*Fuzzy Completions*"
                                         "*Apropos*"
-                                        "*Help*"
                                         "*cvs*"
                                         "*Buffer List*"
-                                        "*Ibuffer*"
-                                        "*esh command on file*"))))
+                                        "*Ibuffer*"))))
 
-(progn ;; personalize
+(progn ;; Personalize
   (let ((file (expand-file-name (concat (user-real-login-name) ".el")
                                 user-emacs-directory)))
     (when (file-exists-p file)
       (load file))))
-
-(defun sooheon--config ()
-  (blink-cursor-mode -1)
-  (global-set-key (kbd "s-u") 'universal-argument)
-  (global-set-key (kbd "s-w") 'delete-window)
-  (global-set-key (kbd "s-W") 'delete-frame)
-  (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
-  ;; Fonts
-  (add-to-list 'default-frame-alist
-               '(font . "Input Mono Narrow-12"))
-  (let ((f "fontset-default"))
-    (set-fontset-font f 'hangul '("NanumGothic" . "unicode-bmp")))
-  (setq-default fringe-indicator-alist '((truncation left-arrow right-arrow)
-                                         (continuation
-                                          nil ;; left-curly-arrow
-                                          right-curly-arrow)
-                                         (overlay-arrow . right-triangle)
-                                         (up . up-arrow)
-                                         (down . down-arrow)
-                                         (top top-left-angle top-right-angle)
-                                         (bottom bottom-left-angle bottom-right-angle top-right-angle top-left-angle)
-                                         (top-bottom left-bracket right-bracket top-right-angle top-left-angle)
-                                         (empty-line . empty-line)
-                                         (unknown . question-mark))))
-(sooheon--config)
 
 (progn ;; Startup
   (message "Loading %s...done (%.3fs)" user-init-file
