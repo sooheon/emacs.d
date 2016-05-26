@@ -386,6 +386,11 @@ current window."
   :demand t
   :config (add-to-list 'recentf-exclude "^/\\(?:ssh\\|su\\|sudo\\)?:"))
 
+(use-package reveal-in-osx-finder
+  :if (eq system-type 'darwin)
+  :commands reveal-in-osx-finder
+  :init (define-key evil-normal-state-map "gof" 'reveal-in-osx-finder))
+
 (use-package savehist
   :config (savehist-mode))
 
@@ -393,7 +398,9 @@ current window."
   :config (save-place-mode))
 
 (use-package shell-pop
-  :bind (("C-s-1" . shell-pop))
+  :bind (("s-`" . shell-pop))
+  :init
+  (define-key evil-normal-state-map "got" 'shell-pop)
   :config
   (setq shell-pop-window-position 'bottom
         shell-pop-window-height 30
@@ -439,6 +446,8 @@ current window."
 
 (use-package undo-tree
   :diminish undo-tree-mode
+  :bind (("s-Z" . undo-tree-redo))
+  :commands (undo-tree-undo)
   :init
   (global-undo-tree-mode)
   (setq undo-tree-visualizer-timestamps t))
@@ -479,6 +488,7 @@ current window."
   (blink-cursor-mode -1)
   (global-set-key (kbd "s-u") 'universal-argument)
   (global-set-key (kbd "s-w") 'delete-window)
+  (global-set-key (kbd "s-W") 'delete-frame)
   (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
   ;; Fonts
   (add-to-list 'default-frame-alist

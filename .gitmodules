@@ -85,6 +85,9 @@
 [submodule "popwin"]
 	path = lib/popwin
 	url = git@github.com:m2ym/popwin-el.git
+[submodule "reveal-in-osx-finder"]
+	path = lib/reveal-in-osx-finder
+	url = git@github.com:kaz-yos/reveal-in-osx-finder.git
 [submodule "shell-pop"]
 	path = lib/shell-pop
 	url = git@github.com:kyagi/shell-pop-el.git
