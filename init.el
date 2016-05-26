@@ -38,16 +38,15 @@
 (use-package no-littering :demand t)
 
 (use-package evil
-  :bind (:map evil-insert-state-map
-              ("C-w" . evil-delete-backward-word))
   :init (setq-default evil-want-C-u-scroll t
-                evil-want-fine-undo nil
-                evil-cross-lines t
-                evil-symbol-word-search t
-                evil-move-cursor-back nil
-                evil-want-C-i-jump t
-                evil-disable-insert-state-bindings t)
-  :config (evil-mode 1))
+                      evil-want-fine-undo nil
+                      evil-cross-lines t
+                      evil-symbol-word-search t
+                      evil-move-cursor-back nil
+                      evil-want-C-i-jump t
+                      evil-disable-insert-state-bindings t)
+  :config (evil-mode 1)
+  (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word))
 
 (use-package evil-leader
   :commands spacemacs/alternate-buffer
@@ -163,7 +162,8 @@ current window."
   :init
   (evil-leader/set-key "d" 'dired-jump)
   :config
-  (setq dired-listing-switches "-alh"))
+  ;; (setq dired-listing-switches "-alh")
+  )
 
 (use-package elisp-slime-nav
   :diminish elisp-slime-nav-mode
@@ -183,6 +183,7 @@ current window."
 
 (use-package ivy
   :diminish ivy-mode
+  :commands magit-status
   :bind (("s-f" . swiper)
          ("C-s" . swiper)
          ("s-b" . ivy-switch-buffer)
@@ -284,7 +285,7 @@ current window."
     (define-key map "\M-n" nil)         ; lispy left
     (define-key map "\M-p" nil)
     (define-key map "\"" nil)           ; lispy-quotes
-    (define-key map "C-d" 'lispy-delete)
+    (define-key map "\C-d" 'lispy-delete)
     (define-key map (kbd "M-)") nil)
     (define-key map (kbd "DEL") 'lispy-delete-backward))
   (let ((map lispy-mode-map-parinfer))
@@ -326,15 +327,15 @@ current window."
   (magit-add-section-hook 'magit-status-sections-hook
                           'magit-insert-modules-unpulled-from-upstream
                           'magit-insert-unpulled-from-upstream)
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-modules-unpulled-from-pushremote
-                          'magit-insert-unpulled-from-upstream)
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-modules-unpushed-to-upstream
-                          'magit-insert-unpulled-from-upstream)
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-modules-unpushed-to-pushremote
-                          'magit-insert-unpulled-from-upstream)
+  ;; (magit-add-section-hook 'magit-status-sections-hook
+  ;;                         'magit-insert-modules-unpulled-from-pushremote
+  ;;                         'magit-insert-unpulled-from-upstream)
+  ;; (magit-add-section-hook 'magit-status-sections-hook
+  ;;                         'magit-insert-modules-unpushed-to-upstream
+  ;;                         'magit-insert-unpulled-from-upstream)
+  ;; (magit-add-section-hook 'magit-status-sections-hook
+  ;;                         'magit-insert-modules-unpushed-to-pushremote
+  ;;                         'magit-insert-unpulled-from-upstream)
   (magit-add-section-hook 'magit-status-sections-hook
                           'magit-insert-submodules
                           'magit-insert-unpulled-from-upstream))
@@ -386,14 +387,14 @@ current window."
 _C_enter  _q_uote    _c_lojure     _L_aTeX:
 _l_atex   _e_xample  _s_cheme      _i_ndex:
 _a_scii   _v_erse    _E_macs-lisp  _I_NCLUDE:
-_S_rc     ^ ^        _p_ython      _H_TML:
+s_r_c     ^ ^        _p_ython      _H_TML:
 _h_tml    ^ ^        ^ ^           _A_SCII:
 "
     ("c" (hot-expand-and-edit "clojure"))
     ("s" (hot-expand-and-edit "scheme"))
     ("E" (hot-expand-and-edit "emacs-lisp"))
     ("p" (hot-expand-and-edit "python"))
-    ("S" (hot-expand "<s"))
+    ("r" (hot-expand "<s"))
     ("e" (hot-expand "<e"))
     ("q" (hot-expand "<q"))
     ("v" (hot-expand "<v"))
@@ -427,13 +428,14 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 
 (use-package worf
   :diminish worf-mode
-  :commands worf-mode
-  :bind (:map worf-mode-map
-              ("\C-j" . nil)
-              ("\[" . nil)
-              ("\]" . nil))
+  :defer t
   :init
-  (add-hook 'org-mode-hook 'worf-mode))
+  (add-hook 'org-mode-hook 'worf-mode)
+  :config
+  (evil-define-key 'insert worf-mode-map
+        "\C-j" nil
+        "\[" nil
+        "\]" nil))
 
 (use-package paren
   :config (show-paren-mode))
@@ -458,16 +460,39 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 (use-package prog-mode
   :config (global-prettify-symbols-mode))
 
-(use-package counsel-projectile
-  :defer 10
+(use-package projectile
+  :diminish projectile-mode
+  :commands projectile-global-mode
+  :defer 5
   :init
   (evil-leader/set-key
-   "pb" 'counsel-projectile-switch-to-buffer
-   "pd" 'counsel-projectile-find-dir
-   "pp" 'counsel-projectile
-   "pf" 'counsel-projectile-find-file
-   "pr" 'projectile-recentf
-   "ps" 'counsel-projectile)
+    "p!" 'projectile-run-shell-command-in-root
+    "p&" 'projectile-run-async-shell-command-in-root
+    "p%" 'projectile-replace-regexp
+    "pk" 'projectile-kill-buffers
+    "pa" 'projectile-find-other-file
+    "pt" 'projectile-toggle-between-implementation-and-test
+    "po" 'projectile-multi-occur
+    "pR" 'projectile-replace
+    "pT" 'projectile-find-test-file
+    "pP" 'projectile-test-project
+    "pm" 'projectile-commander)
+  :config
+  (setq projectile-enable-caching t
+        projectile-sort-order 'recentf
+        projectile-create-missing-test-files t)
+  (projectile-global-mode))
+
+(use-package counsel-projectile
+  :defer 5
+  :init
+  (evil-leader/set-key
+    "pb" 'counsel-projectile-switch-to-buffer
+    "pd" 'counsel-projectile-find-dir
+    "pp" 'counsel-projectile
+    "pf" 'counsel-projectile-find-file
+    "pr" 'projectile-recentf
+    "ps" 'counsel-projectile)
   :config
   (ivy-set-actions
    'counsel-projectile
@@ -504,28 +529,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
             (let ((projectile-switch-project-action (lambda () (spacemacs/search-project-auto))))
               (projectile-switch-project-by-name dir arg)))
       "run ag in project"))))
-
-(use-package projectile
-  :diminish projectile-mode
-  :defer 10
-  :init
-  (setq projectile-sort-order 'recentf
-        projectile-create-missing-test-files t
-        projectile-enable-caching t)
-  (evil-leader/set-key
-    "p!" 'projectile-run-shell-command-in-root
-    "p&" 'projectile-run-async-shell-command-in-root
-    "p%" 'projectile-replace-regexp
-    "pk" 'projectile-kill-buffers
-    "pa" 'projectile-find-other-file
-    "pt" 'projectile-toggle-between-implementation-and-test
-    "po" 'projectile-multi-occur
-    "pR" 'projectile-replace
-    "pT" 'projectile-find-test-file
-    "pP" 'projectile-test-project
-    "pm" 'projectile-commander)
-  :config
-  (projectile-global-mode))
 
 (use-package recentf
   :demand t

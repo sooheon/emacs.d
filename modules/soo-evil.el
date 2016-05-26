@@ -19,7 +19,7 @@
 
 (use-package evil-numbers
   :bind (:map evil-normal-state-map
-              ("C-A" . evil-numbers/inc-at-pt)
-              ("C-X" . evil-numbers/dec-at-pt)))
+              ("C-S-a" . evil-numbers/inc-at-pt)
+              ("C-S-x" . evil-numbers/dec-at-pt)))
 
 (provide 'soo-evil)
