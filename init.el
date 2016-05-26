@@ -458,46 +458,60 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 (use-package prog-mode
   :config (global-prettify-symbols-mode))
 
+(use-package counsel-projectile
+  :defer 10
+  :init
+  (evil-leader/set-key
+   "pb" 'counsel-projectile-switch-to-buffer
+   "pd" 'counsel-projectile-find-dir
+   "pp" 'counsel-projectile
+   "pf" 'counsel-projectile-find-file
+   "pr" 'projectile-recentf
+   "ps" 'counsel-projectile)
+  :config
+  (ivy-set-actions
+   'counsel-projectile
+   '(("d" (lambda (dir)
+            (let ((projectile-switch-project-action 'counsel-projectile-find-dir))
+              (projectile-switch-project-by-name dir arg)))
+      "find directory")
+     ("b" (lambda (dir)
+            (let ((projectile-switch-project-action 'counsel-projectile-switch-to-buffer))
+              (projectile-switch-project-by-name dir arg)))
+      "switch to buffer")
+     ("s" (lambda (dir)
+            (let ((projectile-switch-project-action 'projectile-save-project-buffers))
+              (projectile-switch-project-by-name dir arg)))
+      "save all buffers")
+     ("k" (lambda (dir)
+            (let ((projectile-switch-project-action 'projectile-kill-buffers))
+              (projectile-switch-project-by-name dir arg)))
+      "kill all buffers")
+     ("r" (lambda (dir)
+            (let ((projectile-switch-project-action
+                   'projectile-remove-current-project-from-known-projects))
+              (projectile-switch-project-by-name dir arg)))
+      "remove from known projects")
+     ("g" (lambda (dir)
+            (let ((projectile-switch-project-action 'projectile-vc))
+              (projectile-switch-project-by-name dir arg)))
+      "open in vc-dir / magit / monky")
+     ("t" (lambda (dir)
+            (let ((projectile-switch-project-action (lambda () (projectile-run-term "/usr/local/bin/fish"))))
+              (projectile-switch-project-by-name dir arg)))
+      "start term for project")
+     ("a" (lambda (dir)
+            (let ((projectile-switch-project-action (lambda () (spacemacs/search-project-auto))))
+              (projectile-switch-project-by-name dir arg)))
+      "run ag in project"))))
+
 (use-package projectile
   :diminish projectile-mode
-  :commands (projectile-ack
-             projectile-ag
-             projectile-compile-project
-             projectile-dired
-             projectile-find-dir
-             projectile-find-file
-             projectile-find-tag
-             projectile-test-project
-             projectile-grep
-             projectile-invalidate-cache
-             projectile-kill-buffers
-             projectile-multi-occur
-             projectile-project-p
-             projectile-project-root
-             projectile-recentf
-             projectile-regenerate-tags
-             projectile-replace
-             projectile-replace-regexp
-             projectile-run-async-shell-command-in-root
-             projectile-run-shell-command-in-root
-             projectile-switch-project
-             projectile-switch-to-buffer
-             projectile-vc)
+  :defer 10
   :init
-  ;; (setq
-  ;;  projectile-sort-order 'recentf
-  ;;  projectile-cache-file (concat spacemacs-cache-directory
-  ;;                                "projectile.cache")
-  ;;  projectile-known-projects-file (concat spacemacs-cache-directory
-  ;;                                         "projectile-bookmarks.eld"))
-  (evil-leader/set-key
-    "pb" 'projectile-switch-to-buffer
-    "pd" 'projectile-find-dir
-    "pf" 'projectile-find-file
-    "pF" 'projectile-find-file-dwim
-    "ph" 'helm-projectile
-    "pr" 'projectile-recentf
-    "ps" 'projectile-switch-project)
+  (setq projectile-sort-order 'recentf
+        projectile-create-missing-test-files t
+        projectile-enable-caching t)
   (evil-leader/set-key
     "p!" 'projectile-run-shell-command-in-root
     "p&" 'projectile-run-async-shell-command-in-root
@@ -565,7 +579,8 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 
 (use-package simple
   :config
-  (define-key messages-buffer-mode-map (kbd "s-k") 'bury-buffer))
+  (define-key messages-buffer-mode-map (kbd "s-k") 'bury-buffer)
+  (column-number-mode))
 
 (use-package tramp
   :defer t
