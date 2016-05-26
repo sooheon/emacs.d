@@ -132,12 +132,11 @@ current window."
   (with-eval-after-load 'org
     (define-key org-mode-map "\M-o" 'ace-link-org)))
 
-(use-package autorevert
-  :diminish auto-revert-mode
-  :defer t)
+(use-package autorevert :diminish auto-revert-mode :defer t)
 
 (use-package company
   :diminish (company-mode . "co")
+  :defer 3
   :config
   (setq company-idle-delay 0.2
         company-minimum-prefix-length 2)
@@ -168,27 +167,19 @@ current window."
 
 (use-package elisp-slime-nav
   :diminish elisp-slime-nav-mode
+  :commands elisp-slime-nav-describe-elisp-thing-at-point
+  :init
+  (evil-define-key 'normal emacs-lisp-mode-map
+    "K" 'elisp-slime-nav-describe-elisp-thing-at-point)
   :config
   (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
-    (add-hook hook 'turn-on-elisp-slime-nav-mode))
-  (evil-define-key 'normal elisp-slime-nav-mode-map
-    "K" 'elisp-slime-nav-describe-elisp-thing-at-point))
+    (add-hook hook 'turn-on-elisp-slime-nav-mode)))
 
-(use-package evil-commentary
-  :diminish evil-commentary-mode
-  :commands (evil-commentary evil-commentary-line evil-commentary-yank)
-  :config (evil-commentary-mode))
+(use-package flx :defer 5)
 
-(use-package evil-matchit :defer t)
+(use-package help :config (setq help-window-select t))
 
-(use-package flx :defer t)
-
-(use-package help
-  :config
-  (setq help-window-select t))
-
-(use-package info
-  :config (evil-leader/set-key "hi" 'info))
+(use-package info :config (evil-leader/set-key "hi" 'info))
 
 (use-package ivy
   :diminish ivy-mode
@@ -267,16 +258,18 @@ current window."
       ("o" ivy-occur :exit t))))
 
 (use-package lispy
-  :init (setq lispy-compat '(edebug cider)
-              lispy-avy-keys sooheon--avy-keys
-              lispy-avy-style-paren 'at-full
-              lispy-delete-backward-recenter nil
-              lispy-safe-paste t)
+  :defer 3
+  :init
   (add-hook 'smartparens-enabled-hook
             (lambda () (when (member major-mode sp-lisp-modes) (lispy-mode))))
   (add-hook 'smartparens-disabled-hook
             (lambda () (when (member major-mode sp-lisp-modes) (lispy-mode -1))))
   :config
+  (setq lispy-compat '(edebug cider)
+        lispy-avy-keys sooheon--avy-keys
+        lispy-avy-style-paren 'at-full
+        lispy-delete-backward-recenter nil
+        lispy-safe-paste t)
   (lispy-set-key-theme '(special
                          c-digits
                          paredit))
@@ -306,20 +299,22 @@ current window."
 
 (use-package lispyville
   :diminish lispyville-mode
-  :init
-  (add-hook 'lispy-mode-hook #'lispyville-mode)
+  :init (add-hook 'lispy-mode-hook #'lispyville-mode)
+  :commands (lispyville-delete
+             lispyville-delete-char-or-splice
+             lispyville-drag-forward
+             lispyville-drag-backward)
+  :config
   (setq lispyville-key-theme '(operators
                                (escape insert hybrid emacs)
                                slurp/barf-cp)
         lispyville-motions-put-into-special t
         lispyville-barf-stay-with-closing t)
-  :config
   (define-key lispyville-mode-map "\M-n" 'lispyville-drag-forward)
   (define-key lispyville-mode-map "\M-p" 'lispyville-drag-backward))
 
 (use-package magit
-  :defer t
-  :bind (("C-x g"   . magit-status)
+  :bind (("C-x g" . magit-status)
          ("C-x M-g" . magit-dispatch-popup))
   :init
   (define-key evil-normal-state-map "gs" 'magit-status)
@@ -349,11 +344,96 @@ current window."
   :init (global-morlock-mode))
 
 (use-package org
-  :defer t
-  :init
-  (setq org-src-fontify-natively t)
+  :defer 10
   :config
-  (evil-define-key 'normal org-mode-map [return] 'org-open-at-point))
+  (setq org-src-fontify-natively t
+        org-startup-indented t
+        org-adapt-indentation nil
+        org-preview-latex-default-process 'dvisvgm
+        org-inhibit-startup-visibility-stuff nil)
+  (fset 'latexify-line
+        (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([95 105 36 escape 65 36 escape] 0 "%d")) arg)))
+  ;; Keybinds
+  (evil-define-key 'normal org-mode-map
+    [C-return] (lambda () (interactive) (org-insert-heading-respect-content) (evil-append 1))
+    [M-return] (lambda () (interactive) (org-meta-return) (evil-append 1))
+    [return] 'org-open-at-point
+    "t" 'org-todo
+    "$" 'org-end-of-line
+    "^" 'org-beginning-of-line
+    "-" 'org-ctrl-c-minus
+    "<" 'org-metaleft
+    ">" 'org-metaright
+    "\M-n" 'org-metadown
+    "\M-p" 'org-metaup)
+  (evil-define-key 'insert org-mode-map "\C-j" 'org-return)
+  ;; Org Babel
+  (setq org-edit-src-content-indentation 0
+        org-src-tab-acts-natively t
+        org-confirm-babel-evaluate nil
+        geiser-default-implementation 'guile
+        org-babel-clojure-backend 'cider
+        org-babel-default-header-args '((:session . "none")
+                                        (:results . "replace")
+                                        (:exports . "code")
+                                        (:cache . "no")
+                                        (:noweb . "no")
+                                        (:hlines . "no")
+                                        (:tangle . "yes")))
+  ;; Hydra
+  (defhydra hydra-org-template (:color blue :hint nil)
+    "
+_C_enter  _q_uote    _c_lojure     _L_aTeX:
+_l_atex   _e_xample  _s_cheme      _i_ndex:
+_a_scii   _v_erse    _E_macs-lisp  _I_NCLUDE:
+_S_rc     ^ ^        _p_ython      _H_TML:
+_h_tml    ^ ^        ^ ^           _A_SCII:
+"
+    ("c" (hot-expand-and-edit "clojure"))
+    ("s" (hot-expand-and-edit "scheme"))
+    ("E" (hot-expand-and-edit "emacs-lisp"))
+    ("p" (hot-expand-and-edit "python"))
+    ("S" (hot-expand "<s"))
+    ("e" (hot-expand "<e"))
+    ("q" (hot-expand "<q"))
+    ("v" (hot-expand "<v"))
+    ("C" (hot-expand "<c"))
+    ("l" (hot-expand "<l"))
+    ("h" (hot-expand "<h"))
+    ("a" (hot-expand "<a"))
+    ("L" (hot-expand "<L"))
+    ("i" (hot-expand "<i"))
+    ("I" (hot-expand "<I"))
+    ("H" (hot-expand "<H"))
+    ("A" (hot-expand "<A"))
+    ("<" self-insert-command "ins")
+    ("o" nil "quit"))
+  (defun hot-expand (str)
+    "Expand org template."
+    (insert str)
+    (org-try-structure-completion))
+  (defun hot-expand-and-edit (str)
+    "Expand src template for given languange and enter org-edit-special."
+    (hot-expand "<s")
+    (insert str)
+    (forward-line)
+    (evil-normal-state)
+    (org-edit-special)
+    (evil-insert-state))
+  (define-key org-mode-map "<" (lambda () (interactive)
+                                 (if (bolp)
+                                     (hydra-org-template/body)
+                                   (self-insert-command 1)))))
+
+(use-package worf
+  :diminish worf-mode
+  :commands worf-mode
+  :bind (:map worf-mode-map
+              ("\C-j" . nil)
+              ("\[" . nil)
+              ("\]" . nil))
+  :init
+  (add-hook 'org-mode-hook 'worf-mode))
 
 (use-package paren
   :config (show-paren-mode))
@@ -473,6 +553,8 @@ current window."
   (require 'smartparens-config)
   (show-smartparens-global-mode 1)
   (let ((m smartparens-mode-map))
+    (define-key m (kbd "M-a") 'sp-beginning-of-sexp)
+    (define-key m (kbd "M-e") 'sp-end-of-sexp)
     (define-key m [C-backspace] 'sp-backward-kill-sexp)
     (define-key m (kbd "C-)") 'sp-forward-slurp-sexp)
     (define-key m (kbd "C-(") 'sp-backward-slurp-sexp)
