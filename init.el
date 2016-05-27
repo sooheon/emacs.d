@@ -98,7 +98,8 @@
   (setq auto-compile-toggle-deletes-nonlib-dest t)
   (setq auto-compile-update-autoloads t)
   (add-hook 'auto-compile-inhibit-compile-hook
-            'auto-compile-inhibit-compile-detached-git-head))
+            'auto-compile-inhibit-compile-detached-git-head)
+  (define-key compilation-mode-map (kbd "s-k") 'bury-buffer))
 
 (use-package epkg
   :defer t
@@ -186,18 +187,19 @@
   :config
   (setq dired-listing-switches "-alh")
   (setq dired-omit-mode t)
+  (defvar dired-dotfiles-show-p t)
   (defun vinegar/dotfiles-toggle ()
     "Show/hide dot-files"
     (interactive)
     (when (equal major-mode 'dired-mode)
-      (if (or (not (boundp 'dired-dotfiles-show-p)) dired-dotfiles-show-p) ; if currently showing
+      (if dired-dotfiles-show-p ; if currently showing
           (progn
-            (set (make-local-variable 'dired-dotfiles-show-p) nil)
+            (setq dired-dotfiles-show-p nil)
             (message "h")
             (dired-mark-files-regexp "^\\\.")
             (dired-do-kill-lines))
         (progn (revert-buffer)      ; otherwise just revert to re-show
-               (set (make-local-variable 'dired-dotfiles-show-p) t)))))
+               (setq dired-dotfiles-show-p t)))))
   (defun vinegar/dired-diff ()
     "Ediff marked files in dired or selected files in separate window"
     (interactive)
@@ -246,6 +248,22 @@
     "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 2))
     "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1))))
 
+(use-package ediff
+  :disabled t
+  :defer t
+  :commands (ediff-buffers ediff)
+  :config
+  (setq-default ediff-window-setup-function 'ediff-setup-windows-plain
+                ediff-split-window-function 'split-window-horizontally
+                ediff-merge-split-window-function 'split-window-horizontally)
+  (add-hook 'ediff-quit-hook #'winner-undo))
+
+(use-package eldoc
+  :defer t
+  :diminish eldoc-mode
+  :config
+  (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode))
+
 (use-package elisp-slime-nav
   :diminish elisp-slime-nav-mode
   :commands elisp-slime-nav-describe-elisp-thing-at-point
@@ -290,7 +308,12 @@
   (define-key evil-outer-text-objects-map
     "b" 'evil-textobj-anyblock-a-block))
 
-(use-package evil-visualstar :config (global-evil-visualstar-mode))
+(use-package evil-visualstar
+  :commands (evil-visualstar/begin-search-forward
+             evil-visualstar/begin-search-backward)
+  :init
+  (define-key evil-visual-state-map "*" 'evil-visualstar/begin-search-forward)
+  (define-key evil-visual-state-map "#" 'evil-visualstar/begin-search-backward))
 
 (use-package evil-surround
   :config
@@ -618,8 +641,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
         shackle-rules '((compilation-mode :noselect t)
                         (help-mode :noselect t)
                         ("*undo-tree*" :size 0.3)
-                        (woman-mode :popup t)
-                        ("*Messages*" :inhibit-window-quit t))))
+                        (woman-mode :popup t))))
 
 (use-package popwin
   :disabled t
@@ -714,7 +736,10 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
       "start term for project"))))
 
 (use-package recentf
-  :config (add-to-list 'recentf-exclude "^/\\(?:ssh\\|su\\|sudo\\)?:"))
+  :config
+  (add-to-list 'recentf-exclude "^/\\(?:ssh\\|su\\|sudo\\)?:")
+  (setq recentf-max-saved-items 1000
+        recentf-auto-cleanup 'never))
 
 (use-package reveal-in-osx-finder
   :if (eq system-type 'darwin)
@@ -733,7 +758,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
         shell-pop-window-height 30
         shell-pop-full-span t
         shell-pop-shell-type '("terminal" "*terminal*"
-                               (lambda () (term shell-pop-term-shell)))))
+                               (lambda () (term shell-file-name)))))
 
 (use-package smartparens
   :init
@@ -759,7 +784,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
     (define-key m (kbd "C-{") 'sp-backward-barf-sexp)
     (define-key m (kbd "C-}") 'sp-forward-barf-sexp)))
 
-(use-package smex :defer t)
+(use-package smex :defer t :config (setq smex-history-length 32))
 
 (use-package simple
   :config
