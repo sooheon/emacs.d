@@ -21,7 +21,11 @@
   (fset 'yes-or-no-p 'y-or-n-p)
   (scroll-bar-mode 0)
   (tool-bar-mode 0)
-  (menu-bar-mode 0))
+  (menu-bar-mode 0)
+  ;; Set paths; see: http://tinyurl.com/ctf9h3a
+  (setenv "MANPATH" "/usr/local/opt/coreutils/libexec/gnuman:/usr/local/opt/findutils/libexec/gnuman:/usr/local/share/man")
+  (setenv "PATH" "/usr/local/Cellar/pyenv-virtualenv/20160315/shims:/Users/sooheon/.pyenv/shims:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Library/TeX/texbin")
+  (setq exec-path '("/usr/local/Cellar/pyenv-virtualenv/20160315/shims" "/Users/sooheon/.pyenv/shims" "/usr/local/opt/coreutils/libexec/gnubin" "/usr/local/opt/findutils/libexec/gnubin" "/usr/local/bin" "/usr/bin" "/bin" "/usr/sbin" "/sbin" "/opt/X11/bin" "/Library/TeX/texbin" "/usr/local/Cellar/emacs/HEAD/libexec/emacs/25.1.50/x86_64-apple-darwin15.5.0")))
 
 (progn ;; `borg'
   (add-to-list 'load-path (expand-file-name "lib/borg" user-emacs-directory))
