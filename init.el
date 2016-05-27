@@ -59,10 +59,9 @@
   (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word))
 
 (use-package evil-leader
-  :defer 4
   :init
   (evil-leader/set-key
-    "TAB" 'spacemacs/alternate-buffer
+    "TAB" 'evil-buffer
     "u" 'universal-argument
     "wl" 'evil-window-right
     "wh" 'evil-window-left
@@ -80,13 +79,6 @@
     "wr" 'evil-window-rotate-downwards
     "wR" 'evil-window-rotate-upwards)
   :config
-  (defun spacemacs/alternate-buffer ()
-    "Switch back and forth between current and last buffer in the
-current window."
-    (interactive)
-    (if (evil-alternate-buffer)
-        (switch-to-buffer (car (evil-alternate-buffer)))
-      (switch-to-buffer (other-buffer (current-buffer) t))))
   (global-evil-leader-mode))
 
 (use-package bind-map :defer t)
