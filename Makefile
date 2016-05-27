@@ -34,5 +34,6 @@ lib/%: .FORCE
 	--eval  '(borg-build "$(@F)")'
 
 bootstrap:
+	git submodule init
 	./borg-bootstrap
 	make
