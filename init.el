@@ -666,7 +666,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
                                (lambda () (term shell-pop-term-shell)))))
 
 (use-package smartparens
-  :defer t
   :init
   (setq sp-cancel-autoskip-on-backward-movement nil
         sp-show-pair-from-inside nil
@@ -676,9 +675,8 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
     (if (eq this-command 'eval-expression)
         (smartparens-mode)))
   (add-hook 'minibuffer-setup-hook 'conditionally-enable-smartparens-mode)
-  (add-hook 'prog-mode-hook 'smartparens-mode)
-  (add-hook 'comint-mode-hook 'smartparens-mode)
   :config
+  (smartparens-global-mode 1)
   (require 'smartparens-config)
   (show-smartparens-global-mode 1)
   (let ((m smartparens-mode-map))
@@ -753,8 +751,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 
 (use-package ws-butler
   :diminish ws-butler-mode
-  :defer t
-  :init (add-hook 'prog-mode-hook 'ws-butler-mode))
+  :config (global-ws-butler-mode))
 
 (progn ;; Personalize
   (let ((file (expand-file-name (concat (user-real-login-name) ".el")
