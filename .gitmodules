@@ -151,6 +151,9 @@
 [submodule "worf"]
 	path = lib/worf
 	url = git@github.com:abo-abo/worf.git
+[submodule "ws-butler"]
+	path = lib/ws-butler
+	url = git@github.com:lewang/ws-butler.git
 [submodule "zenburn-theme"]
 	path = lib/zenburn-theme
 	url = git@github.com:bbatsov/zenburn-emacs.git
