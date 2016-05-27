@@ -10,6 +10,9 @@
 [submodule "avy"]
 	path = lib/avy
 	url = git@github.com:abo-abo/avy.git
+[submodule "bind-map"]
+	path = lib/bind-map
+	url = git@github.com:justbur/emacs-bind-map.git
 [submodule "borg"]
 	path = lib/borg
 	url = git@gitlab.com:tarsius/borg.git
