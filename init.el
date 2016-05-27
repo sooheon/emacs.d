@@ -128,8 +128,6 @@ current window."
 
 ;;; Long tail
 
-(add-to-list 'load-path (expand-file-name "modules" user-emacs-directory))
-
 (defvar sooheon--avy-keys '(?w ?e ?r ?s ?d ?x ?c ?u ?i ?o ?v ?n ?m ?l ?k ?j ?f))
 
 (use-package avy
@@ -178,15 +176,13 @@ current window."
     (define-key m "\C-p" 'company-select-previous)
     (define-key m [tab] 'company-complete-common)))
 
-(use-package dash
-  :config (dash-enable-font-lock))
+(use-package dash :config (dash-enable-font-lock))
 
 (use-package diff-hl
   :config
   (setq diff-hl-draw-borders nil)
   (global-diff-hl-mode)
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh t)
-  (add-hook 'dired-mode-hook 'diff-hl-dired-mode))
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh t))
 
 (use-package dired
   :commands dired-jump
@@ -270,20 +266,16 @@ current window."
   :diminish evil-commentary-mode
   :init (evil-commentary-mode))
 
-(use-package evil-matchit
-  :defer 3
-  :config
-  (global-evil-matchit-mode))
+(use-package evil-matchit :config (global-evil-matchit-mode))
 
-(use-package evil-visualstar
-  :defer 4
-  :config
-  (global-evil-visualstar-mode))
+(use-package evil-visualstar :config (global-evil-visualstar-mode))
 
 (use-package evil-surround
-  :defer 4
   :config
-  (global-evil-surround-mode 1))
+  (global-evil-surround-mode 1)
+  (evil-define-key 'visual evil-surround-mode-map "s" 'evil-surround-region)
+  (evil-define-key 'visual evil-surround-mode-map "gs" 'evil-Surround-region)
+  (evil-define-key 'visual evil-surround-mode-map "S" 'evil-substitute))
 
 (use-package evil-snipe
   :diminish evil-snipe-local-mode
@@ -324,7 +316,6 @@ current window."
     "f" 'counsel-find-file
     "r" 'ivy-recentf
     "b" 'ivy-switch-buffer
-    "/" 'counsel-ag
     "Th" 'counsel-load-theme)
   :config
   (setq ivy-use-virtual-buffers t
@@ -332,7 +323,8 @@ current window."
         ivy-count-format "%d "
         ivy-height 12
         ;; ivy-re-builders-alist '((t . ivy--regex-fuzzy))
-        ivy-initial-inputs-alist nil)
+        ivy-initial-inputs-alist nil
+        ivy-action-wrap t)
   (ivy-mode 1)
   (let ((m ivy-minibuffer-map))
     (define-key m [escape] 'minibuffer-keyboard-quit)
@@ -410,11 +402,11 @@ current window."
     (define-key map "\C-d" 'lispy-delete)
     (define-key map (kbd "M-)") nil)
     (define-key map (kbd "DEL") 'lispy-delete-backward))
-  (let ((map lispy-mode-map-parinfer))
-    (define-key map (kbd "\"") nil)
-    (define-key map (kbd "M-r") 'lispy-raise)
-    (define-key map (kbd "#") nil)
-    (define-key map (kbd ":") nil))
+  ;; (let ((map lispy-mode-map-parinfer))
+  ;;   (define-key map (kbd "\"") nil)
+  ;;   (define-key map (kbd "M-r") 'lispy-raise)
+  ;;   (define-key map (kbd "#") nil)
+  ;;   (define-key map (kbd ":") nil))
 
   ;; Unbind M-k and M-. in evil normal state and use lispy
   (define-key evil-normal-state-map "\M-." nil) ; evil-repeat-pop-next
@@ -661,11 +653,9 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :commands reveal-in-osx-finder
   :init (define-key evil-normal-state-map "gof" 'reveal-in-osx-finder))
 
-(use-package savehist
-  :config (savehist-mode))
+(use-package savehist :config (savehist-mode))
 
-(use-package saveplace
-  :config (save-place-mode))
+(use-package saveplace :config (save-place-mode))
 
 (use-package shell-pop
   :bind (("s-`" . shell-pop))
@@ -678,6 +668,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
                                (lambda () (term shell-pop-term-shell)))))
 
 (use-package smartparens
+  :defer t
   :init
   (setq sp-cancel-autoskip-on-backward-movement nil
         sp-show-pair-from-inside nil
@@ -687,7 +678,8 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
     (if (eq this-command 'eval-expression)
         (smartparens-mode)))
   (add-hook 'minibuffer-setup-hook 'conditionally-enable-smartparens-mode)
-  (smartparens-global-mode 1)
+  (add-hook 'prog-mode-hook 'smartparens-mode)
+  (add-hook 'comint-mode-hook 'smartparens-mode)
   :config
   (require 'smartparens-config)
   (show-smartparens-global-mode 1)
@@ -717,10 +709,12 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 
 (use-package undo-tree
   :diminish undo-tree-mode
-  :bind (("s-Z" . undo-tree-redo))
+  :bind (("s-Z" . undo-tree-redo)
+         ("s-z" . undo-tree-undo))
   :commands (undo-tree-undo)
   :init
   (global-undo-tree-mode)
+  :config
   (setq undo-tree-visualizer-timestamps t))
 
 (use-package which-key
