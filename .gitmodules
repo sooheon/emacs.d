@@ -57,6 +57,9 @@
 [submodule "evil-leader"]
 	path = lib/evil-leader
 	url = git@github.com:cofi/evil-leader.git
+[submodule "evil-magit"]
+	path = lib/evil-magit
+	url = git@github.com:justbur/evil-magit.git
 [submodule "evil-matchit"]
 	path = lib/evil-matchit
 	url = git@github.com:redguardtoo/evil-matchit.git
@@ -78,12 +81,18 @@
 [submodule "evil-visualstar"]
 	path = lib/evil-visualstar
 	url = git@github.com:bling/evil-visualstar.git
+[submodule "exec-path-from-shell"]
+	path = lib/exec-path-from-shell
+	url = git@github.com:purcell/exec-path-from-shell.git
 [submodule "finalize"]
 	path = lib/finalize
 	url = git@github.com:skeeto/elisp-finalize.git
 [submodule "flx"]
 	path = lib/flx
 	url = git@github.com:lewang/flx.git
+[submodule "flyspell-correct"]
+	path = lib/flyspell-correct
+	url = git@github.com:d12frosted/flyspell-correct.git
 [submodule "git-modes"]
 	path = lib/git-modes
 	url = git@github.com:magit/git-modes.git

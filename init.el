@@ -313,6 +313,24 @@
               ("C-S-a" . evil-numbers/inc-at-pt)
               ("C-S-x" . evil-numbers/dec-at-pt)))
 
+(use-package exec-path-from-shell
+  :disabled t
+  :config (when (memq window-system '(ns x))
+            (exec-path-from-shell-initialize)))
+
+(use-package flyspell
+  :disabled t
+  :defer t
+  :diminish flyspell-mode
+  :init
+  (add-hook 'text-mode-hook 'flyspell-mode))
+
+(use-package flyspell-correct
+  :defer t
+  :bind (("C-;" . flyspell-correct-word-generic))
+  :config
+  (setq flyspell-correct-interface 'flyspell-correct-ivy))
+
 (use-package flx :defer 5)
 
 (use-package help :config (setq help-window-select t))
@@ -485,7 +503,13 @@
   ;;                         'magit-insert-unpulled-from-upstream)
   (magit-add-section-hook 'magit-status-sections-hook
                           'magit-insert-submodules
-                          'magit-insert-unpulled-from-upstream))
+                          'magit-insert-unpulled-from-upstream)
+
+  (use-package evil-magit
+    :config
+    (evil-define-key 'normal magit-status-mode-map
+      "n" 'magit-section-forward
+      "p" 'magit-section-backward)))
 
 (use-package morlock
   :commands global-morlock-mode
