@@ -187,6 +187,30 @@ current window."
   (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
     (add-hook hook 'turn-on-elisp-slime-nav-mode)))
 
+(use-package evil-commentary
+  :diminish evil-commentary-mode
+  :init (evil-commentary-mode))
+
+(use-package evil-matchit
+  :defer 3
+  :config
+  (global-evil-matchit-mode))
+
+(use-package evil-visualstar
+  :defer 4
+  :config
+  (global-evil-visualstar-mode))
+
+(use-package evil-surround
+  :defer 4
+  :config
+  (global-evil-surround-mode 1))
+
+(use-package evil-numbers
+  :bind (:map evil-normal-state-map
+              ("C-S-a" . evil-numbers/inc-at-pt)
+              ("C-S-x" . evil-numbers/dec-at-pt)))
+
 (use-package flx :defer 5)
 
 (use-package help :config (setq help-window-select t))

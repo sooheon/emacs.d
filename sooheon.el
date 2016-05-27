@@ -1,3 +1,4 @@
+(setq scroll-preserve-screen-position t)
 (blink-cursor-mode -1)
 (global-set-key "\C-x\C-b" 'ibuffer)
 (global-set-key (kbd "s-u") 'universal-argument)
