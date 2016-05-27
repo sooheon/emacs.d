@@ -575,7 +575,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 
 (use-package projectile
   :diminish projectile-mode
-  :commands projectile-global-mode
+  :commands (counsel-projectile-ag projectile-global-mode)
   :defer 5
   :init
   (evil-leader/set-key
@@ -590,8 +590,12 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
     "pR" 'projectile-replace
     "pT" 'projectile-find-test-file
     "pP" 'projectile-test-project
-    "pm" 'projectile-commander)
+    "pm" 'projectile-commander
+    "/" 'counsel-projectile-ag)
   :config
+  (defun counsel-projectile-ag ()
+    (interactive)
+    (counsel-ag nil (projectile-project-root)))
   (setq projectile-enable-caching t
         projectile-sort-order 'recentf
         projectile-create-missing-test-files t)
@@ -605,8 +609,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
     "pd" 'counsel-projectile-find-dir
     "pp" 'counsel-projectile
     "pf" 'counsel-projectile-find-file
-    "pr" 'projectile-recentf
-    "ps" 'counsel-projectile)
+    "pr" 'projectile-recentf)
   :config
   (ivy-set-actions
    'counsel-projectile
@@ -638,14 +641,9 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
      ("t" (lambda (dir)
             (let ((projectile-switch-project-action (lambda () (projectile-run-term "/usr/local/bin/fish"))))
               (projectile-switch-project-by-name dir arg)))
-      "start term for project")
-     ("a" (lambda (dir)
-            (let ((projectile-switch-project-action (lambda () (spacemacs/search-project-auto))))
-              (projectile-switch-project-by-name dir arg)))
-      "run ag in project"))))
+      "start term for project"))))
 
 (use-package recentf
-  :demand t
   :config (add-to-list 'recentf-exclude "^/\\(?:ssh\\|su\\|sudo\\)?:"))
 
 (use-package reveal-in-osx-finder
