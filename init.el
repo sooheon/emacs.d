@@ -81,6 +81,14 @@ current window."
       (switch-to-buffer (other-buffer (current-buffer) t))))
   (global-evil-leader-mode))
 
+(use-package bind-map :defer t)
+
+(use-package evil-evilified-state
+  :load-path "~/.emacs.d/lib/evil-evilified-state"
+  :commands (evil-evilified-state-evilify-map evilified-state-evilify)
+  :config
+  (define-key evil-evilified-state-map " " spacemacs-default-map))
+
 (use-package auto-compile
   :demand t
   :config
