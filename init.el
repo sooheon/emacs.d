@@ -42,18 +42,20 @@
 (use-package no-littering :demand t)
 
 (use-package evil
-  :init (setq-default evil-want-C-u-scroll t
-                      evil-want-fine-undo nil
-                      evil-cross-lines t
-                      evil-symbol-word-search t
-                      evil-move-cursor-back nil
-                      evil-want-C-i-jump t
-                      evil-disable-insert-state-bindings t)
-  :config (evil-mode 1)
+  :init
+  (setq-default evil-want-C-u-scroll t
+                evil-want-fine-undo nil
+                evil-cross-lines t
+                evil-symbol-word-search t
+                evil-move-cursor-back nil
+                evil-want-C-i-jump t
+                evil-disable-insert-state-bindings t)
+  :config
+  (evil-mode 1)
   (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word))
 
 (use-package evil-leader
-  :commands spacemacs/alternate-buffer
+  :defer 4
   :init
   (evil-leader/set-key
     "TAB" 'spacemacs/alternate-buffer
@@ -126,15 +128,29 @@ current window."
 
 (add-to-list 'load-path (expand-file-name "modules" user-emacs-directory))
 
-(require 'soo-evil)
-
 (defvar sooheon--avy-keys '(?w ?e ?r ?s ?d ?x ?c ?u ?i ?o ?v ?n ?m ?l ?k ?j ?f))
 
 (use-package avy
+  :defer
+  :commands spacemacs/avy-open-url
   :bind (("s-g" . evil-avy-goto-word-1)
          ([remap goto-line] . evil-avy-goto-line))
+  :init
+  (evil-leader/set-key
+    "xo" 'spacemacs/avy-open-url)
   :config
-  (setq avy-keys sooheon--avy-keys))
+  (setq avy-keys sooheon--avy-keys)
+  (progn
+    (defun spacemacs/avy-goto-url ()
+      "Use avy to go to an URL in the buffer."
+      (interactive)
+      (avy--generic-jump "https?://" nil 'pre))
+    (defun spacemacs/avy-open-url ()
+      "Use avy to select an URL in the buffer and open it."
+      (interactive)
+      (save-excursion
+        (spacemacs/avy-goto-url)
+        (browse-url-at-point)))))
 
 (use-package ace-link
   :commands (ace-link-info ace-link-eww ace-link-help)
@@ -167,15 +183,76 @@ current window."
   :config
   (setq diff-hl-draw-borders nil)
   (global-diff-hl-mode)
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh t))
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh t)
+  (add-hook 'dired-mode-hook 'diff-hl-dired-mode))
 
 (use-package dired
-  :commands (dired-jump)
+  :commands dired-jump
+  :diminish dired-omit-mode
   :init
-  (evil-leader/set-key "d" 'dired-jump)
+  (define-key evil-normal-state-map "-" 'dired-jump)
   :config
-  ;; (setq dired-listing-switches "-alh")
-  )
+  (setq dired-listing-switches "-alh")
+  (setq dired-omit-mode t)
+  (defun vinegar/dotfiles-toggle ()
+    "Show/hide dot-files"
+    (interactive)
+    (when (equal major-mode 'dired-mode)
+      (if (or (not (boundp 'dired-dotfiles-show-p)) dired-dotfiles-show-p) ; if currently showing
+          (progn
+            (set (make-local-variable 'dired-dotfiles-show-p) nil)
+            (message "h")
+            (dired-mark-files-regexp "^\\\.")
+            (dired-do-kill-lines))
+        (progn (revert-buffer)      ; otherwise just revert to re-show
+               (set (make-local-variable 'dired-dotfiles-show-p) t)))))
+  (defun vinegar/dired-diff ()
+    "Ediff marked files in dired or selected files in separate window"
+    (interactive)
+    (let* ((marked-files (dired-get-marked-files nil nil))
+           (other-win (get-window-with-predicate
+                       (lambda (window)
+                         (with-current-buffer (window-buffer window)
+                           (and (not (eq window (selected-window)))
+                                (eq major-mode 'dired-mode))))))
+           (other-marked-files (and other-win
+                                    (with-current-buffer (window-buffer other-win)
+                                      (dired-get-marked-files nil)))))
+      (cond ((= (length marked-files) 2)
+             (ediff-files (nth 0 marked-files)
+                          (nth 1 marked-files)))
+            ((= (length marked-files) 3)
+             (ediff-files3 (nth 0 marked-files)
+                           (nth 1 marked-files)
+                           (nth 2 marked-files)))
+            ((and (= (length marked-files) 1)
+                  (= (length other-marked-files) 1))
+             (ediff-files (nth 0 marked-files)
+                          (nth 0 other-marked-files)))
+            ((= (length marked-files) 1)
+             (dired-diff))
+            (t (error "mark exactly 2 files, at least 1 locally")))))
+  (evilified-state-evilify dired-mode dired-mode-map
+    "j" 'dired-next-line
+    "k" 'dired-previous-line
+    "-" 'dired-jump
+    "0" 'dired-back-to-start-of-files
+    "=" 'vinegar/dired-diff
+    (kbd "C-j") 'dired-next-subdir
+    (kbd "C-k") 'dired-prev-subdir
+    "I" 'vinegar/dotfiles-toggle
+    (kbd "~") '(lambda () (interactive) (find-alternate-file "~/"))
+    (kbd "RET") 'dired-find-file
+    "f" 'counsel-find-file
+    "J" 'dired-goto-file
+    (kbd "C-f") 'find-name-dired
+    "H" 'diredp-dired-recent-dirs
+    "T" 'dired-tree-down
+    "K" 'dired-do-kill-lines
+    "r" 'revert-buffer
+    (kbd "C-r") 'dired-do-redisplay
+    "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 2))
+    "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1))))
 
 (use-package elisp-slime-nav
   :diminish elisp-slime-nav-mode
@@ -358,8 +435,7 @@ current window."
   (evil-leader/set-key "g" 'magit-status "G" 'magit-dispatch-popup)
   :config
   (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1
-        magit-refresh-verbose t
-        magit-git-executable "/usr/local/bin/git")
+        magit-refresh-verbose t)
   (magit-add-section-hook 'magit-status-sections-hook
                           'magit-insert-modules-unpulled-from-upstream
                           'magit-insert-unpulled-from-upstream)
@@ -398,7 +474,7 @@ current window."
     "t" 'org-todo
     "$" 'org-end-of-line
     "^" 'org-beginning-of-line
-    "-" 'org-ctrl-c-minus
+    ;; "-" 'org-ctrl-c-minus
     "<" 'org-metaleft
     ">" 'org-metaright
     "\M-n" 'org-metadown
@@ -502,6 +578,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :defer 5
   :init
   (evil-leader/set-key
+    "pD" 'projectile-dired
     "p!" 'projectile-run-shell-command-in-root
     "p&" 'projectile-run-async-shell-command-in-root
     "p%" 'projectile-replace-regexp
