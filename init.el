@@ -2,6 +2,7 @@
 ;;; Early birds
 
 (progn ;; Startup
+  (setq gc-cons-threshold most-positive-fixnum)
   (defvar before-user-init-time (current-time)
     "Value of `current-time' when Emacs begins loading `user-init-file'.")
   (message "Loading Emacs...done (%.3fs)"
@@ -780,6 +781,8 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
                (float-time (time-subtract (current-time)
                                           before-user-init-time))))
             t))
+
+(setq gc-cons-threshold 1000000)
 
 ;; Local Variables:
 ;; indent-tabs-mode: nil

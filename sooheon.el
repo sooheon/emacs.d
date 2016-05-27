@@ -26,4 +26,11 @@
     (add-to-list 'custom-theme-load-path
                  (expand-file-name elt user-emacs-directory)))
   (setq custom-safe-themes t)
-  (load-theme 'eclipse2 t))
+  (load-theme 'solarized-dark t))
+
+(defun sooheon--gc-setup-minibuffer-hook ()
+  (setq gc-cons-threshold most-positive-fixnum))
+(defun sooheon--gc-exit-minibuffer-hook ()
+  (setq gc-cons-threshold 8000000))
+(add-hook 'minibuffer-setup-hook #'sooheon--gc-setup-minibuffer-hook)
+(add-hook 'minibuffer-exit-hook #'sooheon--gc-exit-minibuffer-hook)
