@@ -87,9 +87,7 @@ current window."
 
 (use-package evil-evilified-state
   :load-path "~/.emacs.d/lib/evil-evilified-state"
-  :commands (evil-evilified-state-evilify-map evilified-state-evilify)
-  :config
-  (define-key evil-evilified-state-map " " spacemacs-default-map))
+  :config (define-key evil-evilified-state-map " " spacemacs-default-map))
 
 (use-package auto-compile
   :demand t
