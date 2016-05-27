@@ -97,8 +97,7 @@
   (setq auto-compile-toggle-deletes-nonlib-dest t)
   (setq auto-compile-update-autoloads t)
   (add-hook 'auto-compile-inhibit-compile-hook
-            'auto-compile-inhibit-compile-detached-git-head)
-  (define-key compilation-mode-map (kbd "s-k") 'bury-buffer))
+            'auto-compile-inhibit-compile-detached-git-head))
 
 (use-package epkg
   :defer t
