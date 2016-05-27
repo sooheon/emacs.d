@@ -19,7 +19,6 @@
                 initial-scratch-message ""
                 load-prefer-newer t
                 create-lockfiles nil    ; Don't create #foo.file#
-                vc-handled-backends nil ; vc may slow down opening of files
                 fill-column 80)
   (eval '(setq inhibit-startup-echo-area-message "sooheon"))
   (fset 'yes-or-no-p 'y-or-n-p)
