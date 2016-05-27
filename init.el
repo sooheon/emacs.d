@@ -283,6 +283,13 @@ current window."
   :config
   (global-evil-surround-mode 1))
 
+(use-package evil-snipe
+  :diminish evil-snipe-local-mode
+  :config
+  (setq evil-snipe-scope 'whole-buffer
+        evil-snipe-smart-case t)
+  (evil-snipe-override-mode 1))
+
 (use-package evil-numbers
   :bind (:map evil-normal-state-map
               ("C-S-a" . evil-numbers/inc-at-pt)
@@ -322,7 +329,7 @@ current window."
         ivy-extra-directories '("./")
         ivy-count-format "%d "
         ivy-height 12
-        ivy-re-builders-alist '((t . ivy--regex-fuzzy))
+        ;; ivy-re-builders-alist '((t . ivy--regex-fuzzy))
         ivy-initial-inputs-alist nil)
   (ivy-mode 1)
   (let ((m ivy-minibuffer-map))
