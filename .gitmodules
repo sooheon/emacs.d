@@ -38,6 +38,9 @@
 [submodule "elisp-slime-nav"]
 	path = lib/elisp-slime-nav
 	url = git@github.com:purcell/elisp-slime-nav.git
+[submodule "emacs-doom-theme"]
+	path = lib/emacs-doom-theme
+	url = git@github.com:hlissner/emacs-doom-theme.git
 [submodule "emacsql"]
 	path = lib/emacsql
 	url = git@github.com:skeeto/emacsql.git
@@ -57,6 +60,9 @@
 [submodule "evil-matchit"]
 	path = lib/evil-matchit
 	url = git@github.com:redguardtoo/evil-matchit.git
+[submodule "evil-multiedit"]
+	path = lib/evil-multiedit
+	url = git@github.com:hlissner/evil-multiedit.git
 [submodule "evil-numbers"]
 	path = lib/evil-numbers
 	url = git@github.com:cofi/evil-numbers.git
@@ -66,6 +72,9 @@
 [submodule "evil-surround"]
 	path = lib/evil-surround
 	url = git@github.com:timcharper/evil-surround.git
+[submodule "evil-textobj-anyblock"]
+	path = lib/evil-textobj-anyblock
+	url = git@github.com:noctuid/evil-textobj-anyblock.git
 [submodule "evil-visualstar"]
 	path = lib/evil-visualstar
 	url = git@github.com:bling/evil-visualstar.git
@@ -118,6 +127,9 @@
 [submodule "reveal-in-osx-finder"]
 	path = lib/reveal-in-osx-finder
 	url = git@github.com:kaz-yos/reveal-in-osx-finder.git
+[submodule "shackle"]
+	path = lib/shackle
+	url = git@github.com:wasamasa/shackle.git
 [submodule "shell-pop"]
 	path = lib/shell-pop
 	url = git@github.com:kyagi/shell-pop-el.git

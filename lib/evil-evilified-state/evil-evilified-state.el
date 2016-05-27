@@ -53,7 +53,7 @@
   :message "-- EVILIFIED BUFFER --"
   :cursor box)
 
-(bind-map spacemacs-default-map
+(bind-map evil-leader--default-map
   :prefix-cmd spacemacs-cmds
   :evil-keys ("SPC")
   :evil-states (evilified)

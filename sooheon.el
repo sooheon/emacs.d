@@ -22,7 +22,8 @@
 
 (progn ;; Themes
   (dolist (elt '("themes" "lib/zenburn-theme" "lib/solarized-theme"
-                 "lib/ample-theme" "lib/spacemacs-theme"))
+                 "lib/ample-theme" "lib/spacemacs-theme"
+                 "lib/emacs-doom-theme"))
     (add-to-list 'custom-theme-load-path
                  (expand-file-name elt user-emacs-directory)))
   (setq custom-safe-themes t)

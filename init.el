@@ -11,16 +11,16 @@
   (setq user-init-file (or load-file-name buffer-file-name))
   (setq user-emacs-directory (file-name-directory user-init-file))
   (message "Loading %s..." user-init-file)
-  (setq package-enable-at-startup nil
-        inhibit-startup-buffer-menu t
-        inhibit-startup-screen t
-        initial-buffer-choice t
-        initial-major-mode 'fundamental-mode
-        initial-scratch-message ""
-        load-prefer-newer t
-        create-lockfiles nil       ; Don't create #foo.file#
-        vc-handled-backends nil    ; vc may slow down opening of files
-        fill-column 81)
+  (setq-default package-enable-at-startup nil
+                inhibit-startup-buffer-menu t
+                inhibit-startup-screen t
+                initial-buffer-choice t
+                initial-major-mode 'fundamental-mode
+                initial-scratch-message ""
+                load-prefer-newer t
+                create-lockfiles nil    ; Don't create #foo.file#
+                vc-handled-backends nil ; vc may slow down opening of files
+                fill-column 80)
   (eval '(setq inhibit-startup-echo-area-message "sooheon"))
   (fset 'yes-or-no-p 'y-or-n-p)
   (scroll-bar-mode 0)
@@ -51,7 +51,7 @@
                 evil-want-fine-undo nil
                 evil-cross-lines t
                 evil-symbol-word-search t
-                evil-move-cursor-back nil
+                ;; evil-move-cursor-back nil
                 evil-want-C-i-jump t
                 evil-disable-insert-state-bindings t)
   :config
@@ -76,7 +76,9 @@
     "wm" 'delete-other-windows
     "wo" 'other-window
     "ws" 'evil-window-split
-    "wv" 'evil-window-vsplit)
+    "wv" 'evil-window-vsplit
+    "wr" 'evil-window-rotate-downwards
+    "wR" 'evil-window-rotate-upwards)
   :config
   (defun spacemacs/alternate-buffer ()
     "Switch back and forth between current and last buffer in the
@@ -91,7 +93,7 @@ current window."
 
 (use-package evil-evilified-state
   :load-path "~/.emacs.d/lib/evil-evilified-state"
-  :config (define-key evil-evilified-state-map " " spacemacs-default-map))
+  :config (define-key evil-evilified-state-map " " evil-leader--default-map))
 
 (use-package auto-compile
   :demand t
@@ -162,8 +164,8 @@ current window."
 (use-package autorevert :diminish auto-revert-mode :defer t)
 
 (use-package company
+  :defer 2
   :diminish (company-mode . "co")
-  :defer 3
   :config
   (setq company-idle-delay 0.2
         company-minimum-prefix-length 2)
@@ -268,6 +270,34 @@ current window."
 
 (use-package evil-matchit :config (global-evil-matchit-mode))
 
+(use-package evil-multiedit
+  :config
+  ;; Match the word under cursor (i.e. make it an edit region). Consecutive
+  ;; presses will incrementally add the next unmatched match.
+  (let ((map evil-normal-state-map))
+    (define-key map (kbd "s-d") 'evil-multiedit-match-symbol-and-next)
+    (define-key map (kbd "s-D") 'evil-multiedit-match-symbol-and-prev))
+  (let ((map evil-visual-state-map))
+    (define-key map (kbd "s-d") 'evil-multiedit-match-and-next)
+    (define-key map (kbd "s-D") 'evil-multiedit-match-and-prev)
+    (define-key map (kbd "C-s-D") 'evil-multiedit-restore)
+    (define-key map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+    (define-key map "R" 'evil-multiedit-match-all))
+  (let ((map evil-multiedit-state-map))
+    (define-key map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+    (define-key map (kbd "C-n") 'evil-multiedit-next)
+    (define-key map (kbd "C-p") 'evil-multiedit-prev))
+  (let ((map evil-multiedit-insert-state-map))
+    (define-key map (kbd "C-n") 'evil-multiedit-next)
+    (define-key map (kbd "C-p") 'evil-multiedit-prev)))
+
+(use-package evil-textobj-anyblock
+  :config
+  (define-key evil-inner-text-objects-map
+    "b" 'evil-textobj-anyblock-inner-block)
+  (define-key evil-outer-text-objects-map
+    "b" 'evil-textobj-anyblock-a-block))
+
 (use-package evil-visualstar :config (global-evil-visualstar-mode))
 
 (use-package evil-surround
@@ -280,7 +310,9 @@ current window."
 (use-package evil-snipe
   :diminish evil-snipe-local-mode
   :config
-  (setq evil-snipe-scope 'whole-buffer
+  (setq evil-snipe-scope 'buffer
+        evil-snipe-repeat-scope 'buffer
+        evil-snipe-show-prompt nil
         evil-snipe-smart-case t)
   (evil-snipe-override-mode 1))
 
@@ -295,35 +327,41 @@ current window."
 
 (use-package info :config (evil-leader/set-key "hi" 'info))
 
-(use-package ivy
-  :diminish ivy-mode
-  :commands magit-status
-  :bind (("s-f" . swiper)
-         ("C-s" . swiper)
-         ("s-b" . ivy-switch-buffer)
-         ("C-c k" . counsel-ag)
+(use-package counsel
+  :bind (("C-c k" . counsel-ag)
          ("M-x" . counsel-M-x)
          ("C-h f" . counsel-describe-function)
          ("C-h v" . counsel-describe-variable)
          ("C-c g" . counsel-git)
          ("C-c j" . counsel-git-grep)
-         ("C-x l" . counsel-locate)
-         ("C-c C-r" . ivy-resume))
+         ("C-x l" . counsel-locate))
   :init
   (evil-leader/set-key
     "hv" 'counsel-describe-variable
     "hf" 'counsel-describe-function
     "f" 'counsel-find-file
+    "Th" 'counsel-load-theme))
+
+(use-package swiper
+  :bind (("s-f" . swiper)
+         ("C-s" . swiper)))
+
+(use-package ivy
+  :diminish ivy-mode
+  :commands (magit-status epkg-describe-package)
+  :bind (("s-b" . ivy-switch-buffer)
+         ("C-c C-r" . ivy-resume))
+  :init
+  (evil-leader/set-key
     "r" 'ivy-recentf
-    "b" 'ivy-switch-buffer
-    "Th" 'counsel-load-theme)
+    "b" 'ivy-switch-buffer)
   :config
   (setq ivy-use-virtual-buffers t
         ivy-extra-directories '("./")
         ivy-count-format "%d "
         ivy-height 12
         ;; ivy-re-builders-alist '((t . ivy--regex-fuzzy))
-        ivy-initial-inputs-alist nil
+        ;; ivy-initial-inputs-alist nil
         ivy-action-wrap t)
   (ivy-mode 1)
   (let ((m ivy-minibuffer-map))
@@ -373,7 +411,7 @@ current window."
       ("o" ivy-occur :exit t))))
 
 (use-package lispy
-  :defer 3
+  :defer t
   :init
   (add-hook 'smartparens-enabled-hook
             (lambda () (when (member major-mode sp-lisp-modes) (lispy-mode))))
@@ -383,6 +421,7 @@ current window."
   (setq lispy-compat '(edebug cider)
         lispy-avy-keys sooheon--avy-keys
         lispy-avy-style-paren 'at-full
+        lispy-avy-style-symbol 'at-full
         lispy-delete-backward-recenter nil
         lispy-safe-paste t)
   (lispy-set-key-theme '(special
@@ -398,7 +437,7 @@ current window."
   (let ((map lispy-mode-map-paredit))
     (define-key map "\M-n" nil)         ; lispy left
     (define-key map "\M-p" nil)
-    (define-key map "\"" nil)           ; lispy-quotes
+    ;; (define-key map "\"" nil)           ; lispy-quotes
     (define-key map "\C-d" 'lispy-delete)
     (define-key map (kbd "M-)") nil)
     (define-key map (kbd "DEL") 'lispy-delete-backward))
@@ -407,6 +446,8 @@ current window."
   ;;   (define-key map (kbd "M-r") 'lispy-raise)
   ;;   (define-key map (kbd "#") nil)
   ;;   (define-key map (kbd ":") nil))
+  (lispy-define-key lispy-mode-map-special ">" 'lispy-slurp-or-barf-right)
+  (lispy-define-key lispy-mode-map-special "<" 'lispy-slurp-or-barf-left)
 
   ;; Unbind M-k and M-. in evil normal state and use lispy
   (define-key evil-normal-state-map "\M-." nil) ; evil-repeat-pop-next
@@ -414,17 +455,18 @@ current window."
 
 (use-package lispyville
   :diminish lispyville-mode
-  :init (add-hook 'lispy-mode-hook #'lispyville-mode)
   :commands (lispyville-delete
              lispyville-delete-char-or-splice
              lispyville-drag-forward
              lispyville-drag-backward)
-  :config
+  :init
+  (add-hook 'lispy-mode-hook #'lispyville-mode)
   (setq lispyville-key-theme '(operators
                                (escape insert hybrid emacs)
                                slurp/barf-cp)
         lispyville-motions-put-into-special t
         lispyville-barf-stay-with-closing t)
+  :config
   (define-key lispyville-mode-map "\M-n" 'lispyville-drag-forward)
   (define-key lispyville-mode-map "\M-p" 'lispyville-drag-backward))
 
@@ -553,7 +595,18 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 (use-package paren
   :config (show-paren-mode))
 
+(use-package shackle
+  :config
+  (shackle-mode 1)
+  (setq shackle-default-rule '(:select t)
+        shackle-rules '((compilation-mode :noselect t)
+                        (help-mode :noselect t)
+                        ("*undo-tree*" :size 0.3)
+                        (woman-mode :popup t)
+                        ("*Messages*" :inhibit-window-quit t))))
+
 (use-package popwin
+  :disabled t
   :config
   (popwin-mode 1)
   (setq popwin:special-display-config nil)
@@ -598,7 +651,8 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
     (counsel-ag nil (projectile-project-root)))
   (setq projectile-enable-caching t
         projectile-sort-order 'recentf
-        projectile-create-missing-test-files t)
+        projectile-create-missing-test-files t
+        projectile-completion-system 'ivy)
   (projectile-global-mode))
 
 (use-package counsel-projectile
@@ -669,7 +723,8 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :init
   (setq sp-cancel-autoskip-on-backward-movement nil
         sp-show-pair-from-inside nil
-        sp-show-pair-delay 0)
+        sp-show-pair-delay 0
+        sp-autoskip-closing-pair 't)
   (defun conditionally-enable-smartparens-mode ()
     "Enable `smartparens-mode' in the minibuffer, during `eval-expression'."
     (if (eq this-command 'eval-expression)
@@ -751,7 +806,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 
 (use-package ws-butler
   :diminish ws-butler-mode
-  :config (global-ws-butler-mode))
+  :config (ws-butler-global-mode))
 
 (progn ;; Personalize
   (let ((file (expand-file-name (concat (user-real-login-name) ".el")
