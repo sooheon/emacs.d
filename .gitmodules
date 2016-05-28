@@ -16,3 +16,6 @@
 [submodule "soap"]
 	path = lib/soap
 	url = git@github.com:emacsmirror/soap.git
+[submodule "lispyville"]
+	path = lib/lispyville
+	url = git@github.com:noctuid/lispyville.git

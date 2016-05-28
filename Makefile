@@ -1,5 +1,7 @@
-.PHONY: all help build quick bootstrap upgrade
+.PHONY: all help build quick pull upgrade up
 .FORCE:
+
+emacs ?= emacs
 
 BASEDIR := $(shell pwd)
 
@@ -15,7 +17,7 @@ help:
 
 build:
 	@rm -f init.elc
-	@emacs -Q --batch -L lib/borg --load borg \
+	@emacs --batch -L lib/borg --load borg \
 	--funcall borg-initialize \
 	--funcall borg-batch-rebuild
 
@@ -30,10 +32,13 @@ lib/%: .FORCE
 	--funcall borg-initialize \
 	--eval  '(borg-build "$(@F)")'
 
-bootstrap:
+pull:
+	git pull
 	git submodule init
-	./borg-bootstrap
-	make
+	git submodule update
 
-upgrade: bootstrap
-	cd $(BASEDIR) && $(emacs) -batch -l packages.el 2>&1 | tee -a etc/log
+upgrade: pull
+	cd $(BASEDIR) && $(emacs) -batch -l packages.el
+
+up: upgrade
+	$(emacs) -Q -l init.el
