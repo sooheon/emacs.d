@@ -125,9 +125,15 @@
 (use-package epkg
   :defer t
   :commands epkg-describe-package
-  :init (setq epkg-repository
-              (expand-file-name "var/epkgs/" emacs-d))
-  (evil-leader/set-key "ak" 'epkg-describe-package))
+  :init (setq epkg-repository (expand-file-name "var/epkgs/" emacs-d))
+  (evil-leader/set-key "aep" 'epkg-describe-package))
+
+(use-package package
+  :config
+  (setq package-archives
+      '(("melpa" . "http://melpa.org/packages/")
+        ("gnu" . "http://elpa.gnu.org/packages/")))
+  (evil-leader/set-key "ap" 'package-list-packages))
 
 (use-package custom
   :config
