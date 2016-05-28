@@ -1,10 +1,7 @@
-# Copyright (C) 2016  Jonas Bernoulli
-#
-# Author: Jonas Bernoulli <jonas@bernoul.li>
-# License: GPL v3 <https://www.gnu.org/licenses/gpl-3.0.txt>
-
-.PHONY: all help build quick bootstrap
+.PHONY: all help build quick bootstrap upgrade
 .FORCE:
+
+BASEDIR := $(shell pwd)
 
 all: build
 
@@ -37,3 +34,6 @@ bootstrap:
 	git submodule init
 	./borg-bootstrap
 	make
+
+upgrade: bootstrap
+	cd $(BASEDIR) && $(emacs) -batch -l packages.el 2>&1 | tee -a etc/log
