@@ -411,7 +411,6 @@
          ([remap load-library] . counsel-load-library)
          ([remap yank-pop] . counsel-yank-pop)
          ([remap info-lookup-symbol] . counsel-info-lookup-symbol)
-         ("C-c k" . counsel-ag)
          ("C-c g" . counsel-git)
          ("C-c j" . counsel-git-grep)
          ("C-x l" . counsel-locate))
@@ -721,6 +720,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
              projectile-dired
              projectile-recentf
              counsel-projectile-ag)
+  :bind (("C-c k" . counsel-projectile-ag))
   :init
   (evil-leader/set-key
     "pp" 'projectile
