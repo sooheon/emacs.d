@@ -194,8 +194,6 @@
 (use-package diff-hl
   :defer 5
   :after magit
-  :init
-  (use-package vc-hooks :defer t :init (setq vc-handled-backends '(Git)))
   :config
   (setq diff-hl-draw-borders nil)
   (global-diff-hl-mode)
@@ -567,7 +565,8 @@
   (evil-leader/set-key "g" 'magit-status "G" 'magit-dispatch-popup)
   :config
   (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1
-        magit-refresh-verbose t)
+        magit-refresh-verbose t
+        magit-refresh-status-buffer nil)
   (magit-add-section-hook 'magit-status-sections-hook
                           'magit-insert-modules-unpulled-from-upstream
                           'magit-insert-unpulled-from-upstream)
@@ -718,7 +717,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 
 (use-package projectile
   :diminish projectile-mode
-  :defer 7
+  :defer 6
   :commands (projectile
              projectile-find-file
              projectile-find-dir
@@ -755,47 +754,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
         projectile-create-missing-test-files t
         projectile-completion-system 'ivy))
 
-(use-package counsel-projectile
-  :defer 10
-  :init
-  (evil-leader/set-key
-    "pb" 'counsel-projectile-switch-to-buffer
-    "pd" 'counsel-projectile-find-dir
-    "pp" 'counsel-projectile
-    "pf" 'counsel-projectile-find-file)
-  :config
-  (ivy-set-actions
-   'counsel-projectile
-   '(("d" (lambda (dir)
-            (let ((projectile-switch-project-action 'counsel-projectile-find-dir))
-              (projectile-switch-project-by-name dir arg)))
-      "find directory")
-     ("b" (lambda (dir)
-            (let ((projectile-switch-project-action 'counsel-projectile-switch-to-buffer))
-              (projectile-switch-project-by-name dir arg)))
-      "switch to buffer")
-     ("s" (lambda (dir)
-            (let ((projectile-switch-project-action 'projectile-save-project-buffers))
-              (projectile-switch-project-by-name dir arg)))
-      "save all buffers")
-     ("k" (lambda (dir)
-            (let ((projectile-switch-project-action 'projectile-kill-buffers))
-              (projectile-switch-project-by-name dir arg)))
-      "kill all buffers")
-     ("r" (lambda (dir)
-            (let ((projectile-switch-project-action
-                   'projectile-remove-current-project-from-known-projects))
-              (projectile-switch-project-by-name dir arg)))
-      "remove from known projects")
-     ("g" (lambda (dir)
-            (let ((projectile-switch-project-action 'projectile-vc))
-              (projectile-switch-project-by-name dir arg)))
-      "open in vc-dir / magit / monky")
-     ("t" (lambda (dir)
-            (let ((projectile-switch-project-action (lambda () (projectile-run-term "/usr/local/bin/fish"))))
-              (projectile-switch-project-by-name dir arg)))
-      "start term for project"))))
-
 (use-package recentf
   :config
   (add-to-list 'recentf-exclude "^/\\(?:ssh\\|su\\|sudo\\)?:")
@@ -822,6 +780,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
                                (lambda () (term shell-file-name)))))
 
 (use-package smartparens
+  :defer t
   :init
   (setq sp-cancel-autoskip-on-backward-movement nil
         sp-show-pair-from-inside nil
@@ -832,8 +791,8 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
     (if (eq this-command 'eval-expression)
         (smartparens-mode)))
   (add-hook 'minibuffer-setup-hook 'conditionally-enable-smartparens-mode)
+  (add-hook 'prog-mode-hook 'smartparens-mode)
   :config
-  (smartparens-global-mode 1)
   (require 'smartparens-config)
   (show-smartparens-global-mode 1)
   (let ((m smartparens-mode-map))
