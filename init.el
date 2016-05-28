@@ -23,9 +23,7 @@
 (csetq tool-bar-mode nil)
 (csetq scroll-bar-mode nil)
 (csetq menu-bar-mode nil)
-(csetq inhibit-startup-buffer-menu t)
 (csetq inhibit-startup-screen t)
-(csetq initial-buffer-choice t)
 (csetq initial-scratch-message "")
 (csetq load-prefer-newer t)
 (csetq create-lockfiles nil) ; Don't create #foo.file#
@@ -587,8 +585,7 @@
   (define-key evil-normal-state-map "gp" 'magit-dispatch-popup)
   (evil-leader/set-key "g" 'magit-status "G" 'magit-dispatch-popup)
   :config
-  (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1
-        magit-refresh-verbose t
+  (setq magit-refresh-verbose t
         magit-refresh-status-buffer nil)
   (magit-add-section-hook 'magit-status-sections-hook
                           'magit-insert-modules-unpulled-from-upstream

@@ -6,6 +6,12 @@ BASEDIR := $(shell pwd)
 
 all: build
 
+profile:
+	$(emacs) -Q -l lib/profile-dotemacs/profile-dotemacs.el \
+	--eval "(setq profile-dotemacs-file \
+        (setq load-file-name \"$(realpath init.el)\"))" \
+	-f profile-dotemacs
+
 help:
 	$(info )
 	$(info make [all|build]    = rebuild all drones)
