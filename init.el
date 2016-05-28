@@ -298,14 +298,32 @@
 
 (use-package evil-commentary
   :diminish evil-commentary-mode
-  :init (evil-commentary-mode))
+  :commands (evil-commentary
+             evil-commentary-yank
+             evil-commentary-line)
+  :init
+  (evil-define-key 'normal global-map "gc" 'evil-commentary)
+  (evil-define-key 'normal global-map "gy" 'evil-commentary-yank)
+  (define-key global-map (kbd "s-/") 'evil-commentary-line)
+  :config
+  (evil-commentary-mode))
 
-(use-package evil-matchit :config (global-evil-matchit-mode))
+(use-package evil-matchit
+  :commands (evilmi-jump-items)
+  :init
+  (evil-define-key 'normal global-map "%" 'evilmi-jump-items)
+  (evil-define-key 'visual global-map "%" 'evilmi-jump-items)
+  :config
+  (global-evil-matchit-mode))
 
 (use-package evil-multiedit
-  :config
-  ;; Match the word under cursor (i.e. make it an edit region). Consecutive
-  ;; presses will incrementally add the next unmatched match.
+  :commands (evil-multiedit-match-symbol-and-next
+             evil-multiedit-match-symbol-and-prev
+             evil-multiedit-match-and-prev
+             evil-multiedit-match-and-next
+             evil-multiedit-prev
+             evil-multiedit-next)
+  :init
   (let ((map evil-normal-state-map))
     (define-key map (kbd "s-d") 'evil-multiedit-match-symbol-and-next)
     (define-key map (kbd "s-D") 'evil-multiedit-match-symbol-and-prev))
@@ -315,6 +333,7 @@
     (define-key map (kbd "C-s-D") 'evil-multiedit-restore)
     (define-key map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
     (define-key map "R" 'evil-multiedit-match-all))
+  :config
   (let ((map evil-multiedit-state-map))
     (define-key map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
     (define-key map (kbd "C-n") 'evil-multiedit-next)
@@ -358,15 +377,10 @@
               ("C-S-a" . evil-numbers/inc-at-pt)
               ("C-S-x" . evil-numbers/dec-at-pt)))
 
-(use-package exec-path-from-shell
-  :disabled t
-  :config (when (memq window-system '(ns x))
-            (exec-path-from-shell-initialize)))
-
 (use-package flycheck
   :defer 3
+  :init (add-hook 'prog-mode-hook 'flycheck-mode)
   :config
-  (global-flycheck-mode 1)
   (setq flycheck-standard-error-navigation nil
         flycheck-global-modes nil))
 
@@ -378,12 +392,13 @@
   (add-hook 'text-mode-hook 'flyspell-mode))
 
 (use-package flyspell-correct
+  :disabled t
   :defer t
   :bind (("C-;" . flyspell-correct-word-generic))
   :config
   (setq flyspell-correct-interface 'flyspell-correct-ivy))
 
-(use-package flx :defer 5)
+(use-package flx :after ivy)
 
 (use-package help :config (setq help-window-select t))
 
@@ -411,8 +426,7 @@
     "Th" 'counsel-load-theme))
 
 (use-package swiper
-  :bind (("s-f" . counsel-grep-or-swiper)
-         ("C-s" . counsel-grep-or-swiper)))
+  :bind (([remap isearch-forward] . counsel-grep-or-swiper)))
 
 (use-package ivy
   :diminish ivy-mode
