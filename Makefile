@@ -1,4 +1,3 @@
-.PHONY: all help build quick pull upgrade up
 .FORCE:
 
 emacs ?= emacs
@@ -16,6 +15,7 @@ help:
 	@printf "\n"
 
 build:
+	cd lib/org && make compile && make autoloads
 	@rm -f init.elc
 	@emacs --batch -L lib/borg --load borg \
 	--funcall borg-initialize \
@@ -42,3 +42,5 @@ upgrade: pull
 
 up: upgrade
 	$(emacs) -Q -l init.el
+
+.PHONY: all help build quick pull upgrade up

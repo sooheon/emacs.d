@@ -1,53 +1,71 @@
 ;;; init.el --- user-init-file                    -*- lexical-binding: t -*-
-;;; Commentary:
-;;; Uses borg to assimilate packages.
 
-;;; Code:
-;;; Early birds
-
-(defvar emacs-d (file-name-directory
-	(file-chase-links load-file-name)))
+(defvar before-user-init-time (current-time)
+  "Value of `current-time' when Emacs begins loading `user-init-file'.")
+(message "Loading Emacs...done (%.3fs)"
+         (float-time (time-subtract before-user-init-time
+                                    before-init-time)))
+(setq user-init-file (or load-file-name buffer-file-name))
+(setq emacs-d (file-name-directory user-init-file))
 (setq package-user-dir (expand-file-name "elpa" emacs-d))
 (package-initialize)
-(progn ;; Startup
-  (defvar before-user-init-time (current-time)
-    "Value of `current-time' when Emacs begins loading `user-init-file'.")
-  (message "Loading Emacs...done (%.3fs)"
-           (float-time (time-subtract before-user-init-time
-                                      before-init-time)))
-  (setq user-init-file (or load-file-name buffer-file-name))
-  (setq user-emacs-directory (file-name-directory user-init-file))
-  (message "Loading %s..." user-init-file)
-  (setq-default package-enable-at-startup nil
-                inhibit-startup-buffer-menu t
-                inhibit-startup-screen t
-                initial-buffer-choice t
-                initial-major-mode 'fundamental-mode
-                initial-scratch-message ""
-                load-prefer-newer t
-                create-lockfiles nil    ; Don't create #foo.file#
-                fill-column 80)
-  (eval '(setq inhibit-startup-echo-area-message "sooheon"))
-  (fset 'yes-or-no-p 'y-or-n-p)
-  (scroll-bar-mode 0)
-  (tool-bar-mode 0)
-  (menu-bar-mode 0)
-  ;; Set paths--see: http://tinyurl.com/ctf9h3a
-  (setenv "MANPATH" "/usr/local/opt/coreutils/libexec/gnuman:/usr/local/opt/findutils/libexec/gnuman:/usr/local/share/man")
-  (setenv "PATH" "/usr/local/Cellar/pyenv-virtualenv/20160315/shims:/Users/sooheon/.pyenv/shims:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Library/TeX/texbin")
-  (setq exec-path '("/usr/local/Cellar/pyenv-virtualenv/20160315/shims" "/Users/sooheon/.pyenv/shims" "/usr/local/opt/coreutils/libexec/gnubin" "/usr/local/opt/findutils/libexec/gnubin" "/usr/local/bin" "/usr/bin" "/bin" "/usr/sbin" "/sbin" "/opt/X11/bin" "/Library/TeX/texbin" "/usr/local/Cellar/emacs/HEAD/libexec/emacs/25.1.50/x86_64-apple-darwin15.5.0")))
- 
-(progn ;; `borg'
-  (add-to-list 'load-path (expand-file-name "lib/borg" user-emacs-directory))
-  (require 'borg)
-  (borg-initialize))
 
-(progn ;; `use-package'
- (eval-when-compile
-   (require 'use-package))
- (require 'diminish)
- (require 'bind-key)
- (setq use-package-verbose t))
+(message "Loading %s..." user-init-file)
+
+;; Theme
+(add-to-list 'custom-theme-load-path (expand-file-name "themes" user-emacs-directory))
+(load-theme 'eclipse2 t)
+;; Font
+(ignore-errors (set-frame-font "Input Mono Narrow"))
+;; Customize
+(defmacro csetq (variable value)
+  `(funcall (or (get ',variable 'custom-set) 'set-default) ',variable ,value))
+(csetq tool-bar-mode nil)
+(csetq scroll-bar-mode nil)
+(csetq menu-bar-mode nil)
+(csetq inhibit-startup-buffer-menu t)
+(csetq inhibit-startup-screen t)
+(csetq initial-buffer-choice t)
+(csetq initial-scratch-message "")
+(csetq load-prefer-newer t)
+(csetq create-lockfiles nil) ; Don't create #foo.file#
+(csetq fill-column 80)
+(eval '(setq inhibit-startup-echo-area-message "sooheon"))
+;; Navigation within buffer
+(csetq recenter-positions '(top middle bottom))
+;; Finding files
+(csetq vc-follow-symlinks t)
+(csetq find-file-suppress-same-file-warnings t)
+(csetq read-buffer-completion-ignore-case t)
+;; Editor behavior
+(csetq default-input-method "korean-hangul")
+(csetq indent-tabs-mode nil)
+(csetq ring-bell-function 'ignore)
+(csetq highlight-nonselected-windows t)
+(defalias 'yes-or-no-p 'y-or-n-p)
+(setq kill-buffer-query-functions nil)
+(add-hook 'server-switch-hook 'raise-frame)
+(csetq eval-expression-print-length nil)
+(csetq eval-expression-print-level nil)
+;; internals
+(csetq gc-cons-threshold (* 10 1024 1024))
+(csetq ad-redefinition-action 'accept)
+;; Set PATHs--see: http://tinyurl.com/ctf9h3a
+(setenv "MANPATH" "/usr/local/opt/coreutils/libexec/gnuman:/usr/local/opt/findutils/libexec/gnuman:/usr/local/share/man")
+(setenv "PATH" "/usr/local/Cellar/pyenv-virtualenv/20160315/shims:/Users/sooheon/.pyenv/shims:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Library/TeX/texbin")
+(setq exec-path '("/usr/local/Cellar/pyenv-virtualenv/20160315/shims" "/Users/sooheon/.pyenv/shims" "/usr/local/opt/coreutils/libexec/gnubin" "/usr/local/opt/findutils/libexec/gnubin" "/usr/local/bin" "/usr/bin" "/bin" "/usr/sbin" "/sbin" "/opt/X11/bin" "/Library/TeX/texbin" "/usr/local/Cellar/emacs/HEAD/libexec/emacs/25.1.50/x86_64-apple-darwin15.5.0"))
+
+;; borg
+(add-to-list 'load-path (expand-file-name "lib/borg" emacs-d))
+(require 'borg)
+(borg-initialize)
+
+;; use-package
+(eval-when-compile
+  (require 'use-package))
+(require 'diminish)
+(require 'bind-key)
+(setq use-package-verbose t)
 
 (use-package no-littering :demand t)
 
@@ -110,12 +128,12 @@
   :defer t
   :commands epkg-describe-package
   :init (setq epkg-repository
-              (expand-file-name "var/epkgs/" user-emacs-directory))
+              (expand-file-name "var/epkgs/" emacs-d))
   (evil-leader/set-key "ak" 'epkg-describe-package))
 
 (use-package custom
   :config
-  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+  (setq custom-file (expand-file-name "custom.el" emacs-d))
   (when (file-exists-p custom-file)
     (load custom-file)))
 
@@ -159,7 +177,9 @@
   (when (boundp 'org-mode-map)
     (define-key org-mode-map "\M-o" 'ace-link-org)))
 
-(use-package autorevert :diminish auto-revert-mode :defer t)
+(use-package autorevert
+  :diminish auto-revert-mode
+  :init (global-auto-revert-mode 1))
 
 (use-package company
   :defer 2
@@ -681,9 +701,9 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   (add-hook 'org-mode-hook 'worf-mode)
   :config
   (evil-define-key 'insert worf-mode-map
-        "\C-j" nil
-        "\[" nil
-        "\]" nil))
+    "\C-j" nil
+    "\[" nil
+    "\]" nil))
 
 (use-package paren
   :config (show-paren-mode))
@@ -758,8 +778,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 (use-package recentf
   :config
   (add-to-list 'recentf-exclude "^/\\(?:ssh\\|su\\|sudo\\)?:")
-  (setq recentf-max-saved-items 1000
-        recentf-auto-cleanup 'never))
+  (setq recentf-max-saved-items 1000))
 
 (use-package reveal-in-osx-finder
   :if (eq system-type 'darwin)
@@ -869,7 +888,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 
 (progn ;; Personalize
   (let ((file (expand-file-name (concat (user-real-login-name) ".el")
-                                user-emacs-directory)))
+                                emacs-d)))
     (when (file-exists-p file)
       (load file))))
 

@@ -7,7 +7,6 @@
 (global-set-key (kbd "s-w") 'delete-window)
 (global-set-key (kbd "s-W") 'delete-frame)
 (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
-(add-to-list 'default-frame-alist '(font . "Input Mono Narrow-12"))
 (set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
 (setq-default fringe-indicator-alist '((truncation left-arrow right-arrow)
                                        (continuation
@@ -21,14 +20,6 @@
                                        (top-bottom left-bracket right-bracket top-right-angle top-left-angle)
                                        (empty-line . empty-line)
                                        (unknown . question-mark)))
-
-(progn ;; Themes
-  (dolist (elt '("themes" "lib/zenburn-theme" "lib/solarized-theme"
-                 "lib/ample-theme" "lib/spacemacs-theme"))
-    (add-to-list 'custom-theme-load-path
-                 (expand-file-name elt user-emacs-directory)))
-  (setq custom-safe-themes t)
-  (load-theme 'eclipse2 t))
 
 (defun spacemacs/smart-move-beginning-of-line (arg)
   "Move point back to indentation of beginning of line.
