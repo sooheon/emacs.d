@@ -8,7 +8,64 @@
 (package-refresh-contents)
 
 (defconst soo-packages
-  '(ace-link ample-theme auto-compile avy bind-map cider clojure-mode closql company dash diff-hl diminish elisp-slime-nav emacsql epkg evil evil-commentary evil-leader evil-magit evil-matchit evil-multiedit evil-numbers evil-snipe evil-surround evil-textobj-anyblock evil-visualstar finalize flx flycheck flyspell-correct git-modes hydra iedit ivy ivy-hydra swiper counsel magit packed popwin projectile queue reveal-in-osx-finder shackle shell-pop smartparens smex solarized-theme spacemacs-theme spinner undo-tree use-package which-key window-numbering with-editor worf ws-butler zenburn-theme))
+  '(ace-link
+    ample-theme
+    auto-compile
+    avy
+    bind-map
+    cider
+    clojure-mode
+    closql
+    company
+    counsel
+    dash
+    diff-hl
+    diminish
+    elisp-slime-nav
+    emacsql
+    epkg
+    evil
+    evil-commentary
+    evil-leader
+    evil-magit
+    evil-matchit
+    evil-multiedit
+    evil-numbers
+    evil-snipe
+    evil-surround
+    evil-textobj-anyblock
+    evil-visualstar
+    finalize
+    flx
+    flycheck
+    flyspell-correct
+    git-modes
+    hydra
+    iedit
+    ivy
+    ivy-hydra
+    magit
+    packed
+    popwin
+    projectile
+    queue
+    reveal-in-osx-finder
+    shackle
+    shell-pop
+    smartparens
+    smex
+    solarized-theme
+    spacemacs-theme
+    spinner
+    swiper
+    undo-tree
+    use-package
+    which-key
+    window-numbering
+    with-editor
+    worf
+    ws-butler
+    zenburn-theme))
 
 ;; Install required
 (dolist (package soo-packages)

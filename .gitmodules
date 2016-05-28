@@ -1,27 +1,27 @@
 [submodule "borg"]
-	path = lib/borg
-	url = git@gitlab.com:tarsius/borg.git
+        path = lib/borg
+        url = git@gitlab.com:tarsius/borg.git
 [submodule "clojure-semantic"]
-	path = lib/clojure-semantic
-	url = git@github.com:abo-abo/clojure-semantic.git
+        path = lib/clojure-semantic
+        url = git@github.com:abo-abo/clojure-semantic.git
+[submodule "lib/profile-dotemacs"]
+        path = lib/profile-dotemacs
+        url = git@github.com:abo-abo/profile-dotemacs
 [submodule "lispy"]
-	path = lib/lispy
-	url = git@github.com:abo-abo/lispy.git
-[submodule "lpy"]
-	path = lib/lpy
-	url = git@github.com:abo-abo/lpy.git
-[submodule "org"]
-	path = lib/org
-	url = git://orgmode.org/org-mode.git
-[submodule "soap"]
-	path = lib/soap
-	url = git@github.com:emacsmirror/soap.git
+        path = lib/lispy
+        url = git@github.com:abo-abo/lispy.git
 [submodule "lispyville"]
-	path = lib/lispyville
-	url = git@github.com:noctuid/lispyville.git
+        path = lib/lispyville
+        url = git@github.com:noctuid/lispyville.git
+[submodule "lpy"]
+        path = lib/lpy
+        url = git@github.com:abo-abo/lpy.git
 [submodule "no-littering"]
         path = lib/no-littering
         url = git@github.com:tarsius/no-littering.git
-[submodule "lib/profile-dotemacs"]
-	path = lib/profile-dotemacs
-	url = git@github.com:abo-abo/profile-dotemacs
+[submodule "org"]
+        path = lib/org
+        url = git://orgmode.org/org-mode.git
+[submodule "soap"]
+        path = lib/soap
+        url = git@github.com:emacsmirror/soap.git

@@ -294,6 +294,7 @@
     "r" 'revert-buffer
     (kbd "C-r") 'dired-do-redisplay
     "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 2))
+    "gs" 'magit-status
     "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1))))
 
 (use-package ediff
