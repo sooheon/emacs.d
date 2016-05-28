@@ -1,8 +1,11 @@
 ;;; init.el --- user-init-file                    -*- lexical-binding: t -*-
+;;; Commentary:
+;;; Uses borg to assimilate packages.
+
+;;; Code:
 ;;; Early birds
 
 (progn ;; Startup
-  (setq gc-cons-threshold most-positive-fixnum)
   (defvar before-user-init-time (current-time)
     "Value of `current-time' when Emacs begins loading `user-init-file'.")
   (message "Loading Emacs...done (%.3fs)"
@@ -169,6 +172,24 @@
     (define-key m "\C-p" 'company-select-previous)
     (define-key m [tab] 'company-complete-common)))
 
+(use-package cider
+  :defer t
+  :init
+  (add-hook 'clojure-mode-hook 'cider-mode)
+  :config
+  (setq cider-repl-pop-to-buffer-on-connect nil
+        cider-prompt-save-file-on-load nil
+        cider-repl-use-clojure-font-lock t)
+  ;; (defadvice cider-jump-to-var (before add-evil-jump activate)
+  ;;   (evil-set-jump))
+  (add-hook 'cider-mode-hook 'eldoc-mode))
+
+(use-package clojure-mode
+  :defer t
+  :mode ("\\.boot\\'" . clojure-mode)
+  :init
+  (add-to-list 'magic-mode-alist '("!.*boot\\s-*" . clojure-mode)))
+
 (use-package dash :config (dash-enable-font-lock))
 
 (use-package diff-hl
@@ -223,7 +244,7 @@
                           (nth 0 other-marked-files)))
             ((= (length marked-files) 1)
              (dired-diff))
-            (t (error "mark exactly 2 files, at least 1 locally")))))
+            (t (error "Mark exactly 2 files, at least 1 locally")))))
   (evilified-state-evilify dired-mode dired-mode-map
     "j" 'dired-next-line
     "k" 'dired-previous-line
@@ -339,6 +360,13 @@
   :config (when (memq window-system '(ns x))
             (exec-path-from-shell-initialize)))
 
+(use-package flycheck
+  :defer 3
+  :config
+  (global-flycheck-mode 1)
+  (setq flycheck-standard-error-navigation nil
+        flycheck-global-modes nil))
+
 (use-package flyspell
   :disabled t
   :defer t
@@ -374,8 +402,8 @@
     "Th" 'counsel-load-theme))
 
 (use-package swiper
-  :bind (("s-f" . swiper)
-         ("C-s" . swiper)))
+  :bind (("s-f" . counsel-grep-or-swiper)
+         ("C-s" . counsel-grep-or-swiper)))
 
 (use-package ivy
   :diminish ivy-mode
@@ -501,11 +529,18 @@
   (define-key lispyville-mode-map "\M-n" 'lispyville-drag-forward)
   (define-key lispyville-mode-map "\M-p" 'lispyville-drag-backward))
 
+(use-package lpy
+  :defer t
+  :init
+  (use-package soap :defer t)
+  (add-hook 'python-mode 'lpy-mode))
+
 (use-package magit
   :bind (("C-x g" . magit-status)
          ("C-x M-g" . magit-dispatch-popup))
   :init
   (define-key evil-normal-state-map "gs" 'magit-status)
+  (define-key evil-normal-state-map "gp" 'magit-dispatch-popup)
   (evil-leader/set-key "g" 'magit-status "G" 'magit-dispatch-popup)
   :config
   (setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1
@@ -513,15 +548,15 @@
   (magit-add-section-hook 'magit-status-sections-hook
                           'magit-insert-modules-unpulled-from-upstream
                           'magit-insert-unpulled-from-upstream)
-  ;; (magit-add-section-hook 'magit-status-sections-hook
-  ;;                         'magit-insert-modules-unpulled-from-pushremote
-  ;;                         'magit-insert-unpulled-from-upstream)
-  ;; (magit-add-section-hook 'magit-status-sections-hook
-  ;;                         'magit-insert-modules-unpushed-to-upstream
-  ;;                         'magit-insert-unpulled-from-upstream)
-  ;; (magit-add-section-hook 'magit-status-sections-hook
-  ;;                         'magit-insert-modules-unpushed-to-pushremote
-  ;;                         'magit-insert-unpulled-from-upstream)
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'magit-insert-modules-unpulled-from-pushremote
+                          'magit-insert-unpulled-from-upstream)
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'magit-insert-modules-unpushed-to-upstream
+                          'magit-insert-unpulled-from-upstream)
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'magit-insert-modules-unpushed-to-pushremote
+                          'magit-insert-unpulled-from-upstream)
   (magit-add-section-hook 'magit-status-sections-hook
                           'magit-insert-submodules
                           'magit-insert-unpulled-from-upstream)
@@ -864,8 +899,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
                (float-time (time-subtract (current-time)
                                           before-user-init-time))))
             t))
-
-(setq gc-cons-threshold 1000000)
 
 ;; Local Variables:
 ;; indent-tabs-mode: nil

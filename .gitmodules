@@ -16,6 +16,12 @@
 [submodule "borg"]
 	path = lib/borg
 	url = git@gitlab.com:tarsius/borg.git
+[submodule "cider"]
+	path = lib/cider
+	url = git@github.com:clojure-emacs/cider.git
+[submodule "clojure-mode"]
+	path = lib/clojure-mode
+	url = git@github.com:clojure-emacs/clojure-mode.git
 [submodule "closql"]
 	path = lib/closql
 	url = git@gitlab.com:tarsius/closql.git
@@ -90,6 +96,9 @@
 [submodule "flx"]
 	path = lib/flx
 	url = git@github.com:lewang/flx.git
+[submodule "flycheck"]
+	path = lib/flycheck
+	url = git@github.com:flycheck/flycheck.git
 [submodule "flyspell-correct"]
 	path = lib/flyspell-correct
 	url = git@github.com:d12frosted/flyspell-correct.git
@@ -111,6 +120,9 @@
 [submodule "lispyville"]
 	path = lib/lispyville
 	url = git@github.com:noctuid/lispyville.git
+[submodule "lpy"]
+	path = lib/lpy
+	url = git@github.com:abo-abo/lpy.git
 [submodule "magit"]
 	path = lib/magit
 	url = git@github.com:magit/magit.git
@@ -133,6 +145,9 @@
 [submodule "projectile"]
 	path = lib/projectile
 	url = git@github.com:bbatsov/projectile.git
+[submodule "queue"]
+	path = lib/queue
+	url = git@github.com:emacsmirror/queue.git
 [submodule "reveal-in-osx-finder"]
 	path = lib/reveal-in-osx-finder
 	url = git@github.com:kaz-yos/reveal-in-osx-finder.git
@@ -148,12 +163,18 @@
 [submodule "smex"]
 	path = lib/smex
 	url = git@github.com:nonsequitur/smex.git
+[submodule "soap"]
+	path = lib/soap
+	url = git@github.com:emacsmirror/soap.git
 [submodule "solarized-theme"]
 	path = lib/solarized-theme
 	url = git@github.com:bbatsov/solarized-emacs.git
 [submodule "spacemacs-theme"]
 	path = lib/spacemacs-theme
 	url = git@github.com:nashamri/spacemacs-theme.git
+[submodule "spinner"]
+	path = lib/spinner
+	url = git@github.com:Malabarba/spinner.el.git
 [submodule "undo-tree"]
 	path = lib/undo-tree
 	url = git@github.com:emacsmirror/undo-tree.git

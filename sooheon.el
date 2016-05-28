@@ -1,4 +1,6 @@
-(setq scroll-preserve-screen-position t)
+(setq scroll-preserve-screen-position t
+      scroll-margin 2
+      scroll-conservatively 101)
 (blink-cursor-mode -1)
 (global-set-key "\C-x\C-b" 'ibuffer)
 (global-set-key (kbd "s-u") 'universal-argument)
@@ -28,13 +30,6 @@
                  (expand-file-name elt user-emacs-directory)))
   (setq custom-safe-themes t)
   (load-theme 'solarized-dark t))
-
-(defun sooheon--gc-setup-minibuffer-hook ()
-  (setq gc-cons-threshold most-positive-fixnum))
-(defun sooheon--gc-exit-minibuffer-hook ()
-  (setq gc-cons-threshold 8000000))
-(add-hook 'minibuffer-setup-hook #'sooheon--gc-setup-minibuffer-hook)
-(add-hook 'minibuffer-exit-hook #'sooheon--gc-exit-minibuffer-hook)
 
 (defun spacemacs/smart-move-beginning-of-line (arg)
   "Move point back to indentation of beginning of line.
