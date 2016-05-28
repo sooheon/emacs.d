@@ -83,11 +83,11 @@
   :config
   (global-evil-leader-mode))
 
-(use-package bind-map :defer t)
-
 (use-package evil-evilified-state
   :load-path "~/.emacs.d/lib/evil-evilified-state"
-  :config (define-key evil-evilified-state-map " " evil-leader--default-map))
+  :config
+  (use-package bind-map :defer t)
+  (define-key evil-evilified-state-map " " evil-leader--default-map))
 
 (use-package auto-compile
   :demand t
@@ -420,7 +420,8 @@
     "hv" 'counsel-describe-variable
     "hf" 'counsel-describe-function
     "f" 'counsel-find-file
-    "Th" 'counsel-load-theme))
+    "Th" 'counsel-load-theme)
+  (define-key evil-normal-state-map "\M-y" 'counsel-yank-pop))
 
 (use-package swiper
   :bind (([remap isearch-forward] . counsel-grep-or-swiper)))
@@ -711,9 +712,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   (push '("*nosetests*"            :dedicated t :position bottom :stick t :noselect nil) popwin:special-display-config)
   (push '("^\*WoMan.+\*$"          :regexp t :position bottom) popwin:special-display-config))
 
-(use-package prog-mode
-  :config (global-prettify-symbols-mode))
-
 (use-package projectile
   :diminish projectile-mode
   :defer 6
@@ -805,10 +803,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 
 (use-package smex :defer t :config (setq smex-history-length 32))
 
-(use-package simple
-  :config
-  (define-key messages-buffer-mode-map (kbd "s-k") 'bury-buffer)
-  (column-number-mode))
+(use-package simple :config (column-number-mode))
 
 (use-package tramp
   :defer t

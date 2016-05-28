@@ -48,7 +48,8 @@ point reaches the beginning or end of the buffer, stop there."
     (back-to-indentation)
     (when (= orig-point (point))
       (move-beginning-of-line 1))))
-(global-set-key "\C-a" 'spacemacs/smart-move-beginning-of-line)
+
+(bind-key "C-a" #'spacemacs/smart-move-beginning-of-line)
 
 (defun soo--delete-window-or-bury-buffer (&optional window)
   (interactive)
@@ -56,4 +57,5 @@ point reaches the beginning or end of the buffer, stop there."
     (if (not (window-parent window))
         (call-interactively 'bury-buffer)
       (call-interactively 'delete-window))))
-(global-set-key (kbd "s-w") 'soo--delete-window-or-bury-buffer)
+
+(bind-key "s-w" #'soo--delete-window-or-bury-buffer)
