@@ -582,7 +582,7 @@
   :defer t
   :init
   (use-package soap :defer t)
-  (add-hook 'python-mode 'lpy-mode))
+  (add-hook 'python-mode-hook 'lpy-mode))
 
 (use-package magit
   :bind (("C-x g" . magit-status)
