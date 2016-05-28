@@ -376,8 +376,7 @@
               ("C-S-x" . evil-numbers/dec-at-pt)))
 
 (use-package flycheck
-  :defer 3
-  :init (add-hook 'prog-mode-hook 'flycheck-mode)
+  :defer t
   :config
   (setq flycheck-standard-error-navigation nil
         flycheck-global-modes nil))
