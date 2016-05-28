@@ -127,7 +127,7 @@
 (defvar sooheon--avy-keys '(?w ?e ?r ?s ?d ?x ?c ?u ?i ?o ?v ?n ?m ?l ?k ?j ?f))
 
 (use-package avy
-  :defer
+  :defer t
   :commands spacemacs/avy-open-url
   :bind (("s-g" . evil-avy-goto-word-1)
          ([remap goto-line] . evil-avy-goto-line))
@@ -152,7 +152,7 @@
   :commands (ace-link-info ace-link-eww ace-link-help)
   :init
   (ace-link-setup-default)
-  (with-eval-after-load 'org
+  (when (boundp 'org-mode-map)
     (define-key org-mode-map "\M-o" 'ace-link-org)))
 
 (use-package autorevert :diminish auto-revert-mode :defer t)
@@ -187,12 +187,15 @@
 (use-package clojure-mode
   :defer t
   :mode ("\\.boot\\'" . clojure-mode)
-  :init
-  (add-to-list 'magic-mode-alist '("!.*boot\\s-*" . clojure-mode)))
+  :interpreter ("!.*boot\\s-*" . clojure-mode))
 
 (use-package dash :config (dash-enable-font-lock))
 
 (use-package diff-hl
+  :defer 5
+  :after magit
+  :init
+  (use-package vc-hooks :defer t :init (setq vc-handled-backends '(Git)))
   :config
   (setq diff-hl-draw-borders nil)
   (global-diff-hl-mode)
@@ -268,7 +271,6 @@
     "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1))))
 
 (use-package ediff
-  :disabled t
   :defer t
   :commands (ediff-buffers ediff)
   :config
@@ -281,6 +283,7 @@
   :defer t
   :diminish eldoc-mode
   :config
+  (global-eldoc-mode -1)
   (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode))
 
 (use-package elisp-slime-nav
@@ -387,10 +390,16 @@
 (use-package info :config (evil-leader/set-key "hi" 'info))
 
 (use-package counsel
-  :bind (("C-c k" . counsel-ag)
-         ("M-x" . counsel-M-x)
-         ("C-h f" . counsel-describe-function)
-         ("C-h v" . counsel-describe-variable)
+  :bind (([remap execute-extended-command] . counsel-M-x)
+         ([remap describe-function] . counsel-describe-function)
+         ([remap describe-variable] . counsel-describe-variable)
+         ([remap describe-bindings] . counsel-descbinds)
+         ([remap find-file] . counsel-find-file)
+         ([remap imenu] . counsel-imenu)
+         ([remap load-library] . counsel-load-library)
+         ([remap yank-pop] . counsel-yank-pop)
+         ([remap info-lookup-symbol] . counsel-info-lookup-symbol)
+         ("C-c k" . counsel-ag)
          ("C-c g" . counsel-git)
          ("C-c j" . counsel-git-grep)
          ("C-x l" . counsel-locate))
@@ -567,10 +576,6 @@
       "n" 'magit-section-forward
       "p" 'magit-section-backward)))
 
-(use-package morlock
-  :commands global-morlock-mode
-  :init (global-morlock-mode))
-
 (use-package org
   :defer 10
   :config
@@ -699,10 +704,19 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 
 (use-package projectile
   :diminish projectile-mode
-  :commands (counsel-projectile-ag projectile-global-mode)
-  :defer 5
+  :defer 7
+  :commands (projectile
+             projectile-find-file
+             projectile-find-dir
+             projectile-dired
+             projectile-recentf
+             counsel-projectile-ag)
   :init
   (evil-leader/set-key
+    "pp" 'projectile
+    "pb" 'projectile-switch-to-buffer
+    "pf" 'projectile-find-file
+    "pd" 'projectile-find-dir
     "pD" 'projectile-dired
     "p!" 'projectile-run-shell-command-in-root
     "p&" 'projectile-run-async-shell-command-in-root
@@ -715,26 +729,26 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
     "pT" 'projectile-find-test-file
     "pP" 'projectile-test-project
     "pm" 'projectile-commander
+    "pr" 'projectile-recentf
     "/" 'counsel-projectile-ag)
   :config
+  (projectile-global-mode)
   (defun counsel-projectile-ag ()
     (interactive)
     (counsel-ag nil (projectile-project-root)))
   (setq projectile-enable-caching t
         projectile-sort-order 'recentf
         projectile-create-missing-test-files t
-        projectile-completion-system 'ivy)
-  (projectile-global-mode))
+        projectile-completion-system 'ivy))
 
 (use-package counsel-projectile
-  :defer 5
+  :defer 10
   :init
   (evil-leader/set-key
     "pb" 'counsel-projectile-switch-to-buffer
     "pd" 'counsel-projectile-find-dir
     "pp" 'counsel-projectile
-    "pf" 'counsel-projectile-find-file
-    "pr" 'projectile-recentf)
+    "pf" 'counsel-projectile-find-file)
   :config
   (ivy-set-actions
    'counsel-projectile

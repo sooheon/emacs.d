@@ -24,12 +24,11 @@
 
 (progn ;; Themes
   (dolist (elt '("themes" "lib/zenburn-theme" "lib/solarized-theme"
-                 "lib/ample-theme" "lib/spacemacs-theme"
-                 "lib/emacs-doom-theme"))
+                 "lib/ample-theme" "lib/spacemacs-theme"))
     (add-to-list 'custom-theme-load-path
                  (expand-file-name elt user-emacs-directory)))
   (setq custom-safe-themes t)
-  (load-theme 'solarized-dark t))
+  (load-theme 'eclipse2 t))
 
 (defun spacemacs/smart-move-beginning-of-line (arg)
   "Move point back to indentation of beginning of line.
@@ -50,3 +49,11 @@ point reaches the beginning or end of the buffer, stop there."
     (when (= orig-point (point))
       (move-beginning-of-line 1))))
 (global-set-key "\C-a" 'spacemacs/smart-move-beginning-of-line)
+
+(defun soo--delete-window-or-bury-buffer (&optional window)
+  (interactive)
+  (let ((window (window-normalize-window window)))
+    (if (not (window-parent window))
+        (call-interactively 'bury-buffer)
+      (call-interactively 'delete-window))))
+(global-set-key (kbd "s-w") 'soo--delete-window-or-bury-buffer)

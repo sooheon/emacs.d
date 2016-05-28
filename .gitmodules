@@ -28,9 +28,6 @@
 [submodule "company"]
 	path = lib/company
 	url = git@github.com:company-mode/company-mode.git
-[submodule "counsel-projectile"]
-	path = lib/counsel-projectile
-	url = git@github.com:ericdanan/counsel-projectile.git
 [submodule "dash"]
 	path = lib/dash
 	url = git@github.com:magnars/dash.el.git
@@ -44,9 +41,6 @@
 [submodule "elisp-slime-nav"]
 	path = lib/elisp-slime-nav
 	url = git@github.com:purcell/elisp-slime-nav.git
-[submodule "emacs-doom-theme"]
-	path = lib/emacs-doom-theme
-	url = git@github.com:hlissner/emacs-doom-theme.git
 [submodule "emacsql"]
 	path = lib/emacsql
 	url = git@github.com:skeeto/emacsql.git
@@ -87,9 +81,6 @@
 [submodule "evil-visualstar"]
 	path = lib/evil-visualstar
 	url = git@github.com:bling/evil-visualstar.git
-[submodule "exec-path-from-shell"]
-	path = lib/exec-path-from-shell
-	url = git@github.com:purcell/exec-path-from-shell.git
 [submodule "finalize"]
 	path = lib/finalize
 	url = git@github.com:skeeto/elisp-finalize.git
@@ -127,9 +118,6 @@
 	path = lib/magit
 	url = git@github.com:magit/magit.git
 	info-path = Documentation
-[submodule "morlock"]
-	path = lib/morlock
-	url = git@github.com:tarsius/morlock.git
 [submodule "no-littering"]
 	path = lib/no-littering
 	url = git@github.com:tarsius/no-littering.git
@@ -142,6 +130,7 @@
 [submodule "popwin"]
 	path = lib/popwin
 	url = git@github.com:m2ym/popwin-el.git
+	disabled = true
 [submodule "projectile"]
 	path = lib/projectile
 	url = git@github.com:bbatsov/projectile.git
