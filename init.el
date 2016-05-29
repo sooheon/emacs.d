@@ -839,6 +839,19 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
                                      (hydra-org-template/body)
                                    (self-insert-command 1)))))
 
+(use-package osx-dictionary
+  :commands osx-dictionary-search-pointer
+  :init
+  (evil-leader/set-key "xwd" 'osx-dictionary-search-pointer)
+  :config
+  (evilified-state-evilify-map osx-dictionary-mode-map
+    :mode osx-dictionary-mode
+    :bindings
+    "q" 'osx-dictionary-quit
+    "r" 'osx-dictionary-read-word
+    "s" 'osx-dictionary-search-input
+    "o" 'osx-dictionary-open-dictionary.app))
+
 (use-package worf
   :diminish worf-mode
   :after org
@@ -1057,17 +1070,19 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
          ("s-3" . select-window-3)
          ("s-4" . select-window-4)
          ("s-5" . select-window-5)
-         ("s-6" . select-window-6)
-         ("M-0" . nil)
-         ("M-1" . nil)
-         ("M-2" . nil)
-         ("M-3" . nil)
-         ("M-4" . nil)
-         ("M-5" . nil)
-         ("M-6" . nil)
-         ("M-7" . nil)
-         ("M-8" . nil)
-         ("M-9" . nil))
+         ("s-6" . select-window-6))
+  :init
+  (let ((m window-numbering-keymap))
+    (define-key m "\M-0" nil)
+    (define-key m "\M-1" nil)
+    (define-key m "\M-2" nil)
+    (define-key m "\M-3" nil)
+    (define-key m "\M-4" nil)
+    (define-key m "\M-5" nil)
+    (define-key m "\M-6" nil)
+    (define-key m "\M-7" nil)
+    (define-key m "\M-8" nil)
+    (define-key m "\M-9" nil))
   :config
   (window-numbering-mode 1))
 

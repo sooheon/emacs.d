@@ -50,7 +50,10 @@
     ivy-hydra
     magit
     markdown-mode
+    markdown-toc
+    osx-dictionary
     packed
+    pandoc-mode
     popwin
     projectile
     py-yapf
