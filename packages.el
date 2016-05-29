@@ -20,9 +20,11 @@
     company
     company-anaconda
     counsel
+    counsel-projectile
     dash
     diff-hl
     diminish
+    dired+
     elisp-slime-nav
     emacsql
     epkg
@@ -70,6 +72,8 @@
     ws-butler
     zenburn-theme))
 
+(csetq package-selected-packages soo-packages)
+
 ;; Install required
 (dolist (package soo-packages)
   (unless (package-installed-p package)
@@ -80,7 +84,4 @@
 (save-window-excursion
   (package-list-packages t)
   (package-menu-mark-upgrades)
-  (condition-case nil
-      (package-menu-execute t)
-    (error
-     (package-menu-execute))))
+  (package-menu-execute t))

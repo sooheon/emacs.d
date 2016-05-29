@@ -229,25 +229,29 @@
 
 (use-package dired
   :commands dired-jump
-  :diminish dired-omit-mode
   :init
+  (delete ".elc" completion-ignored-extensions)
   (define-key evil-normal-state-map "-" 'dired-jump)
+  (defun soo--dired-setup ()
+    (setq dired-omit-verbose nil)
+    (setq dired-hide-details-hide-symlink-targets nil)
+    (dired-hide-details-mode t)
+    (dired-omit-mode t))
+  (add-hook 'dired-mode-hook 'soo--dired-setup)
   :config
   (setq dired-listing-switches "-alh")
-  (setq dired-omit-mode t)
-  (defvar dired-dotfiles-show-p t)
   (defun vinegar/dotfiles-toggle ()
     "Show/hide dot-files"
     (interactive)
     (when (equal major-mode 'dired-mode)
-      (if dired-dotfiles-show-p ; if currently showing
+      (if (or (not (boundp 'dired-dotfiles-show-p)) dired-dotfiles-show-p) ; if currently showing
           (progn
-            (setq dired-dotfiles-show-p nil)
+            (set (make-local-variable 'dired-dotfiles-show-p) nil)
             (message "h")
             (dired-mark-files-regexp "^\\\.")
             (dired-do-kill-lines))
-        (progn (revert-buffer)      ; otherwise just revert to re-show
-               (setq dired-dotfiles-show-p t)))))
+        (progn (revert-buffer)          ; otherwise just revert to re-show
+               (set (make-local-variable 'dired-dotfiles-show-p) t)))))
   (defun vinegar/dired-diff ()
     "Ediff marked files in dired or selected files in separate window"
     (interactive)
@@ -770,7 +774,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 (use-package projectile
   :diminish projectile-mode
   :defer 6
-  :commands (projectile
+  :commands (projectile-switch-project
              projectile-find-file
              projectile-find-dir
              projectile-dired
@@ -779,9 +783,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :bind (("C-c k" . counsel-projectile-ag))
   :init
   (evil-leader/set-key
-    "pp" 'projectile
-    "pb" 'projectile-switch-to-buffer
-    "pf" 'projectile-find-file
     "pd" 'projectile-find-dir
     "pD" 'projectile-dired
     "p!" 'projectile-run-shell-command-in-root
@@ -795,7 +796,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
     "pT" 'projectile-find-test-file
     "pP" 'projectile-test-project
     "pm" 'projectile-commander
-    "pr" 'projectile-recentf
     "/" 'counsel-projectile-ag)
   :config
   (projectile-global-mode)
@@ -808,10 +808,25 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
         projectile-create-missing-test-files t
         projectile-completion-system 'ivy))
 
+(use-package counsel-projectile
+  :after projectile
+  :init
+  (evil-leader/set-key
+    "pp" 'counsel-projectile
+    "pb" 'counsel-projectile-switch-to-buffer
+    "pd" 'counsel-projectile-find-dir
+    "pf" 'counsel-projectile-find-file
+    "pr" 'projectile-recentf
+    "ps" 'counsel-projectile))
+
 (use-package recentf
+  :demand t
+  :init
+  (setq recentf-max-saved-items 1000
+        recentf-auto-cleanup 'never)
   :config
-  (add-to-list 'recentf-exclude "^/\\(?:ssh\\|su\\|sudo\\)?:")
-  (setq recentf-max-saved-items 1000))
+  (recentf-mode 1)
+  (add-to-list 'recentf-exclude "^/\\(?:ssh\\|su\\|sudo\\)?:"))
 
 (use-package reveal-in-osx-finder
   :if (eq system-type 'darwin)
