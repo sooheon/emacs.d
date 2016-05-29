@@ -3,8 +3,7 @@
 (defvar before-user-init-time (current-time)
   "Value of `current-time' when Emacs begins loading `user-init-file'.")
 (message "Loading Emacs...done (%.3fs)"
-         (float-time (time-subtract before-user-init-time
-                                    before-init-time)))
+         (float-time (time-subtract before-user-init-time before-init-time)))
 (setq user-init-file (or load-file-name buffer-file-name))
 (setq emacs-d (file-name-directory user-init-file))
 (setq package-user-dir (expand-file-name "elpa" emacs-d))
@@ -821,7 +820,42 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
     "pr" 'projectile-recentf
     "ps" 'counsel-projectile)
   :config
-  (setq projectile-switch-project-action 'counsel-projectile-find-file))
+  (setq projectile-switch-project-action 'counsel-projectile-find-file)
+  (ivy-set-actions
+   'counsel-projectile
+   '(("d" (lambda (dir)
+            (let ((projectile-switch-project-action 'projectile-dired))
+              (projectile-switch-project-by-name dir arg)))
+      "find directory")
+     ("b" (lambda (dir)
+            (let ((projectile-switch-project-action 'counsel-projectile-switch-to-buffer))
+              (projectile-switch-project-by-name dir arg)))
+      "switch to buffer")
+     ("s" (lambda (dir)
+            (let ((projectile-switch-project-action 'projectile-save-project-buffers))
+              (projectile-switch-project-by-name dir arg)))
+      "save all buffers")
+     ("k" (lambda (dir)
+            (let ((projectile-switch-project-action 'projectile-kill-buffers))
+              (projectile-switch-project-by-name dir arg)))
+      "kill all buffers")
+     ("r" (lambda (dir)
+            (let ((projectile-switch-project-action
+                   'projectile-remove-current-project-from-known-projects))
+              (projectile-switch-project-by-name dir arg)))
+      "remove from known projects")
+     ("g" (lambda (dir)
+            (let ((projectile-switch-project-action 'projectile-vc))
+              (projectile-switch-project-by-name dir arg)))
+      "open in magit")
+     ("t" (lambda (dir)
+            (let ((projectile-switch-project-action (lambda () (projectile-run-term "/usr/local/bin/fish"))))
+              (projectile-switch-project-by-name dir arg)))
+      "start term for project")
+     ("a" (lambda (dir)
+            (let ((projectile-switch-project-action (lambda () (counsel-projectile-ag))))
+              (projectile-switch-project-by-name dir arg)))
+      "run ag in project"))))
 
 (use-package rainbow-delimiters
   :init
