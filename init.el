@@ -253,6 +253,7 @@
   (add-hook 'dired-mode-hook 'soo--dired-setup)
   :config
   (setq dired-listing-switches "-alh")
+  (defvar dired-dotfiles-show-p)
   (defun vinegar/dotfiles-toggle ()
     "Show/hide dot-files"
     (interactive)
@@ -289,7 +290,7 @@
              (ediff-files (nth 0 marked-files)
                           (nth 0 other-marked-files)))
             ((= (length marked-files) 1)
-             (dired-diff))
+             (call-interactively 'dired-diff))
             (t (error "Mark exactly 2 files, at least 1 locally")))))
   (evilified-state-evilify dired-mode dired-mode-map
     "j" 'dired-next-line
