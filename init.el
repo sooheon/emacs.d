@@ -45,7 +45,10 @@
 (add-hook 'server-switch-hook 'raise-frame)
 (csetq eval-expression-print-length nil)
 (csetq eval-expression-print-level nil)
-;; internals
+;; Shell
+(csetq shell-file-name "/usr/local/bin/bash")
+(csetq explicit-shell-file-name "/usr/local/bin/fish")
+;; Internals
 (csetq gc-cons-threshold (* 10 1024 1024))
 (csetq ad-redefinition-action 'accept)
 ;; Set PATHs--see: http://tinyurl.com/ctf9h3a
@@ -297,9 +300,11 @@
     "K" 'dired-do-kill-lines
     "r" 'revert-buffer
     (kbd "C-r") 'dired-do-redisplay
-    "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 2))
+    "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
     "gs" 'magit-status
     "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1))))
+
+(use-package dired+ :after dired :diminish dired-omit-mode)
 
 (use-package ediff
   :defer t
@@ -467,8 +472,8 @@
     "r" 'ivy-recentf
     "b" 'ivy-switch-buffer)
   :config
-  (setq ivy-use-virtual-buffers t
-        ivy-extra-directories '("./")
+  (with-eval-after-load 'recentf (setq ivy-use-virtual-buffers t))
+  (setq ivy-extra-directories '("./")
         ivy-count-format "%d "
         ivy-height 12
         ;; ivy-re-builders-alist '((t . ivy--regex-fuzzy))
@@ -592,7 +597,7 @@
   :defer t
   :diminish anaconda-mode
   :init
-  (setq anaconda-mode-installation-directory (concat emacs-d "etc/anaconda-mode"))
+  (setq anaconda-mode-installation-directory (expand-file-name "etc/anaconda-mode" emacs-d))
   (add-hook 'python-mode-hook 'anaconda-mode)
   :config
   (evil-define-key 'normal anaconda-mode-map "K" 'anaconda-mode-show-doc)
@@ -747,8 +752,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 (use-package shackle
   :config
   (shackle-mode 1)
-  (setq shackle-default-rule '(:select t)
-        shackle-rules '((compilation-mode :noselect t)
+  (setq shackle-rules '((compilation-mode :noselect t)
                         (help-mode :noselect t)
                         ("*undo-tree*" :size 0.3)
                         (woman-mode :popup t))))
@@ -845,7 +849,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
         shell-pop-window-height 30
         shell-pop-full-span t
         shell-pop-shell-type '("terminal" "*terminal*"
-                               (lambda () (term shell-file-name))))
+                               (lambda () (term explicit-shell-file-name))))
   :config
   (define-key term-raw-map (kbd "s-v") 'term-paste)
   (evil-define-key 'normal term-raw-map "p" 'term-paste))
