@@ -14,7 +14,7 @@
 
 ;; Theme
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" user-emacs-directory))
-(load-theme 'eclipse2 t)
+(load-theme 'zenburn t)
 ;; Font
 (ignore-errors (set-frame-font "Input Mono Narrow"))
 ;; Customize
@@ -310,7 +310,6 @@
   :defer t
   :diminish eldoc-mode
   :config
-  (global-eldoc-mode -1)
   (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode))
 
 (use-package elisp-slime-nav
@@ -579,10 +578,31 @@
   (define-key lispyville-mode-map "\M-p" 'lispyville-drag-backward))
 
 (use-package lpy
+  :disabled t
   :defer t
   :init
   (use-package soap :defer t)
   (add-hook 'python-mode-hook 'lpy-mode))
+
+(use-package anaconda-mode
+  :defer t
+  :diminish anaconda-mode
+  :init
+  (setq anaconda-mode-installation-directory (concat emacs-d "etc/anaconda-mode"))
+  (add-hook 'python-mode-hook 'anaconda-mode)
+  :config
+  (evil-define-key 'normal anaconda-mode-map "K" 'anaconda-mode-show-doc)
+  (evilified-state-evilify anaconda-mode-view-mode anaconda-mode-view-mode-map
+    (kbd "q") 'quit-window)
+  (defadvice anaconda-mode-goto (before python/anaconda-mode-goto activate)
+    (evil--jumps-push))
+  (require 'company-anaconda)
+  (add-to-list 'company-backends 'company-anaconda))
+
+(use-package py-yapf
+  :commands py-yapf-buffer
+  :init
+  (evil-leader/set-key-for-mode 'python-mode "=" 'py-yapf-buffer))
 
 (use-package magit
   :bind (("C-x g" . magit-status)
@@ -619,10 +639,17 @@
 (use-package org
   :defer 10
   :config
+  (setq org-export-backends '(html latex))
+  (add-to-list 'load-path (expand-file-name "lib/org/contrib/lisp/" emacs-d))
+  (require 'org-download)
+  (org-download-enable)
+  (require 'org-bullets)
+  (org-bullets-mode)
+  (require 'ox)
   (setq org-src-fontify-natively t
         org-startup-indented t
         org-adapt-indentation nil
-        org-preview-latex-default-process 'dvisvgm
+        org-preview-latex-default-process 'dvipng
         org-inhibit-startup-visibility-stuff nil)
   (fset 'latexify-line
         (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([95 105 36 escape 65 36 escape] 0 "%d")) arg)))
@@ -645,7 +672,8 @@
         org-src-tab-acts-natively t
         org-confirm-babel-evaluate nil
         geiser-default-implementation 'guile
-        org-babel-clojure-backend 'cider
+        org-babel-load-languages '((python . t)
+                                   (clojure . t))
         org-babel-default-header-args '((:session . "none")
                                         (:results . "replace")
                                         (:exports . "code")
@@ -700,7 +728,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 
 (use-package worf
   :diminish worf-mode
-  :defer t
+  :after org
   :init
   (add-hook 'org-mode-hook 'worf-mode)
   :config
@@ -773,7 +801,8 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   (projectile-global-mode)
   (defun counsel-projectile-ag ()
     (interactive)
-    (counsel-ag nil (projectile-project-root)))
+    (counsel-ag nil (or (ignore-errors (projectile-project-root))
+                        default-directory)))
   (setq projectile-enable-caching t
         projectile-sort-order 'recentf
         projectile-create-missing-test-files t
@@ -801,7 +830,10 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
         shell-pop-window-height 30
         shell-pop-full-span t
         shell-pop-shell-type '("terminal" "*terminal*"
-                               (lambda () (term shell-file-name)))))
+                               (lambda () (term shell-file-name))))
+  :config
+  (define-key term-raw-map (kbd "s-v") 'term-paste)
+  (evil-define-key 'normal term-raw-map "p" 'term-paste))
 
 (use-package smartparens
   :defer t

@@ -10,6 +10,7 @@
 (defconst soo-packages
   '(ace-link
     ample-theme
+    anaconda-mode
     auto-compile
     avy
     bind-map
@@ -17,6 +18,7 @@
     clojure-mode
     closql
     company
+    company-anaconda
     counsel
     dash
     diff-hl
@@ -48,6 +50,7 @@
     packed
     popwin
     projectile
+    py-yapf
     queue
     reveal-in-osx-finder
     shackle
