@@ -43,6 +43,7 @@
     flycheck
     flyspell-correct
     git-modes
+    highlight-escape-sequences
     hydra
     iedit
     ivy

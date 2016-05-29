@@ -434,6 +434,11 @@
 
 (use-package help :config (setq help-window-select t))
 
+(use-package highlight-escape-sequences
+  :defer
+  :init
+  (add-hook 'prog-mode-hook 'hes-mode))
+
 (use-package info :config (evil-leader/set-key "hi" 'info))
 
 (use-package counsel
