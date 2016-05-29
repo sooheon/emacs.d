@@ -874,24 +874,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
                         ("*undo-tree*" :size 0.3)
                         (woman-mode :popup t))))
 
-(use-package popwin
-  :disabled t
-  :config
-  (popwin-mode 1)
-  (setq popwin:special-display-config nil)
-  (evil-leader/set-key
-    "wpm" 'popwin:messages
-    "wpp" 'popwin:close-popup-window)
-  (push '("*Help*"                 :dedicated t :position bottom :stick t :noselect t :height 0.4) popwin:special-display-config)
-  (push '("*compilation*"          :dedicated t :position bottom :stick t :noselect t :height 0.4) popwin:special-display-config)
-  (push '("*Shell Command Output*" :dedicated t :position bottom :stick t :noselect nil) popwin:special-display-config)
-  (push '("*Async Shell Command*"  :dedicated t :position bottom :stick t :noselect nil) popwin:special-display-config)
-  (push '(" *undo-tree*"           :dedicated t :position bottom :stick t :noselect nil :height 0.4) popwin:special-display-config)
-  (push '("*ert*"                  :dedicated t :position bottom :stick t :noselect nil) popwin:special-display-config)
-  (push '("*grep*"                 :dedicated t :position bottom :stick t :noselect nil) popwin:special-display-config)
-  (push '("*nosetests*"            :dedicated t :position bottom :stick t :noselect nil) popwin:special-display-config)
-  (push '("^\*WoMan.+\*$"          :regexp t :position bottom) popwin:special-display-config))
-
 (use-package projectile
   :diminish projectile-mode
   :defer 6

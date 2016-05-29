@@ -54,7 +54,6 @@
     osx-dictionary
     packed
     pandoc-mode
-    popwin
     projectile
     py-yapf
     queue
