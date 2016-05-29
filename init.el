@@ -450,10 +450,7 @@
 (use-package highlight-escape-sequences
   :defer
   :init
-  (add-hook 'prog-mode-hook 'hes-mode)
-  :config
-  (put 'hes-escape-sequence-face 'face-alias
-       'font-lock-regexp-grouping-backslash))
+  (add-hook 'prog-mode-hook 'hes-mode))
 
 (use-package info :config (evil-leader/set-key "hi" 'info))
 
