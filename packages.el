@@ -49,6 +49,7 @@
     ivy
     ivy-hydra
     magit
+    markdown-mode
     packed
     popwin
     projectile
