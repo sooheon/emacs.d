@@ -220,7 +220,8 @@
   :config
   (setq cider-repl-pop-to-buffer-on-connect nil
         cider-prompt-save-file-on-load nil
-        cider-repl-use-clojure-font-lock t)
+        cider-repl-use-clojure-font-lock t
+        cider-mode-line '(:eval (format " [%s]" (cider--modeline-info))))
   ;; (defadvice cider-jump-to-var (before add-evil-jump activate)
   ;;   (evil-set-jump))
   (add-hook 'cider-mode-hook 'eldoc-mode))
