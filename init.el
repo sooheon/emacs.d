@@ -387,6 +387,7 @@
   (global-evil-matchit-mode))
 
 (use-package evil-multiedit
+  :disabled t
   :commands (evil-multiedit-match-symbol-and-next
              evil-multiedit-match-symbol-and-prev
              evil-multiedit-match-and-prev
@@ -518,8 +519,8 @@
   (setq ivy-extra-directories '("./")
         ivy-count-format "%d "
         ivy-height 12
-        ;; ivy-re-builders-alist '((t . ivy--regex-fuzzy))
-        ;; ivy-initial-inputs-alist nil
+        ivy-re-builders-alist '((t . ivy--regex-fuzzy))
+        ivy-initial-inputs-alist nil
         ivy-action-wrap t)
   (ivy-mode 1)
   (let ((m ivy-minibuffer-map))
@@ -581,7 +582,9 @@
         lispy-avy-style-paren 'at-full
         lispy-avy-style-symbol 'at-full
         lispy-delete-backward-recenter nil
-        lispy-safe-paste t)
+        lispy-safe-paste t
+        lispy-safe-copy t
+        lispy-safe-delete t)
   (lispy-set-key-theme '(special
                          c-digits
                          paredit))
