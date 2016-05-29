@@ -134,7 +134,7 @@
   :config
   (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                            ("gnu" . "http://elpa.gnu.org/packages/")))
-  (evil-leader/set-key "ap" 'package-list-packages))
+  (evil-leader/set-key "ak" 'package-list-packages))
 
 (use-package custom
   :config
@@ -314,7 +314,30 @@
     (kbd "C-r") 'dired-do-redisplay
     "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
     "gs" 'magit-status
-    "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1))))
+    "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1)))
+  ;; Use rsync in dired: http://oremacs.com/2016/02/24/dired-rsync/
+  (defun ora-dired-rsync (dest)
+    (interactive (list (expand-file-name
+                        (read-file-name
+                         "Rsync to:"
+                         (dired-dwim-target-directory)))))
+    (let ((files (dired-get-marked-files nil current-prefix-arg))
+          (tmtxt/rsync-command "rsync -arvz --progress "))
+      ;; Add all selected file names as arguments to the rsync command
+      (dolist (file files)
+        (setq tmtxt/rsync-command
+              (concat tmtxt/rsync-command
+                      (shell-quote-argument file)
+                      " ")))
+      ;; Append the destination
+      (setq tmtxt/rsync-command
+            (concat tmtxt/rsync-command
+                    (shell-quote-argument dest)))
+      ;; Run the async shell command
+      (async-shell-command tmtxt/rsync-command "*rsync*")
+      ;; Finally, switch to that window
+      (other-window 1)))
+  (define-key dired-mode-map "Y" 'ora-dired-rsync))
 
 (use-package dired+ :after dired :diminish dired-omit-mode)
 
@@ -465,6 +488,7 @@
          ([remap load-library] . counsel-load-library)
          ([remap yank-pop] . counsel-yank-pop)
          ([remap info-lookup-symbol] . counsel-info-lookup-symbol)
+         ([remap menu-bar-open] . counsel-tmm)
          ("C-c g" . counsel-git)
          ("C-c j" . counsel-git-grep)
          ("C-x l" . counsel-locate))
@@ -473,7 +497,8 @@
     "hv" 'counsel-describe-variable
     "hf" 'counsel-describe-function
     "f" 'counsel-find-file
-    "Th" 'counsel-load-theme)
+    "Th" 'counsel-load-theme
+    "ap" 'counsel-list-processes)
   (define-key evil-normal-state-map "\M-y" 'counsel-yank-pop))
 
 (use-package swiper
