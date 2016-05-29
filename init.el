@@ -1074,7 +1074,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
          ("s-4" . select-window-4)
          ("s-5" . select-window-5)
          ("s-6" . select-window-6))
-  :init
+  :config
   (let ((m window-numbering-keymap))
     (define-key m "\M-0" nil)
     (define-key m "\M-1" nil)
@@ -1086,7 +1086,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
     (define-key m "\M-7" nil)
     (define-key m "\M-8" nil)
     (define-key m "\M-9" nil))
-  :config
   (window-numbering-mode 1))
 
 (use-package winner
