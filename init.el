@@ -190,6 +190,18 @@
   :defer 2
   :diminish (company-mode . "co")
   :config
+  (setq company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
+                            company-preview-if-just-one-frontend))
+  (setq company-backends '(company-elisp
+                           company-css
+                           ;; company-semantic
+                           company-capf
+                           (company-dabbrev-code
+                            company-gtags
+                            company-etags
+                            company-keywords)
+                           company-files
+                           company-dabbrev))
   (setq company-idle-delay 0.2
         company-minimum-prefix-length 2)
   (global-company-mode)
