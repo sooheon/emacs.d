@@ -2,9 +2,8 @@
   "The giant turtle on whose shell the world rests.")
 (setq package-user-dir (expand-file-name "elpa" emacs-d))
 (package-initialize)
-(setq package-archives
-      '(("melpa" . "http://melpa.org/packages/")
-        ("gnu" . "http://elpa.gnu.org/packages/")))
+(setq package-archives '(("melpa" . "http://melpa.org/packages/")
+                         ("gnu" . "http://elpa.gnu.org/packages/")))
 (package-refresh-contents)
 
 (defconst soo-packages
@@ -54,6 +53,7 @@
     projectile
     py-yapf
     queue
+    rainbow-delimiters
     reveal-in-osx-finder
     shackle
     shell-pop

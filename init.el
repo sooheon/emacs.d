@@ -133,9 +133,8 @@
 
 (use-package package
   :config
-  (setq package-archives
-      '(("melpa" . "http://melpa.org/packages/")
-        ("gnu" . "http://elpa.gnu.org/packages/")))
+  (setq package-archives '(("melpa" . "http://melpa.org/packages/")
+                           ("gnu" . "http://elpa.gnu.org/packages/")))
   (evil-leader/set-key "ap" 'package-list-packages))
 
 (use-package custom
@@ -643,7 +642,9 @@
     :config
     (evil-define-key 'normal magit-status-mode-map
       "n" 'magit-section-forward
-      "p" 'magit-section-backward)))
+      "p" 'magit-section-backward
+      "\C-n" 'next-line
+      "\C-p" 'previous-line)))
 
 (use-package org
   :defer 10
@@ -822,6 +823,10 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :config
   (setq projectile-switch-project-action 'counsel-projectile-find-file))
 
+(use-package rainbow-delimiters
+  :init
+  (add-hook 'smartparens-mode-hook #'rainbow-delimiters-mode))
+
 (use-package recentf
   :demand t
   :init
@@ -869,7 +874,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :config
   (require 'smartparens-config)
   (show-smartparens-global-mode 1)
-  ;; Don't pair single quote in minibuffer
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
   (let ((m smartparens-mode-map))
     (define-key m (kbd "M-a") 'sp-beginning-of-sexp)
