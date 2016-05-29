@@ -746,9 +746,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
     "\[" nil
     "\]" nil))
 
-(use-package paren
-  :config (show-paren-mode))
-
 (use-package shackle
   :config
   (shackle-mode 1)
@@ -821,7 +818,9 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
     "pd" 'counsel-projectile-find-dir
     "pf" 'counsel-projectile-find-file
     "pr" 'projectile-recentf
-    "ps" 'counsel-projectile))
+    "ps" 'counsel-projectile)
+  :config
+  (setq projectile-switch-project-action 'counsel-projectile-find-file))
 
 (use-package recentf
   :demand t
@@ -870,6 +869,8 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :config
   (require 'smartparens-config)
   (show-smartparens-global-mode 1)
+  ;; Don't pair single quote in minibuffer
+  (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
   (let ((m smartparens-mode-map))
     (define-key m (kbd "M-a") 'sp-beginning-of-sexp)
     (define-key m (kbd "M-e") 'sp-end-of-sexp)
