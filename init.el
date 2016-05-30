@@ -725,36 +725,36 @@
       "\C-p" 'previous-line)))
 
 (use-package markdown-mode
-    :mode ("\\.m[k]d" . markdown-mode)
-    :defer t
-    :config
-    ;; Insert key for org-mode and markdown a la C-h k
-    ;; from SE endless http://emacs.stackexchange.com/questions/2206/i-want-to-have-the-kbd-tags-for-my-blog-written-in-org-mode/2208#2208
-    (defun spacemacs/insert-keybinding-markdown (key)
-      "Ask for a key then insert its description.
+  :mode ("\\.m[k]d" . markdown-mode)
+  :defer t
+  :config
+  ;; Insert key for org-mode and markdown a la C-h k
+  ;; from SE endless http://emacs.stackexchange.com/questions/2206/i-want-to-have-the-kbd-tags-for-my-blog-written-in-org-mode/2208#2208
+  (defun spacemacs/insert-keybinding-markdown (key)
+    "Ask for a key then insert its description.
 Will work on both org-mode and any mode that accepts plain html."
-      (interactive "kType key sequence: ")
-      (let* ((tag "~%s~"))
-        (if (null (equal key "\r"))
-            (insert
-             (format tag (help-key-description key nil)))
-          (insert (format tag ""))
-          (forward-char -6))))
+    (interactive "kType key sequence: ")
+    (let* ((tag "~%s~"))
+      (if (null (equal key "\r"))
+          (insert
+           (format tag (help-key-description key nil)))
+        (insert (format tag ""))
+        (forward-char -6))))
 
-    ;; Header navigation in normal state movements
-    (evil-define-key 'normal markdown-mode-map
-      "gj" 'outline-forward-same-level
-      "gk" 'outline-backward-same-level
-      "gh" 'outline-up-heading
-      ;; next visible heading is not exactly what we want but close enough
-      "gl" 'outline-next-visible-heading)
+  ;; Header navigation in normal state movements
+  (evil-define-key 'normal markdown-mode-map
+    "gj" 'outline-forward-same-level
+    "gk" 'outline-backward-same-level
+    "gh" 'outline-up-heading
+    ;; next visible heading is not exactly what we want but close enough
+    "gl" 'outline-next-visible-heading)
 
-    ;; Promotion, Demotion
-    ;; (define-key markdown-mode-map "\M-h" 'markdown-promote)
-    ;; (define-key markdown-mode-map "\M-j" 'markdown-move-down)
-    ;; (define-key markdown-mode-map "\M-k" 'markdown-move-up)
-    ;; (define-key markdown-mode-map "\M-l" 'markdown-demote)
-    )
+  ;; Promotion, Demotion
+  ;; (define-key markdown-mode-map "\M-h" 'markdown-promote)
+  ;; (define-key markdown-mode-map "\M-j" 'markdown-move-down)
+  ;; (define-key markdown-mode-map "\M-k" 'markdown-move-up)
+  ;; (define-key markdown-mode-map "\M-l" 'markdown-demote)
+  )
 
 (use-package multiple-cursors
   :defer t
