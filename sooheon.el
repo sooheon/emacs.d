@@ -54,3 +54,18 @@ point reaches the beginning or end of the buffer, stop there."
       (call-interactively 'delete-window))))
 
 (bind-key "s-w" #'soo--delete-window-or-bury-buffer)
+
+(defun soo--terminal-pop ()
+  (interactive)
+  (do-applescript
+   (format "
+tell application \"Terminal\"
+  activate
+  tell application \"System Events\" to keystroke \"t\" using {command down}
+  delay 0.2
+  do script with command \"cd %s\" in window 1
+end tell
+"
+           default-directory)))
+
+(bind-key "C-`" #'soo--terminal-pop)
