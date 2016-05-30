@@ -24,6 +24,7 @@
 (csetq menu-bar-mode nil)
 (csetq inhibit-startup-screen t)
 (csetq initial-scratch-message "")
+(csetq initial-major-mode 'emacs-lisp-mode)
 (csetq load-prefer-newer t)
 (csetq create-lockfiles nil) ; Don't create #foo.file#
 (csetq fill-column 80)
