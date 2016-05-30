@@ -485,10 +485,12 @@
   (setq speck-hunspell-coding-system 'utf-8
         speck-hunspell-dictionary-alist '(("en" . "en_US"))
         speck-hunspell-default-dictionary-name "en"
-        speck-hunspell-library-directory "/Library/Spelling/"
-        speck-syntactic t)
+        speck-hunspell-library-directory "/Library/Spelling/")
   (add-hook 'text-mode-hook 'speck-mode)
-  (add-hook 'prog-mode-hook 'speck-mode))
+  (defun soo--speck-prog-hook ()
+    (set (make-local-variable 'speck-syntactic) t)
+    (speck-mode))
+  (add-hook 'prog-mode-hook 'soo--speck-prog-hook))
 
 (use-package flx :after ivy)
 
@@ -799,7 +801,7 @@ Will work on both org-mode and any mode that accepts plain html."
   ;; Keybinds
   (evil-define-key 'normal org-mode-map
     [C-return] (lambda () (interactive) (org-insert-heading-respect-content) (evil-append 1))
-    [M-return] (lambda () (interactive) (org-meta-return) (evil-append 1))
+    [M-return] (lambda () (interactive) (move-end-of-line nil) (org-meta-return) (evil-append 1))
     [return] 'org-open-at-point
     "t" 'org-todo
     "$" 'org-end-of-line
@@ -809,7 +811,9 @@ Will work on both org-mode and any mode that accepts plain html."
     ">" 'org-metaright
     "\M-n" 'org-metadown
     "\M-p" 'org-metaup)
-  (evil-define-key 'insert org-mode-map "\C-j" 'org-return)
+  (evil-define-key 'insert org-mode-map
+    "\C-j" 'org-return
+    "\M-j" 'org-meta-return)
   ;; Org Babel
   (setq org-edit-src-content-indentation 0
         org-src-tab-acts-natively t
