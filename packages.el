@@ -29,6 +29,7 @@
     epkg
     evil
     evil-commentary
+    evil-cleverparens
     evil-leader
     evil-magit
     evil-matchit

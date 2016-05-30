@@ -379,6 +379,15 @@
   :config
   (evil-commentary-mode))
 
+(use-package evil-cleverparens-text-objects
+  :config
+  (define-key evil-outer-text-objects-map "f" #'evil-cp-a-form)
+  (define-key evil-inner-text-objects-map "f" #'evil-cp-inner-form)
+  (define-key evil-outer-text-objects-map "c" #'evil-cp-a-comment)
+  (define-key evil-inner-text-objects-map "c" #'evil-cp-inner-comment)
+  (define-key evil-outer-text-objects-map "d" #'evil-cp-a-defun)
+  (define-key evil-inner-text-objects-map "d" #'evil-cp-inner-defun))
+
 (use-package evil-matchit
   :commands (evilmi-jump-items)
   :init
