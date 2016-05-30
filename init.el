@@ -639,6 +639,7 @@
   (define-key evil-normal-state-map "\M-k" nil))
 
 (use-package lispyville
+  :after lispy
   :diminish lispyville-mode
   :commands (lispyville-delete
              lispyville-delete-char-or-splice

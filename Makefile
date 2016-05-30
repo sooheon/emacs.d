@@ -43,8 +43,8 @@ pull:
 	git submodule update
 
 upgrade: pull
-	cd $(BASEDIR) && $(emacs) -batch -l packages.el
 	cd lib/org && make compile && make autoloads
+	cd $(BASEDIR) && $(emacs) -batch -l packages.el
 	make build
 
 .PHONY: all help build quick pull upgrade

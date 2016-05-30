@@ -77,7 +77,7 @@
     ws-butler
     zenburn-theme))
 
-(csetq package-selected-packages soo-packages)
+(setq package-selected-packages soo-packages)
 
 ;; Install required
 (dolist (package soo-packages)
