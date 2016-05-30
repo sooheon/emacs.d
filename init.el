@@ -53,7 +53,6 @@
 ;; Set PATHs--see: http://tinyurl.com/ctf9h3a
 (setenv "MANPATH" "/usr/local/opt/coreutils/libexec/gnuman:/usr/local/opt/findutils/libexec/gnuman:/usr/local/share/man")
 (setenv "PATH" "/usr/local/Cellar/pyenv-virtualenv/20160315/shims:/Users/sooheon/.pyenv/shims:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Library/TeX/texbin")
-(setenv "DICPATH" "/Library/Spelling/")
 (setq exec-path '("/usr/local/Cellar/pyenv-virtualenv/20160315/shims" "/Users/sooheon/.pyenv/shims" "/usr/local/opt/coreutils/libexec/gnubin" "/usr/local/opt/findutils/libexec/gnubin" "/usr/local/bin" "/usr/bin" "/bin" "/usr/sbin" "/sbin" "/opt/X11/bin" "/Library/TeX/texbin" "/usr/local/Cellar/emacs/HEAD/libexec/emacs/25.1.50/x86_64-apple-darwin15.5.0"))
 
 ;; borg
@@ -465,15 +464,12 @@
         flycheck-global-modes nil))
 
 (use-package ispell
-  :disabled t
   :init
-  (setq ispell-program-name (executable-find "aspell")
-        ;; ispell-local-dictionary "en_US"
-        ;; ispell-local-dictionary-alist '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8))
-        ))
+  (setenv "DICTIONARY" "en_US")
+  ;; (setenv "DICPATH" "/Library/Spelling/")
+  (setq ispell-program-name (executable-find "hunspell")))
 
 (use-package flyspell
-  :disabled t
   :defer t
   :diminish flyspell-mode
   :init
@@ -487,7 +483,7 @@
   (setq flyspell-correct-interface 'flyspell-correct-ivy))
 
 (use-package speck
-  :ensure t
+  :disabled t
   :defer t
   :commands speck-mode
   :init
