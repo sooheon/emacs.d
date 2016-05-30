@@ -525,7 +525,8 @@
   (setq speck-hunspell-coding-system 'utf-8
         speck-hunspell-dictionary-alist '(("en" . "en_US"))
         speck-hunspell-default-dictionary-name "en"
-        speck-hunspell-library-directory "/Library/Spelling/")
+        speck-hunspell-library-directory "/Library/Spelling/"
+        speck-hunspell-minimum-word-length 3)
   (add-hook 'text-mode-hook 'speck-mode)
   (defun soo--speck-prog-hook ()
     (set (make-local-variable 'speck-syntactic) t)
