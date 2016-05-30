@@ -13,7 +13,7 @@
 
 ;; Theme
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" user-emacs-directory))
-(load-theme 'eclipse2 t)
+(load-theme 'zenburn t)
 ;; Font
 (ignore-errors (set-frame-font "Input Mono Narrow"))
 ;; Customize
@@ -230,8 +230,6 @@
   :defer t
   :mode ("\\.boot\\'" . clojure-mode)
   :interpreter ("!.*boot\\s-*" . clojure-mode))
-
-(use-package dash :config (dash-enable-font-lock))
 
 (use-package diff-hl
   :defer 5
@@ -1058,7 +1056,9 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 
 (use-package smex :defer t :config (setq smex-history-length 32))
 
-(use-package simple :config (column-number-mode))
+(use-package simple
+  :diminish visual-line-mode
+  :config (column-number-mode))
 
 (use-package tramp
   :defer t
@@ -1076,7 +1076,11 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :init
   (global-undo-tree-mode)
   :config
-  (setq undo-tree-visualizer-timestamps t))
+  (setq undo-tree-visualizer-timestamps t
+        undo-tree-visualizer-diff t
+        undo-tree-auto-save-history t
+        undo-tree-history-directory-alist
+        `(("." . ,(expand-file-name "var" emacs-d)))))
 
 (use-package which-key
   :diminish which-key-mode
