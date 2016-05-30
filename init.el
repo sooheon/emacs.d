@@ -80,7 +80,39 @@
                 evil-disable-insert-state-bindings t)
   :config
   (evil-mode 1)
-  (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word))
+  (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word)
+  (defmacro spacemacs|define-text-object (key name start end)
+    (let ((inner-name (make-symbol (concat "evil-inner-" name)))
+          (outer-name (make-symbol (concat "evil-outer-" name)))
+          (start-regex (regexp-opt (list start)))
+          (end-regex (regexp-opt (list end))))
+      `(progn
+         (evil-define-text-object ,inner-name (count &optional beg end type)
+           (evil-select-paren ,start-regex ,end-regex beg end type count nil))
+         (evil-define-text-object ,outer-name (count &optional beg end type)
+           (evil-select-paren ,start-regex ,end-regex beg end type count t))
+         (define-key evil-inner-text-objects-map ,key (quote ,inner-name))
+         (define-key evil-outer-text-objects-map ,key (quote ,outer-name))
+         (with-eval-after-load 'evil-surround
+           (push (cons (string-to-char ,key)
+                       (if ,end
+                           (cons ,start ,end)
+                         ,start))
+                 evil-surround-pairs-alist)))))
+  ;; define text objects
+  (spacemacs|define-text-object "$" "dollar" "$" "$")
+  (spacemacs|define-text-object "*" "star" "*" "*")
+  ;; (spacemacs|define-text-object "8" "block-star" "/*" "*/")
+  ;; (spacemacs|define-text-object "|" "bar" "|" "|")
+  (spacemacs|define-text-object "%" "percent" "%" "%")
+  ;; (spacemacs|define-text-object "/" "slash" "/" "/")
+  ;; (spacemacs|define-text-object "_" "underscore" "_" "_")
+  ;; (spacemacs|define-text-object "-" "hyphen" "-" "-")
+  (spacemacs|define-text-object "~" "tilde" "~" "~")
+  (spacemacs|define-text-object "=" "equal" "=" "=")
+  (evil-define-text-object evil-inner-buffer (count &optional beg end type)
+    (list (point-min) (point-max)))
+  (define-key evil-inner-text-objects-map "g" 'evil-inner-buffer))
 
 (use-package evil-leader
   :init
@@ -439,7 +471,9 @@
   (global-evil-surround-mode 1)
   (evil-define-key 'visual evil-surround-mode-map "s" 'evil-surround-region)
   (evil-define-key 'visual evil-surround-mode-map "gs" 'evil-Surround-region)
-  (evil-define-key 'visual evil-surround-mode-map "S" 'evil-substitute))
+  (evil-define-key 'visual evil-surround-mode-map "S" 'evil-substitute)
+  (add-hook 'emacs-lisp-mode-hook (lambda ()
+                                    (push '(?` . ("`" . "'")) evil-surround-pairs-alist))))
 
 (use-package evil-snipe
   :diminish evil-snipe-local-mode
