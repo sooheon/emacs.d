@@ -13,7 +13,7 @@
 
 ;; Theme
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" user-emacs-directory))
-(load-theme 'zenburn t)
+(load-theme 'eclipse2 t)
 ;; Font
 (ignore-errors (set-frame-font "Input Mono Narrow"))
 ;; Customize
@@ -53,6 +53,7 @@
 ;; Set PATHs--see: http://tinyurl.com/ctf9h3a
 (setenv "MANPATH" "/usr/local/opt/coreutils/libexec/gnuman:/usr/local/opt/findutils/libexec/gnuman:/usr/local/share/man")
 (setenv "PATH" "/usr/local/Cellar/pyenv-virtualenv/20160315/shims:/Users/sooheon/.pyenv/shims:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Library/TeX/texbin")
+(setenv "DICPATH" "/Library/Spelling/")
 (setq exec-path '("/usr/local/Cellar/pyenv-virtualenv/20160315/shims" "/Users/sooheon/.pyenv/shims" "/usr/local/opt/coreutils/libexec/gnubin" "/usr/local/opt/findutils/libexec/gnubin" "/usr/local/bin" "/usr/bin" "/bin" "/usr/sbin" "/sbin" "/opt/X11/bin" "/Library/TeX/texbin" "/usr/local/Cellar/emacs/HEAD/libexec/emacs/25.1.50/x86_64-apple-darwin15.5.0"))
 
 ;; borg
@@ -134,7 +135,7 @@
   :config
   (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                            ("gnu" . "http://elpa.gnu.org/packages/")))
-  (evil-leader/set-key "ak" 'package-list-packages))
+  (evil-leader/set-key "ap" 'package-list-packages))
 
 (use-package custom
   :config
@@ -386,32 +387,32 @@
   :config
   (global-evil-matchit-mode))
 
-(use-package evil-multiedit
-  :disabled t
-  :commands (evil-multiedit-match-symbol-and-next
-             evil-multiedit-match-symbol-and-prev
-             evil-multiedit-match-and-prev
-             evil-multiedit-match-and-next
-             evil-multiedit-prev
-             evil-multiedit-next)
-  :init
-  (let ((map evil-normal-state-map))
-    (define-key map (kbd "s-d") 'evil-multiedit-match-symbol-and-next)
-    (define-key map (kbd "s-D") 'evil-multiedit-match-symbol-and-prev))
-  (let ((map evil-visual-state-map))
-    (define-key map (kbd "s-d") 'evil-multiedit-match-and-next)
-    (define-key map (kbd "s-D") 'evil-multiedit-match-and-prev)
-    (define-key map (kbd "C-s-D") 'evil-multiedit-restore)
-    (define-key map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
-    (define-key map "R" 'evil-multiedit-match-all))
-  :config
-  (let ((map evil-multiedit-state-map))
-    (define-key map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
-    (define-key map (kbd "C-n") 'evil-multiedit-next)
-    (define-key map (kbd "C-p") 'evil-multiedit-prev))
-  (let ((map evil-multiedit-insert-state-map))
-    (define-key map (kbd "C-n") 'evil-multiedit-next)
-    (define-key map (kbd "C-p") 'evil-multiedit-prev)))
+;; (use-package evil-multiedit
+;;   :disabled t
+;;   :commands (evil-multiedit-match-symbol-and-next
+;;              evil-multiedit-match-symbol-and-prev
+;;              evil-multiedit-match-and-prev
+;;              evil-multiedit-match-and-next
+;;              evil-multiedit-prev
+;;              evil-multiedit-next)
+;;   :init
+;;   (let ((map evil-normal-state-map))
+;;     (define-key map (kbd "s-d") 'evil-multiedit-match-symbol-and-next)
+;;     (define-key map (kbd "s-D") 'evil-multiedit-match-symbol-and-prev))
+;;   (let ((map evil-visual-state-map))
+;;     (define-key map (kbd "s-d") 'evil-multiedit-match-and-next)
+;;     (define-key map (kbd "s-D") 'evil-multiedit-match-and-prev)
+;;     (define-key map (kbd "C-s-D") 'evil-multiedit-restore)
+;;     (define-key map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+;;     (define-key map "R" 'evil-multiedit-match-all))
+;;   :config
+;;   (let ((map evil-multiedit-state-map))
+;;     (define-key map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+;;     (define-key map (kbd "C-n") 'evil-multiedit-next)
+;;     (define-key map (kbd "C-p") 'evil-multiedit-prev))
+;;   (let ((map evil-multiedit-insert-state-map))
+;;     (define-key map (kbd "C-n") 'evil-multiedit-next)
+;;     (define-key map (kbd "C-p") 'evil-multiedit-prev)))
 
 (use-package evil-textobj-anyblock
   :config
@@ -454,19 +455,40 @@
   (setq flycheck-standard-error-navigation nil
         flycheck-global-modes nil))
 
+(use-package ispell
+  :disabled t
+  :init
+  (setq ispell-program-name (executable-find "aspell")
+        ;; ispell-local-dictionary "en_US"
+        ;; ispell-local-dictionary-alist '(("en_US" "[[:alpha:]]" "[^[:alpha:]]" "[']" nil ("-d" "en_US") nil utf-8))
+        ))
+
 (use-package flyspell
   :disabled t
   :defer t
   :diminish flyspell-mode
   :init
-  (add-hook 'text-mode-hook 'flyspell-mode))
+  (add-hook 'text-mode-hook 'flyspell-mode)
+  (add-hook 'prog-mode-hook 'flyspell-prog-mode))
 
 (use-package flyspell-correct
-  :disabled t
-  :defer t
-  :bind (("C-;" . flyspell-correct-word-generic))
+  :after flyspell
   :config
+  (define-key flyspell-mode-map (kbd "C-;") 'flyspell-correct-word-generic)
   (setq flyspell-correct-interface 'flyspell-correct-ivy))
+
+(use-package speck
+  :ensure t
+  :defer t
+  :commands speck-mode
+  :init
+  (setq speck-hunspell-coding-system 'utf-8
+        speck-hunspell-dictionary-alist '(("en" . "en_US"))
+        speck-hunspell-default-dictionary-name "en"
+        speck-hunspell-library-directory "/Library/Spelling/"
+        speck-syntactic t)
+  (add-hook 'text-mode-hook 'speck-mode)
+  (add-hook 'prog-mode-hook 'speck-mode))
 
 (use-package flx :after ivy)
 
@@ -476,6 +498,8 @@
   :defer
   :init
   (add-hook 'prog-mode-hook 'hes-mode))
+
+(use-package iedit :defer t :init (setq iedit-toggle-key-default nil))
 
 (use-package info :config (evil-leader/set-key "hi" 'info))
 
@@ -499,7 +523,7 @@
     "hf" 'counsel-describe-function
     "f" 'counsel-find-file
     "Th" 'counsel-load-theme
-    "ap" 'counsel-list-processes)
+    "aP" 'counsel-list-processes)
   (define-key evil-normal-state-map "\M-y" 'counsel-yank-pop))
 
 (use-package swiper
@@ -519,8 +543,8 @@
   (setq ivy-extra-directories '("./")
         ivy-count-format "%d "
         ivy-height 12
-        ivy-re-builders-alist '((t . ivy--regex-fuzzy))
-        ivy-initial-inputs-alist nil
+        ;; ivy-re-builders-alist '((t . ivy--regex-fuzzy))
+        ;; ivy-initial-inputs-alist nil
         ivy-action-wrap t)
   (ivy-mode 1)
   (let ((m ivy-minibuffer-map))
@@ -754,6 +778,8 @@ Will work on both org-mode and any mode that accepts plain html."
 
 (use-package org
   :defer 10
+  :init
+  (add-hook 'org-mode-hook 'visual-line-mode)
   :config
   (setq org-export-backends '(html latex))
   (add-to-list 'load-path (expand-file-name "lib/org/contrib/lisp/" emacs-d))

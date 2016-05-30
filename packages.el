@@ -65,6 +65,7 @@
     smex
     solarized-theme
     spacemacs-theme
+    speck
     spinner
     swiper
     undo-tree

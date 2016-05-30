@@ -12,7 +12,7 @@
  '(magit-branch-arguments nil)
  '(package-selected-packages
    (quote
-    (markdown-mode highlight-escape-sequences rainbow-delimiters counsel-projectile dired+ zenburn-theme ws-butler worf window-numbering which-key use-package spacemacs-theme solarized-theme smex smartparens shell-pop shackle reveal-in-osx-finder projectile popwin flyspell-correct flycheck flx evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-multiedit evil-matchit evil-magit evil-leader evil-commentary epkg elisp-slime-nav diff-hl counsel company cider bind-map auto-compile ample-theme)))
+    (speck iedit osx-dictionary markdown-toc pandoc-mode markdown-mode highlight-escape-sequences rainbow-delimiters counsel-projectile dired+ zenburn-theme ws-butler worf window-numbering which-key use-package spacemacs-theme solarized-theme smex smartparens shell-pop shackle reveal-in-osx-finder projectile flyspell-correct flycheck flx evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-matchit evil-magit evil-leader evil-commentary epkg elisp-slime-nav diff-hl counsel company cider bind-map auto-compile ample-theme)))
  '(ring-bell-function (quote ignore))
  '(solarized-distinct-doc-face t)
  '(solarized-high-contrast-mode-line t)
