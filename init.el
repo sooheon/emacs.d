@@ -535,7 +535,10 @@
 
 (use-package flx :after ivy)
 
-(use-package help :config (setq help-window-select t))
+(use-package help
+  :config
+  (setq help-window-select t)
+  (evil-set-initial-state 'help-mode 'emacs))
 
 (use-package highlight-escape-sequences
   :defer
@@ -936,6 +939,10 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
     "\C-j" nil
     "\[" nil
     "\]" nil))
+
+(use-package woman
+  :defer t
+  :config (evil-set-initial-state 'woman-mode 'emacs))
 
 (use-package shackle
   :config
