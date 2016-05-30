@@ -496,26 +496,28 @@
         flycheck-global-modes nil))
 
 (use-package ispell
+  :disabled t
   :init
   (setenv "DICTIONARY" "en_US")
-  ;; (setenv "DICPATH" "/Library/Spelling/")
   (setq ispell-program-name (executable-find "hunspell")))
 
 (use-package flyspell
+  :disabled t
   :defer t
   :diminish flyspell-mode
+  :bind (("C-;" . flyspell-auto-correct-previous-word))
   :init
   (add-hook 'text-mode-hook 'flyspell-mode)
   (add-hook 'prog-mode-hook 'flyspell-prog-mode))
 
 (use-package flyspell-correct
+  :disabled t
   :after flyspell
   :config
   (define-key flyspell-mode-map (kbd "C-;") 'flyspell-correct-word-generic)
   (setq flyspell-correct-interface 'flyspell-correct-ivy))
 
 (use-package speck
-  :disabled t
   :defer t
   :commands speck-mode
   :init
@@ -656,8 +658,7 @@
     (define-key map "\M-j" 'lispy-split)
     (define-key map "\M-k" 'lispy-kill-sentence)
     (define-key map [M-up] 'sp-splice-sexp-killing-backward)
-    (define-key map [M-down] 'sp-splice-sexp-killing-forward)
-    (define-key map (kbd "C-,") 'lispy-kill-at-point))
+    (define-key map [M-down] 'sp-splice-sexp-killing-forward))
   (let ((map lispy-mode-map-paredit))
     (define-key map "\M-n" nil)         ; lispy left
     (define-key map "\M-p" nil)
