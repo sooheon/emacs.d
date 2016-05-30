@@ -664,7 +664,7 @@
   (let ((map lispy-mode-map-paredit))
     (define-key map "\M-n" nil)         ; lispy left
     (define-key map "\M-p" nil)
-    ;; (define-key map "\"" nil)           ; lispy-quotes
+    (define-key map "\"" nil)           ; lispy-doublequote
     (define-key map "\C-d" 'lispy-delete)
     (define-key map (kbd "M-)") nil)
     (define-key map (kbd "DEL") 'lispy-delete-backward))
