@@ -69,3 +69,19 @@ end tell
            default-directory)))
 
 (define-key evil-normal-state-map "got" #'soo--terminal-pop)
+
+(setq mac-option-modifier 'meta
+      mac-command-modifier 'super)
+
+;; Right alt nil for deadkeys
+(defun sooheon--toggle-right-option-key ()
+  (interactive)
+  (if (eq mac-right-option-modifier nil)
+      (progn (message "Setting right option key to meta")
+             (setq mac-right-option-modifier 'meta))
+    (progn (message "Setting right option key to nil")
+           (setq mac-right-option-modifier nil))))
+(evil-leader/set-key
+  "t\C-o" 'sooheon--toggle-right-option-key)
+
+(bind-key "s-s" 'save-buffer)

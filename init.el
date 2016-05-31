@@ -13,7 +13,7 @@
 
 ;; Theme
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" user-emacs-directory))
-(load-theme 'zenburn t)
+(load-theme 'eclipse2 t)
 ;; Font
 (ignore-errors (set-frame-font "Input Mono Narrow"))
 ;; Customize
@@ -40,6 +40,7 @@
 (csetq indent-tabs-mode nil)
 (csetq ring-bell-function 'ignore)
 (csetq highlight-nonselected-windows t)
+(csetq backup-inhibited t)
 (defalias 'yes-or-no-p 'y-or-n-p)
 (setq kill-buffer-query-functions nil)
 (add-hook 'server-switch-hook 'raise-frame)
@@ -79,9 +80,6 @@
                 ;; evil-move-cursor-back nil
                 evil-want-C-i-jump t
                 evil-disable-insert-state-bindings t)
-  :config
-  (evil-mode 1)
-  (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word)
   (defmacro spacemacs|define-text-object (key name start end)
     (let ((inner-name (make-symbol (concat "evil-inner-" name)))
           (outer-name (make-symbol (concat "evil-outer-" name)))
@@ -100,10 +98,12 @@
                            (cons ,start ,end)
                          ,start))
                  evil-surround-pairs-alist)))))
+  :config
+  (evil-mode 1)
+  (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word)
   ;; define text objects
   (spacemacs|define-text-object "$" "dollar" "$" "$")
   (spacemacs|define-text-object "*" "star" "*" "*")
-  ;; (spacemacs|define-text-object "8" "block-star" "/*" "*/")
   (spacemacs|define-text-object "|" "bar" "|" "|")
   (spacemacs|define-text-object "%" "percent" "%" "%")
   (spacemacs|define-text-object "/" "slash" "/" "/")
@@ -129,8 +129,8 @@
     "wK" 'evil-window-move-very-top
     "wJ" 'evil-window-move-very-bottom
     "w=" 'balance-windows
-    "wm" 'delete-other-windows
-    "wo" 'other-window
+    "wo" 'delete-other-windows
+    "ww" 'evil-window-next
     "ws" 'evil-window-split
     "wv" 'evil-window-vsplit
     "wr" 'evil-window-rotate-downwards
@@ -426,33 +426,6 @@
   :config
   (global-evil-matchit-mode))
 
-;; (use-package evil-multiedit
-;;   :disabled t
-;;   :commands (evil-multiedit-match-symbol-and-next
-;;              evil-multiedit-match-symbol-and-prev
-;;              evil-multiedit-match-and-prev
-;;              evil-multiedit-match-and-next
-;;              evil-multiedit-prev
-;;              evil-multiedit-next)
-;;   :init
-;;   (let ((map evil-normal-state-map))
-;;     (define-key map (kbd "s-d") 'evil-multiedit-match-symbol-and-next)
-;;     (define-key map (kbd "s-D") 'evil-multiedit-match-symbol-and-prev))
-;;   (let ((map evil-visual-state-map))
-;;     (define-key map (kbd "s-d") 'evil-multiedit-match-and-next)
-;;     (define-key map (kbd "s-D") 'evil-multiedit-match-and-prev)
-;;     (define-key map (kbd "C-s-D") 'evil-multiedit-restore)
-;;     (define-key map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
-;;     (define-key map "R" 'evil-multiedit-match-all))
-;;   :config
-;;   (let ((map evil-multiedit-state-map))
-;;     (define-key map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
-;;     (define-key map (kbd "C-n") 'evil-multiedit-next)
-;;     (define-key map (kbd "C-p") 'evil-multiedit-prev))
-;;   (let ((map evil-multiedit-insert-state-map))
-;;     (define-key map (kbd "C-n") 'evil-multiedit-next)
-;;     (define-key map (kbd "C-p") 'evil-multiedit-prev)))
-
 (use-package evil-textobj-anyblock
   :config
   (define-key evil-inner-text-objects-map
@@ -547,7 +520,10 @@
 
 (use-package iedit :defer t :init (setq iedit-toggle-key-default nil))
 
-(use-package info :config (evil-leader/set-key "hi" 'info))
+(use-package info
+  :config
+  (evil-leader/set-key "hi" 'info)
+  (evil-set-initial-state 'Info-mode 'emacs))
 
 (use-package counsel
   :bind (([remap execute-extended-command] . counsel-M-x)
@@ -573,7 +549,8 @@
   (define-key evil-normal-state-map "\M-y" 'counsel-yank-pop))
 
 (use-package swiper
-  :bind (([remap isearch-forward] . counsel-grep-or-swiper)))
+  :bind (([remap isearch-forward] . counsel-grep-or-swiper)
+         ("s-f" . counsel-grep-or-swiper)))
 
 (use-package ivy
   :diminish ivy-mode
@@ -589,8 +566,8 @@
   (setq ivy-extra-directories '("./")
         ivy-count-format "%d "
         ivy-height 12
-        ;; ivy-re-builders-alist '((t . ivy--regex-fuzzy))
-        ;; ivy-initial-inputs-alist nil
+        ivy-re-builders-alist '((t . ivy--regex-fuzzy))
+        ivy-initial-inputs-alist nil
         ivy-action-wrap t)
   (ivy-mode 1)
   (let ((m ivy-minibuffer-map))
@@ -824,6 +801,7 @@ Will work on both org-mode and any mode that accepts plain html."
 
 (use-package org
   :defer 10
+  :diminish org-indent-mode
   :init
   (add-hook 'org-mode-hook 'visual-line-mode)
   :config
@@ -837,7 +815,7 @@ Will work on both org-mode and any mode that accepts plain html."
   (setq org-src-fontify-natively t
         org-startup-indented t
         org-adapt-indentation nil
-        org-preview-latex-default-process 'dvipng
+        org-preview-latex-default-process 'dvisvgm
         org-inhibit-startup-visibility-stuff nil)
   (fset 'latexify-line
         (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([95 105 36 escape 65 36 escape] 0 "%d")) arg)))
@@ -942,7 +920,8 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 
 (use-package woman
   :defer t
-  :config (evil-set-initial-state 'woman-mode 'emacs))
+  :config
+  (evil-set-initial-state 'woman-mode 'emacs))
 
 (use-package shackle
   :config
@@ -1057,7 +1036,9 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 
 (use-package savehist :config (savehist-mode))
 
-(use-package saveplace :config (save-place-mode))
+(use-package saveplace
+  :if (version< "25" emacs-version)
+  :config (save-place-mode))
 
 (use-package shell-pop
   :bind (("s-`" . shell-pop))
