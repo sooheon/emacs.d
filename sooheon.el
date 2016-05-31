@@ -68,4 +68,4 @@ end tell
 "
            default-directory)))
 
-(bind-key "C-`" #'soo--terminal-pop)
+(define-key evil-normal-state-map "got" #'soo--terminal-pop)

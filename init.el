@@ -1062,7 +1062,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 (use-package shell-pop
   :bind (("s-`" . shell-pop))
   :init
-  (define-key evil-normal-state-map "got" 'shell-pop)
   (setq shell-pop-window-position 'bottom
         shell-pop-window-height 30
         shell-pop-full-span t
