@@ -74,7 +74,7 @@
 (use-package evil
   :init
   (setq-default evil-want-C-u-scroll t
-                evil-want-fine-undo nil
+                evil-want-fine-undo 'fine
                 evil-cross-lines t
                 evil-symbol-word-search t
                 ;; evil-move-cursor-back nil
@@ -284,7 +284,7 @@
     (dired-omit-mode t))
   (add-hook 'dired-mode-hook 'soo--dired-setup)
   :config
-  (setq dired-listing-switches "-alh")
+  (setq dired-listing-switches "-laGh1v --group-directories-first")
   (defvar dired-dotfiles-show-p)
   (defun vinegar/dotfiles-toggle ()
     "Show/hide dot-files"
@@ -499,10 +499,15 @@
         speck-hunspell-dictionary-alist '(("en" . "en_US"))
         speck-hunspell-default-dictionary-name "en"
         speck-hunspell-library-directory "/Library/Spelling/"
-        speck-hunspell-minimum-word-length 3)
+        speck-hunspell-minimum-word-length 3
+        speck-auto-correct-case 'two
+        speck-personal-dictionary-file
+        (expand-file-name "var/personal-dictionary" emacs-d))
   (add-hook 'text-mode-hook 'speck-mode)
   (defun soo--speck-prog-hook ()
     (set (make-local-variable 'speck-syntactic) t)
+    (set (make-local-variable 'speck-face-inhibit-list
+                              '(font-lock-constant-face)))
     (speck-mode))
   (add-hook 'prog-mode-hook 'soo--speck-prog-hook))
 
@@ -906,6 +911,14 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
     "r" 'osx-dictionary-read-word
     "s" 'osx-dictionary-search-input
     "o" 'osx-dictionary-open-dictionary.app))
+
+(use-package pdf-tools
+  :defer t
+  :mode (("\\.pdf\\'" . pdf-view-mode))
+  :init
+  (setenv "PKG_CONFIG_PATH" "/usr/local/Cellar/zlib/1.2.8/lib/pkgconfig:/usr/local/lib/pkgconfig:/opt/X11/lib/pkgconfig")
+  :config
+  (pdf-tools-install))
 
 (use-package worf
   :diminish worf-mode

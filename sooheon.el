@@ -84,4 +84,13 @@ end tell
 (evil-leader/set-key
   "t\C-o" 'sooheon--toggle-right-option-key)
 
+;; Other emacs-mac/OSX keybindings
 (bind-key "s-s" 'save-buffer)
+(bind-key "s-q" 'save-buffers-kill-terminal)
+(bind-key "s-v" 'yank)
+(bind-key "s-c" 'evil-yank)
+(bind-key "s-a" 'mark-whole-buffer)
+(bind-key "s-x" 'kill-region)
+(bind-key "s-n" 'make-frame)
+(bind-key "C-s-f" 'toggle-frame-fullscreen)
+(evil-define-key 'insert global-map "\C-o" 'evil-execute-in-normal-state)
