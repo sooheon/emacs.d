@@ -646,7 +646,8 @@
         lispy-delete-backward-recenter nil
         lispy-safe-paste t
         lispy-safe-copy t
-        lispy-safe-delete t)
+        lispy-safe-delete t
+        lispy-comment-use-single-semicolon t)
   (lispy-set-key-theme '(special
                          c-digits
                          paredit))
