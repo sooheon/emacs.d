@@ -474,8 +474,7 @@
 (use-package flycheck
   :defer t
   :config
-  (setq flycheck-standard-error-navigation nil
-        flycheck-global-modes nil))
+  (setq flycheck-global-modes nil))
 
 (use-package ispell
   :disabled t
@@ -835,7 +834,7 @@ Will work on both org-mode and any mode that accepts plain html."
   (org-bullets-mode)
   (require 'ox)
   (setq org-src-fontify-natively t
-        org-startup-indented t
+        ;; org-startup-indented t
         org-adapt-indentation nil
         org-preview-latex-default-process 'dvisvgm
         org-inhibit-startup-visibility-stuff nil)
@@ -1072,7 +1071,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :config (save-place-mode))
 
 (use-package shell-pop
-  :bind (("s-`" . shell-pop))
+  :bind (("s-t" . shell-pop))
   :init
   (setq shell-pop-window-position 'bottom
         shell-pop-window-height 30
@@ -1081,7 +1080,8 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
                                (lambda () (term explicit-shell-file-name))))
   :config
   (define-key term-raw-map (kbd "s-v") 'term-paste)
-  (evil-define-key 'normal term-raw-map "p" 'term-paste))
+  (evil-define-key 'normal term-raw-map "p" 'term-paste)
+  (add-hook 'term-mode-hook (lambda () (toggle-truncate-lines 1))))
 
 (use-package smartparens
   :defer t
@@ -1100,14 +1100,28 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   (require 'smartparens-config)
   (show-smartparens-global-mode 1)
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
+  (defun soo-end-of-sexp-or-next ()
+    (interactive)
+    (if (looking-at "[])}]")
+        (sp-end-of-next-sexp)
+      (sp-end-of-sexp)))
+  (defun soo-insert-at-bos ()
+    (interactive)
+    (progn (sp-beginning-of-sexp) (evil-insert-state)))
+  (defun soo-insert-at-eos ()
+    (interactive)
+    (progn (sp-end-of-sexp) (evil-insert-state)))
   (let ((m smartparens-mode-map))
     (define-key m (kbd "M-a") 'sp-beginning-of-sexp)
-    (define-key m (kbd "M-e") 'sp-end-of-sexp)
+    (define-key m (kbd "M-e") 'soo-end-of-sexp-or-next)
     (define-key m [C-backspace] 'sp-backward-kill-sexp)
     (define-key m (kbd "C-)") 'sp-forward-slurp-sexp)
     (define-key m (kbd "C-(") 'sp-backward-slurp-sexp)
     (define-key m (kbd "C-{") 'sp-backward-barf-sexp)
-    (define-key m (kbd "C-}") 'sp-forward-barf-sexp)))
+    (define-key m (kbd "C-}") 'sp-forward-barf-sexp))
+  (evil-define-key 'normal smartparens-mode-map
+    "\M-i" 'soo-insert-at-bos
+    "\M-a" 'soo-insert-at-eos))
 
 (use-package smex :defer t :config (setq smex-history-length 32))
 
