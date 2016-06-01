@@ -29,10 +29,9 @@
 (csetq create-lockfiles nil) ; Don't create #foo.file#
 (csetq fill-column 80)
 (eval '(setq inhibit-startup-echo-area-message "sooheon"))
-(setq frame-title-format '("%b"
-                           " ("
-                           (:eval (substring (abbreviate-file-name default-directory) 0 -1))
-                           ")"
+(setq frame-title-format '((:eval (if buffer-file-name
+                                      (abbreviate-file-name buffer-file-name)
+                                    "%b"))
                            (:eval (if (buffer-modified-p) " •"))
                            " - Emacs"))
 ;; Navigation within buffer
