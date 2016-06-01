@@ -55,6 +55,7 @@
     osx-dictionary
     packed
     pandoc-mode
+    pdf-tools
     projectile
     py-yapf
     queue

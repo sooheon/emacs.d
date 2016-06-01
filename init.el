@@ -29,6 +29,12 @@
 (csetq create-lockfiles nil) ; Don't create #foo.file#
 (csetq fill-column 80)
 (eval '(setq inhibit-startup-echo-area-message "sooheon"))
+(setq frame-title-format '("%b"
+                           " ("
+                           (:eval (substring (abbreviate-file-name default-directory) 0 -1))
+                           ")"
+                           (:eval (if (buffer-modified-p) " •"))
+                           " - Emacs"))
 ;; Navigation within buffer
 (csetq recenter-positions '(top middle bottom))
 ;; Finding files
@@ -46,6 +52,7 @@
 (add-hook 'server-switch-hook 'raise-frame)
 (csetq eval-expression-print-length nil)
 (csetq eval-expression-print-level nil)
+(csetq sentence-end-double-space nil)
 ;; Shell
 (csetq shell-file-name "/usr/local/bin/bash")
 (csetq explicit-shell-file-name "/usr/local/bin/fish")
@@ -345,6 +352,7 @@
     (kbd "C-r") 'dired-do-redisplay
     "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
     "gs" 'magit-status
+    "got" #'soo--terminal-pop
     "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1)))
   ;; Use rsync in dired: http://oremacs.com/2016/02/24/dired-rsync/
   (defun ora-dired-rsync (dest)
@@ -500,14 +508,12 @@
         speck-hunspell-default-dictionary-name "en"
         speck-hunspell-library-directory "/Library/Spelling/"
         speck-hunspell-minimum-word-length 3
-        speck-auto-correct-case 'two
-        speck-personal-dictionary-file
-        (expand-file-name "var/personal-dictionary" emacs-d))
+        speck-auto-correct-case 'two)
   (add-hook 'text-mode-hook 'speck-mode)
   (defun soo--speck-prog-hook ()
     (set (make-local-variable 'speck-syntactic) t)
-    (set (make-local-variable 'speck-face-inhibit-list
-                              '(font-lock-constant-face)))
+    (set (make-local-variable 'speck-face-inhibit-list)
+         '(font-lock-constant-face))
     (speck-mode))
   (add-hook 'prog-mode-hook 'soo--speck-prog-hook))
 
@@ -571,8 +577,13 @@
   (setq ivy-extra-directories '("./")
         ivy-count-format "%d "
         ivy-height 12
-        ivy-re-builders-alist '((t . ivy--regex-fuzzy))
-        ivy-initial-inputs-alist nil
+        ivy-re-builders-alist '((counsel-M-x . ivy--regex-fuzzy)
+                                (t . ivy--regex-plus))
+        ivy-initial-inputs-alist '((org-refile . "^")
+                                   (org-agenda-refile . "^")
+                                   (org-capture-refile . "^")
+                                   (man . "^")
+                                   (woman . "^"))
         ivy-action-wrap t)
   (ivy-mode 1)
   (let ((m ivy-minibuffer-map))
@@ -711,8 +722,7 @@
   (evil-leader/set-key-for-mode 'python-mode "=" 'py-yapf-buffer))
 
 (use-package magit
-  :bind (("C-x g" . magit-status)
-         ("C-x M-g" . magit-dispatch-popup))
+  :commands (magit-status magit-dispatch-popup)
   :init
   (define-key evil-normal-state-map "gs" 'magit-status)
   (define-key evil-normal-state-map "gp" 'magit-dispatch-popup)
@@ -720,21 +730,21 @@
   :config
   (setq magit-refresh-verbose t
         magit-refresh-status-buffer nil)
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-modules-unpulled-from-upstream
-                          'magit-insert-unpulled-from-upstream)
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-modules-unpulled-from-pushremote
-                          'magit-insert-unpulled-from-upstream)
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-modules-unpushed-to-upstream
-                          'magit-insert-unpulled-from-upstream)
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-modules-unpushed-to-pushremote
-                          'magit-insert-unpulled-from-upstream)
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-submodules
-                          'magit-insert-unpulled-from-upstream)
+  ;; (magit-add-section-hook 'magit-status-sections-hook
+  ;;                         'magit-insert-modules-unpulled-from-upstream
+  ;;                         'magit-insert-unpulled-from-upstream)
+  ;; (magit-add-section-hook 'magit-status-sections-hook
+  ;;                         'magit-insert-modules-unpulled-from-pushremote
+  ;;                         'magit-insert-unpulled-from-upstream)
+  ;; (magit-add-section-hook 'magit-status-sections-hook
+  ;;                         'magit-insert-modules-unpushed-to-upstream
+  ;;                         'magit-insert-unpulled-from-upstream)
+  ;; (magit-add-section-hook 'magit-status-sections-hook
+  ;;                         'magit-insert-modules-unpushed-to-pushremote
+  ;;                         'magit-insert-unpulled-from-upstream)
+  ;; (magit-add-section-hook 'magit-status-sections-hook
+  ;;                         'magit-insert-submodules
+  ;;                         'magit-insert-unpulled-from-upstream)
 
   (use-package evil-magit
     :config
@@ -803,6 +813,13 @@ Will work on both org-mode and any mode that accepts plain html."
   (define-key endless/mc-map "l" #'mc/edit-lines)
   (define-key endless/mc-map "\C-a" #'mc/edit-beginnings-of-lines)
   (define-key endless/mc-map "\C-e" #'mc/edit-ends-of-lines))
+
+(use-package super-save
+  :ensure t
+  :diminish super-save-mode
+  :config
+  (setq auto-save-default nil)
+  (super-save-mode 1))
 
 (use-package org
   :defer 10
@@ -900,6 +917,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
                                    (self-insert-command 1)))))
 
 (use-package osx-dictionary
+  :disabled t
   :commands osx-dictionary-search-pointer
   :init
   (evil-leader/set-key "xwd" 'osx-dictionary-search-pointer)

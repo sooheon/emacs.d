@@ -92,5 +92,6 @@ end tell
 (bind-key "s-a" 'mark-whole-buffer)
 (bind-key "s-x" 'kill-region)
 (bind-key "s-n" 'make-frame)
+(bind-key "s-l" 'evil-avy-goto-line)
 (bind-key "C-s-f" 'toggle-frame-fullscreen)
 (evil-define-key 'insert global-map "\C-o" 'evil-execute-in-normal-state)
