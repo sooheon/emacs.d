@@ -84,6 +84,58 @@ end tell
 (evil-leader/set-key
   "t\C-o" 'sooheon--toggle-right-option-key)
 
+;; fill/un-fill with one key: http://tinyurl.com/gn2tswy
+(defun endless/fill-or-unfill ()
+  "Like `fill-paragraph', but unfill if used twice."
+  (interactive)
+  (let ((fill-column
+         (if (eq last-command 'endless/fill-or-unfill)
+             (progn (setq this-command nil)
+                    (point-max))
+           fill-column)))
+    (call-interactively #'fill-paragraph)))
+(bind-key [remap fill-paragraph] #'endless/fill-or-unfill)
+
+;; Narrow or widen dwim
+;; http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
+(defun narrow-or-widen-dwim (p)
+  "Widen if buffer is narrowed, narrow-dwim otherwise.
+Dwim means: region, org-src-block, org-subtree, or defun,
+whichever applies first. Narrowing to org-src-block actually
+calls `org-edit-src-code'.
+
+With prefix P, don't widen, just narrow even if buffer is
+already narrowed."
+  (interactive "P")
+  (declare (interactive-only))
+  (cond ((and (buffer-narrowed-p) (not p)) (widen))
+        ((region-active-p)
+         (narrow-to-region (region-beginning) (region-end)))
+        ((derived-mode-p 'org-mode)
+         ;; `org-edit-src-code' is not a real narrowing
+         ;; command. Remove this first conditional if you
+         ;; don't want it.
+         (cond ((ignore-errors (org-edit-src-code))
+                (delete-other-windows))
+               ((ignore-errors (org-narrow-to-block) t))
+               (t (org-narrow-to-subtree))))
+        ((derived-mode-p 'latex-mode)
+         (LaTeX-narrow-to-environment))
+        (t (narrow-to-defun))))
+
+;; This line actually replaces Emacs' entire narrowing keymap, that's how
+;; much I like this command. Only copy it if that's what you want.
+(define-key ctl-x-map "n" #'narrow-or-widen-dwim)
+(add-hook 'LaTeX-mode-hook
+          (lambda () (define-key LaTeX-mode-map "\C-xn" nil)))
+
+;; Deleting with S-backspace work with cleverparens
+(defun sooheon--delete-to-bol ()
+  (interactive)
+  (if (fboundp 'lispyville-delete)
+      (lispyville-delete (line-beginning-position) (point))
+    (evil-delete (line-beginning-position) (point))))
+
 ;; Other emacs-mac/OSX keybindings
 (bind-key "s-s" 'save-buffer)
 (bind-key "s-q" 'save-buffers-kill-terminal)
@@ -94,4 +146,6 @@ end tell
 (bind-key "s-n" 'make-frame)
 (bind-key "s-l" 'evil-avy-goto-line)
 (bind-key "C-s-f" 'toggle-frame-fullscreen)
-(evil-define-key 'insert global-map "\C-o" 'evil-execute-in-normal-state)
+(evil-define-key 'insert global-map
+  "\C-o" 'evil-execute-in-normal-state
+  (kbd "<s-backspace>") 'sooheon--delete-to-bol)
