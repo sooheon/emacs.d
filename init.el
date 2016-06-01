@@ -351,7 +351,8 @@
     (kbd "C-r") 'dired-do-redisplay
     "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
     "gs" 'magit-status
-    "got" #'soo--terminal-pop
+    "got" 'soo--terminal-pop
+    "gof" 'reveal-in-osx-finder
     "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1)))
   ;; Use rsync in dired: http://oremacs.com/2016/02/24/dired-rsync/
   (defun ora-dired-rsync (dest)
