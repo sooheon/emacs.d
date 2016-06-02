@@ -263,6 +263,9 @@
         cider-mode-line '(:eval (format " [%s]" (cider--modeline-info))))
   ;; (defadvice cider-jump-to-var (before add-evil-jump activate)
   ;;   (evil-set-jump))
+  (evil-define-key 'normal cider-mode-map "K" 'cider-doc)
+  (evil-set-initial-state 'cider-docview-mode 'insert)
+  (evil-set-initial-state 'cider-stacktrace-mode 'insert)
   (add-hook 'cider-mode-hook 'eldoc-mode))
 
 (use-package clojure-mode
@@ -521,7 +524,7 @@
 (use-package help
   :config
   (setq help-window-select t)
-  (evil-set-initial-state 'help-mode 'emacs))
+  (evil-set-initial-state 'help-mode 'insert))
 
 (use-package highlight-escape-sequences
   :defer
@@ -533,7 +536,7 @@
 (use-package info
   :config
   (evil-leader/set-key "hi" 'info)
-  (evil-set-initial-state 'Info-mode 'emacs))
+  (evil-set-initial-state 'Info-mode 'insert))
 
 (use-package counsel
   :bind (([remap execute-extended-command] . counsel-M-x)
@@ -730,21 +733,21 @@
   :config
   (setq magit-refresh-verbose t
         magit-refresh-status-buffer nil)
-  ;; (magit-add-section-hook 'magit-status-sections-hook
-  ;;                         'magit-insert-modules-unpulled-from-upstream
-  ;;                         'magit-insert-unpulled-from-upstream)
-  ;; (magit-add-section-hook 'magit-status-sections-hook
-  ;;                         'magit-insert-modules-unpulled-from-pushremote
-  ;;                         'magit-insert-unpulled-from-upstream)
-  ;; (magit-add-section-hook 'magit-status-sections-hook
-  ;;                         'magit-insert-modules-unpushed-to-upstream
-  ;;                         'magit-insert-unpulled-from-upstream)
-  ;; (magit-add-section-hook 'magit-status-sections-hook
-  ;;                         'magit-insert-modules-unpushed-to-pushremote
-  ;;                         'magit-insert-unpulled-from-upstream)
-  ;; (magit-add-section-hook 'magit-status-sections-hook
-  ;;                         'magit-insert-submodules
-  ;;                         'magit-insert-unpulled-from-upstream)
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'magit-insert-modules-unpulled-from-upstream
+                          'magit-insert-unpulled-from-upstream)
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'magit-insert-modules-unpulled-from-pushremote
+                          'magit-insert-unpulled-from-upstream)
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'magit-insert-modules-unpushed-to-upstream
+                          'magit-insert-unpulled-from-upstream)
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'magit-insert-modules-unpushed-to-pushremote
+                          'magit-insert-unpulled-from-upstream)
+  (magit-add-section-hook 'magit-status-sections-hook
+                          'magit-insert-submodules
+                          'magit-insert-unpulled-from-upstream)
 
   (use-package evil-magit
     :config
@@ -952,7 +955,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 (use-package woman
   :defer t
   :config
-  (evil-set-initial-state 'woman-mode 'emacs))
+  (evil-set-initial-state 'woman-mode 'insert))
 
 (use-package shackle
   :config
