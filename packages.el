@@ -61,6 +61,7 @@
     queue
     rainbow-delimiters
     reveal-in-osx-finder
+    sentence-navigation
     shackle
     shell-pop
     smartparens

@@ -1074,6 +1074,10 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :if (version< "25" emacs-version)
   :config (save-place-mode))
 
+(use-package sentence-navigation
+  :ensure t
+  :defer t)
+
 (use-package shell-pop
   :bind (("s-t" . shell-pop))
   :init
@@ -1152,8 +1156,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   (setq undo-tree-visualizer-timestamps t
         undo-tree-visualizer-diff t
         undo-tree-auto-save-history t
-        undo-tree-history-directory-alist
-        `(("." . ,(expand-file-name "var" emacs-d)))))
+        undo-tree-history-directory-alist `(("." . ,(expand-file-name "var" emacs-d)))))
 
 (use-package which-key
   :diminish which-key-mode
