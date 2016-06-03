@@ -85,7 +85,9 @@
                 evil-symbol-word-search t
                 ;; evil-move-cursor-back nil
                 evil-want-C-i-jump t
-                evil-disable-insert-state-bindings t)
+                evil-disable-insert-state-bindings t
+                evil-search-module 'evil-search
+                evil-ex-search-persistent-highlight nil)
   (defmacro spacemacs|define-text-object (key name start end)
     (let ((inner-name (make-symbol (concat "evil-inner-" name)))
           (outer-name (make-symbol (concat "evil-outer-" name)))
@@ -827,8 +829,6 @@ Will work on both org-mode and any mode that accepts plain html."
 (use-package org
   :defer 10
   :diminish org-indent-mode
-  :init
-  (add-hook 'org-mode-hook 'visual-line-mode)
   :config
   (setq org-export-backends '(html latex))
   (add-to-list 'load-path (expand-file-name "lib/org/contrib/lisp/" emacs-d))
@@ -847,7 +847,7 @@ Will work on both org-mode and any mode that accepts plain html."
   ;; Keybinds
   (evil-define-key 'normal org-mode-map
     [C-return] (lambda () (interactive) (org-insert-heading-respect-content) (evil-append 1))
-    [M-return] (lambda () (interactive) (move-end-of-line nil) (org-meta-return) (evil-append 1))
+    [M-return] (lambda () (interactive) (org-meta-return) (evil-append 1))
     [return] 'org-open-at-point
     "t" 'org-todo
     "$" 'org-end-of-line
@@ -947,10 +947,9 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :init
   (add-hook 'org-mode-hook 'worf-mode)
   :config
-  (evil-define-key 'insert worf-mode-map
-    "\C-j" nil
-    "\[" nil
-    "\]" nil))
+  (define-key worf-mode-map "\C-j" nil)
+  (define-key worf-mode-map "\[" nil)
+  (define-key worf-mode-map "\]" nil))
 
 (use-package woman
   :defer t
@@ -1075,8 +1074,19 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :config (save-place-mode))
 
 (use-package sentence-navigation
-  :ensure t
-  :defer t)
+  :disabled t
+  :defer t
+  :init
+  (define-key evil-normal-state-map ")" 'sentence-nav-evil-forward)
+  (define-key evil-normal-state-map "(" 'sentence-nav-evil-backward)
+  (define-key evil-motion-state-map ")" 'sentence-nav-evil-forward)
+  (define-key evil-motion-state-map "(" 'sentence-nav-evil-backward)
+  (define-key evil-normal-state-map "g)" 'sentence-nav-evil-forward-end)
+  (define-key evil-normal-state-map "g(" 'sentence-nav-evil-backward-end)
+  (define-key evil-outer-text-objects-map "s" 'sentence-nav-evil-outer-sentence)
+  (define-key evil-inner-text-objects-map "s" 'sentence-nav-evil-inner-sentence)
+  (bind-key "M-e" 'sentence-nav-forward)
+  (bind-key "M-a" 'sentence-nav-backward))
 
 (use-package shell-pop
   :bind (("s-t" . shell-pop))
@@ -1134,8 +1144,20 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 (use-package smex :defer t :config (setq smex-history-length 32))
 
 (use-package simple
-  :diminish visual-line-mode
-  :config (column-number-mode))
+  :diminish (auto-fill-mode visual-line-mode)
+  :init
+  (add-hook 'org-mode-hook 'visual-line-mode)
+  (add-hook 'org-mode-hook 'auto-fill-mode)
+  :config
+  (column-number-mode))
+
+(use-package typo
+  :disabled t
+  :init
+  (typo-global-mode 1)
+  (csetq typo-language 'English)
+  :config
+  (add-hook 'text-mode-hook 'typo-mode))
 
 (use-package tramp
   :defer t

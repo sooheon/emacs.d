@@ -17,7 +17,7 @@
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(package-selected-packages
    (quote
-    (ace-window evil-cleverparens speck iedit osx-dictionary markdown-toc pandoc-mode markdown-mode highlight-escape-sequences rainbow-delimiters counsel-projectile dired+ zenburn-theme ws-butler worf window-numbering which-key use-package spacemacs-theme solarized-theme smex smartparens shell-pop shackle reveal-in-osx-finder projectile flyspell-correct flycheck flx evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-matchit evil-magit evil-leader evil-commentary epkg elisp-slime-nav diff-hl counsel company cider bind-map auto-compile ample-theme)))
+    (super-save ace-window evil-cleverparens speck iedit osx-dictionary markdown-toc pandoc-mode markdown-mode highlight-escape-sequences rainbow-delimiters counsel-projectile dired+ zenburn-theme ws-butler worf window-numbering which-key use-package spacemacs-theme solarized-theme smex smartparens shell-pop shackle reveal-in-osx-finder projectile flyspell-correct flycheck flx evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-matchit evil-magit evil-leader evil-commentary epkg elisp-slime-nav diff-hl counsel company cider bind-map auto-compile ample-theme)))
  '(ring-bell-function (quote ignore))
  '(solarized-distinct-doc-face t)
  '(solarized-high-contrast-mode-line t)
