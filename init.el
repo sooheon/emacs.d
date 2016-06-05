@@ -17,17 +17,15 @@
 ;; Font
 (ignore-errors (set-frame-font "Input Mono Narrow"))
 ;; Customize
-(defmacro csetq (variable value)
-  `(funcall (or (get ',variable 'custom-set) 'set-default) ',variable ,value))
-(csetq tool-bar-mode nil)
-(csetq scroll-bar-mode nil)
-(csetq menu-bar-mode nil)
-(csetq inhibit-startup-screen t)
-(csetq initial-scratch-message "")
-(csetq initial-major-mode 'emacs-lisp-mode)
-(csetq load-prefer-newer t)
-(csetq create-lockfiles nil) ; Don't create #foo.file#
-(csetq fill-column 80)
+(setq tool-bar-mode nil
+      scroll-bar-mode nil
+      menu-bar-mode nil
+      inhibit-startup-screen t
+      initial-scratch-message ""
+      initial-major-mode 'emacs-lisp-mode
+      load-prefer-newer t
+      create-lockfiles nil              ; Don't create #foo.file#
+      fill-column 80)
 (eval '(setq inhibit-startup-echo-area-message "sooheon"))
 (setq frame-title-format '((:eval (if buffer-file-name
                                       (abbreviate-file-name buffer-file-name)
@@ -35,29 +33,31 @@
                            (:eval (if (buffer-modified-p) " •"))
                            " - Emacs"))
 ;; Navigation within buffer
-(csetq recenter-positions '(top middle bottom))
+(setq recenter-positions '(top middle bottom))
 ;; Finding files
-(csetq vc-follow-symlinks t)
-(csetq find-file-suppress-same-file-warnings t)
-(csetq read-buffer-completion-ignore-case t)
+(setq vc-follow-symlinks t)
+(setq find-file-suppress-same-file-warnings t)
+(setq read-buffer-completion-ignore-case t)
 ;; Editor behavior
-(csetq default-input-method "korean-hangul")
-(csetq indent-tabs-mode nil)
-(csetq ring-bell-function 'ignore)
-(csetq highlight-nonselected-windows t)
-(csetq backup-inhibited t)
+(setq default-input-method "korean-hangul"
+      indent-tabs-mode nil
+      ring-bell-function 'ignore
+      highlight-nonselected-windows t
+      backup-inhibited t
+      kill-buffer-query-functions nil)
 (defalias 'yes-or-no-p 'y-or-n-p)
-(setq kill-buffer-query-functions nil)
 (add-hook 'server-switch-hook 'raise-frame)
-(csetq eval-expression-print-length nil)
-(csetq eval-expression-print-level nil)
-(csetq sentence-end-double-space nil)
+(setq eval-expression-print-length nil
+      eval-expression-print-level nil
+      sentence-end-double-space nil
+      search-default-mode 'character-fold-to-regexp
+      replace-character-fold t)
 ;; Shell
-(csetq shell-file-name "/usr/local/bin/bash")
-(csetq explicit-shell-file-name "/usr/local/bin/fish")
+(setq shell-file-name "/usr/local/bin/bash")
+(setq explicit-shell-file-name "/usr/local/bin/fish")
 ;; Internals
-(csetq gc-cons-threshold (* 10 1024 1024))
-(csetq ad-redefinition-action 'accept)
+(setq gc-cons-threshold (* 10 1024 1024)
+      ad-redefinition-action 'accept)
 ;; Set PATHs--see: http://tinyurl.com/ctf9h3a
 (setenv "MANPATH" "/usr/local/opt/coreutils/libexec/gnuman:/usr/local/opt/findutils/libexec/gnuman:/usr/local/share/man")
 (setenv "PATH" "/usr/local/Cellar/pyenv-virtualenv/20160315/shims:/Users/sooheon/.pyenv/shims:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Library/TeX/texbin")
@@ -356,6 +356,7 @@
     (kbd "C-r") 'dired-do-redisplay
     "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
     "gs" 'magit-status
+    "gp" 'magit-dispatch-popup
     "got" 'soo--terminal-pop
     "gof" 'reveal-in-osx-finder
     "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1)))
@@ -1155,8 +1156,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :disabled t
   :init
   (typo-global-mode 1)
-  (csetq typo-language 'English)
-  :config
+  (setq typo-language 'English)
   (add-hook 'text-mode-hook 'typo-mode))
 
 (use-package tramp
