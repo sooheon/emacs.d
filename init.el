@@ -514,13 +514,13 @@
         speck-hunspell-library-directory "/Library/Spelling/"
         speck-hunspell-minimum-word-length 3
         speck-auto-correct-case 'two)
-  (add-hook 'text-mode-hook 'speck-mode)
-  (defun soo--speck-prog-hook ()
-    (set (make-local-variable 'speck-syntactic) t)
-    (set (make-local-variable 'speck-face-inhibit-list)
-         '(font-lock-constant-face))
-    (speck-mode))
-  (add-hook 'prog-mode-hook 'soo--speck-prog-hook))
+  ;; (defun soo--speck-prog-hook ()
+  ;;   (set (make-local-variable 'speck-syntactic) t)
+  ;;   (set (make-local-variable 'speck-face-inhibit-list)
+  ;;        '(font-lock-constant-face))
+  ;;   (speck-mode))
+  ;; (add-hook 'prog-mode-hook 'soo--speck-prog-hook)
+  (add-hook 'text-mode-hook 'speck-mode))
 
 (use-package flx :after ivy)
 
@@ -1053,6 +1053,11 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 (use-package rainbow-delimiters
   :init
   (add-hook 'smartparens-mode-hook #'rainbow-delimiters-mode))
+
+(use-package rainbow-mode
+  :commands rainbow-mode
+  :diminish rainbow-mode
+  :init (evil-leader/set-key "C" 'rainbow-mode))
 
 (use-package recentf
   :demand t
