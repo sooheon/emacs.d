@@ -17,15 +17,15 @@
 ;; Font
 (ignore-errors (set-frame-font "Input Mono Narrow"))
 ;; Customize
-(setq tool-bar-mode nil
-      scroll-bar-mode nil
-      menu-bar-mode nil
-      inhibit-startup-screen t
-      initial-scratch-message ""
-      initial-major-mode 'emacs-lisp-mode
-      load-prefer-newer t
-      create-lockfiles nil              ; Don't create #foo.file#
-      fill-column 80)
+(scroll-bar-mode 0)
+(tool-bar-mode 0)
+(menu-bar-mode 0)
+(setq-default inhibit-startup-screen t
+              initial-scratch-message ""
+              initial-major-mode 'emacs-lisp-mode
+              load-prefer-newer t
+              create-lockfiles nil      ; Don't create #foo.file#
+              fill-column 80)
 (eval '(setq inhibit-startup-echo-area-message "sooheon"))
 (setq frame-title-format '((:eval (if buffer-file-name
                                       (abbreviate-file-name buffer-file-name)

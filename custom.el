@@ -12,6 +12,7 @@
  '(indent-tabs-mode nil)
  '(indicate-empty-lines t)
  '(magit-branch-arguments nil)
+ '(menu-bar-mode nil)
  '(nrepl-message-colors
    (quote
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
