@@ -80,7 +80,7 @@
 (use-package evil
   :init
   (setq-default evil-want-C-u-scroll t
-                evil-want-fine-undo 'fine
+                ;; evil-want-fine-undo 'fine
                 evil-cross-lines t
                 evil-symbol-word-search t
                 ;; evil-move-cursor-back nil
@@ -831,20 +831,18 @@ Will work on both org-mode and any mode that accepts plain html."
   :defer 10
   :diminish org-indent-mode
   :config
-  (setq org-export-backends '(html latex))
   (add-to-list 'load-path (expand-file-name "lib/org/contrib/lisp/" emacs-d))
-  (require 'org-download)
-  (org-download-enable)
-  (require 'org-bullets)
-  (org-bullets-mode)
-  (require 'ox)
   (setq org-src-fontify-natively t
         ;; org-startup-indented t
         org-adapt-indentation nil
         org-preview-latex-default-process 'dvisvgm
-        org-inhibit-startup-visibility-stuff nil)
-  (fset 'latexify-line
-        (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([95 105 36 escape 65 36 escape] 0 "%d")) arg)))
+        org-inhibit-startup-visibility-stuff nil
+        org-M-RET-may-split-line nil
+        org-catch-invisible-edits 'smart
+        org-footnote-auto-adjust t
+        org-hide-emphasis-markers t
+        org-return-follows-link t
+        org-startup-with-inline-images t)
   ;; Keybinds
   (evil-define-key 'normal org-mode-map
     [C-return] (lambda () (interactive) (org-insert-heading-respect-content) (evil-append 1))
@@ -919,6 +917,22 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
                                  (if (bolp)
                                      (hydra-org-template/body)
                                    (self-insert-command 1)))))
+
+(use-package org-download
+  :after org
+  :config
+  (org-download-enable)
+  (setq org-download-method 'attach))
+
+(use-package ox
+  :after org
+  :config
+  (setq org-export-backends '(ascii html latex odt gfm)
+        org-export-coding-system 'utf-8
+        org-html-html5-fancy t
+        org-html-postamble nil)
+  (fset 'latexify-line
+        (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([95 105 36 escape 65 36 escape] 0 "%d")) arg))))
 
 (use-package osx-dictionary
   :disabled t
