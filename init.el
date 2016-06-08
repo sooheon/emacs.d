@@ -20,6 +20,7 @@
 (scroll-bar-mode 0)
 (tool-bar-mode 0)
 (menu-bar-mode 0)
+(hl-line-mode 1)
 (setq-default inhibit-startup-screen t
               initial-scratch-message ""
               initial-major-mode 'emacs-lisp-mode
@@ -94,10 +95,10 @@
           (start-regex (regexp-opt (list start)))
           (end-regex (regexp-opt (list end))))
       `(progn
-         (evil-define-text-object ,inner-name (count &optional beg end)
-           (evil-select-paren ,start-regex ,end-regex beg end count nil))
-         (evil-define-text-object ,outer-name (count &optional beg end)
-           (evil-select-paren ,start-regex ,end-regex beg end count t))
+         (evil-define-text-object ,inner-name (count &optional beg end type)
+           (evil-select-paren ,start-regex ,end-regex beg end type count nil))
+         (evil-define-text-object ,outer-name (count &optional beg end type)
+           (evil-select-paren ,start-regex ,end-regex beg end type count t))
          (define-key evil-inner-text-objects-map ,key (quote ,inner-name))
          (define-key evil-outer-text-objects-map ,key (quote ,outer-name))
          (with-eval-after-load 'evil-surround
@@ -112,7 +113,8 @@
   ;; define text objects
   (spacemacs|define-text-object "$" "dollar" "$" "$")
   (spacemacs|define-text-object "*" "star" "*" "*")
-  (spacemacs|define-text-object "|" "bar" "|" "|")
+  ;; (spacemacs|define-text-object "8" "block-star" "/*" "*/")
+  ;; (spacemacs|define-text-object "|" "bar" "|" "|")
   (spacemacs|define-text-object "%" "percent" "%" "%")
   (spacemacs|define-text-object "/" "slash" "/" "/")
   (spacemacs|define-text-object "_" "underscore" "_" "_")
@@ -276,7 +278,7 @@
   :interpreter ("!.*boot\\s-*" . clojure-mode))
 
 (use-package diff-hl
-  :defer 5
+  :defer 7
   :after magit
   :config
   (setq diff-hl-draw-borders nil)
@@ -834,11 +836,13 @@ Will work on both org-mode and any mode that accepts plain html."
   (add-to-list 'load-path (expand-file-name "lib/org/contrib/lisp/" emacs-d))
   (setq org-src-fontify-natively t
         ;; org-startup-indented t
+        org-startup-folded nil
+        org-startup-truncated nil
         org-adapt-indentation nil
         org-preview-latex-default-process 'dvisvgm
         org-inhibit-startup-visibility-stuff nil
         org-M-RET-may-split-line nil
-        org-catch-invisible-edits 'smart
+        org-catch-invisible-edits nil
         org-footnote-auto-adjust t
         org-hide-emphasis-markers t
         org-return-follows-link t
@@ -859,6 +863,7 @@ Will work on both org-mode and any mode that accepts plain html."
   (evil-define-key 'insert org-mode-map
     "\C-j" 'org-return
     "\M-j" 'org-meta-return)
+
   ;; Org Babel
   (setq org-edit-src-content-indentation 0
         org-src-tab-acts-natively t
@@ -873,6 +878,7 @@ Will work on both org-mode and any mode that accepts plain html."
                                         (:noweb . "no")
                                         (:hlines . "no")
                                         (:tangle . "yes")))
+
   ;; Hydra
   (defhydra hydra-org-template (:color blue :hint nil)
     "
@@ -900,7 +906,8 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
     ("H" (hot-expand "<H"))
     ("A" (hot-expand "<A"))
     ("<" self-insert-command "ins")
-    ("o" nil "quit"))
+    ("o" nil "quit")
+    ("C-g" nil))
   (defun hot-expand (str)
     "Expand org template."
     (insert str)
