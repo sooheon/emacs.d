@@ -150,3 +150,17 @@ already narrowed."
 (evil-define-key 'insert global-map
   "\C-o" 'evil-execute-in-normal-state
   (kbd "<s-backspace>") 'sooheon--delete-to-bol)
+
+(defun inc-face-height ()
+  (interactive)
+  (let ((new-height (+ 10 (face-attribute 'default :height))))
+    (set-face-attribute 'default nil :height new-height)
+    (message (format "Font height is now %d" new-height))))
+(bind-key "s-=" 'inc-face-height)
+
+(defun dec-face-height ()
+  (interactive)
+  (let ((new-height (- (face-attribute 'default :height) 10)))
+    (set-face-attribute 'default nil :height new-height)
+    (message (format "Font height is now %d" new-height))))
+(bind-key "s--" 'dec-face-height)
