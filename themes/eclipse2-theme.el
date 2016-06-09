@@ -34,7 +34,7 @@
     "Color theme from Eclipse.")
 
 (let ((class '((class color) (min-colors 88) (background light)))
-      (eclipse-bg "#ffffff")
+      (eclipse-bg "#fffff5")
       (eclipse-fg "#000000")
       (eclipse-comment "#3F7F5F")
       (eclipse-const "#110099")
@@ -43,7 +43,9 @@
       (eclipse-string "#2A00FF")
       (eclipse-blue-3 "#758BC6")
       (eclipse-region "#f9b593")
-      (eclipse-shadow "grey50"))
+      (eclipse-shadow "grey50")
+      (eclipse-blu "#0287c8")
+      (eclipse-light-blu "#c1e7f8"))
   (apply 'custom-theme-set-faces 'eclipse2
          (mapcar
           (lambda (x) `(,(car x) ((,class ,(cdr x)))))
@@ -98,7 +100,6 @@
             (minibuffer-prompt :foreground "navy")
             (hl-line :background "grey93")
             ;; defaults
-            (mode-line-buffer-id)
             (show-paren-match :background "turquoise")
             (isearch :background "magenta3" :foreground "lightskyblue1")
             (link :foreground "RoyalBlue3" :underline t)
@@ -134,7 +135,10 @@
             ;; (magit-hash :foreground "firebrick")
             ;; (magit-branch-remote :background "Grey85" :foreground "OliveDrab4" :box t)
             ;; (magit-branch-local :background "Grey85" :foreground "LightSkyBlue4" :box t)
-            (cider-instrumented-face)))))
+            (cider-instrumented-face)
+
+            ;; Ivy
+            (ivy-current-match :background ,eclipse-light-blu)))))
 
 (custom-theme-set-variables
  'eclipse2
