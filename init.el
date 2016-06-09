@@ -45,7 +45,9 @@
       ring-bell-function 'ignore
       highlight-nonselected-windows t
       backup-inhibited t
-      kill-buffer-query-functions nil)
+      kill-buffer-query-functions nil
+      enable-recursive-minibuffers t)
+(minibuffer-depth-indicate-mode 1)
 (defalias 'yes-or-no-p 'y-or-n-p)
 (add-hook 'server-switch-hook 'raise-frame)
 (setq eval-expression-print-length nil
@@ -264,6 +266,7 @@
   (setq cider-repl-pop-to-buffer-on-connect nil
         cider-prompt-save-file-on-load nil
         cider-repl-use-clojure-font-lock t
+        cider-font-lock-dynamically t
         cider-mode-line '(:eval (format " [%s]" (cider--modeline-info))))
   ;; (defadvice cider-jump-to-var (before add-evil-jump activate)
   ;;   (evil-set-jump))
@@ -275,7 +278,10 @@
 (use-package clojure-mode
   :defer t
   :mode ("\\.boot\\'" . clojure-mode)
-  :interpreter ("!.*boot\\s-*" . clojure-mode))
+  :interpreter ("!.*boot\\s-*" . clojure-mode)
+  :config
+  ;; This is for clojure-semantic, the library file is clojure.el
+  (load-library "clojure"))
 
 (use-package diff-hl
   :defer 7
@@ -471,7 +477,8 @@
   (setq evil-snipe-scope 'buffer
         evil-snipe-repeat-scope 'buffer
         evil-snipe-show-prompt nil
-        evil-snipe-smart-case t)
+        evil-snipe-smart-case t
+        evil-snipe-repeat-keys nil)
   (evil-snipe-override-mode 1))
 
 (use-package evil-numbers
@@ -574,7 +581,8 @@
   :diminish ivy-mode
   :commands (magit-status epkg-describe-package)
   :bind (("s-b" . ivy-switch-buffer)
-         ("C-c C-r" . ivy-resume))
+         ("C-c C-r" . ivy-resume)
+         ("<f2> j" . counsel-set-variable))
   :init
   (evil-leader/set-key
     "r" 'ivy-recentf
@@ -672,11 +680,6 @@
     (define-key map "\C-d" 'lispy-delete)
     (define-key map (kbd "M-)") nil)
     (define-key map (kbd "DEL") 'lispy-delete-backward))
-  ;; (let ((map lispy-mode-map-parinfer))
-  ;;   (define-key map (kbd "\"") nil)
-  ;;   (define-key map (kbd "M-r") 'lispy-raise)
-  ;;   (define-key map (kbd "#") nil)
-  ;;   (define-key map (kbd ":") nil))
   (lispy-define-key lispy-mode-map-special ">" 'lispy-slurp-or-barf-right)
   (lispy-define-key lispy-mode-map-special "<" 'lispy-slurp-or-barf-left)
 
