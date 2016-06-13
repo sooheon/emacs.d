@@ -34,7 +34,7 @@
     "Color theme from Eclipse.")
 
 (let ((class '((class color) (min-colors 88) (background light)))
-      (eclipse-bg "#fffff5")
+      (eclipse-bg "#F6F6EF")
       (eclipse-fg "#000000")
       (eclipse-comment "#3F7F5F")
       (eclipse-const "#110099")
