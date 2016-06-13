@@ -18,11 +18,15 @@
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(org-format-latex-options
    (quote
-    (:foreground "Black" :background "Transparent" :scale 1.0 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
+    (:foreground "Black" :background "White" :scale 1.0 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers
                  ("begin" "$1" "$" "$$" "\\(" "\\["))))
  '(package-selected-packages
    (quote
-    (labburn-theme rainbow-mode typo super-save ace-window evil-cleverparens speck iedit osx-dictionary markdown-toc pandoc-mode markdown-mode highlight-escape-sequences rainbow-delimiters counsel-projectile dired+ zenburn-theme ws-butler worf window-numbering which-key use-package spacemacs-theme solarized-theme smex smartparens shell-pop shackle reveal-in-osx-finder projectile flyspell-correct flycheck flx evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-matchit evil-magit evil-leader evil-commentary epkg elisp-slime-nav diff-hl counsel company cider bind-map auto-compile ample-theme)))
+    (gist evil labburn-theme rainbow-mode typo super-save ace-window evil-cleverparens speck iedit osx-dictionary markdown-toc pandoc-mode markdown-mode highlight-escape-sequences rainbow-delimiters counsel-projectile dired+ zenburn-theme ws-butler worf window-numbering which-key use-package spacemacs-theme solarized-theme smex smartparens shell-pop shackle reveal-in-osx-finder projectile flyspell-correct flycheck flx evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-matchit evil-magit evil-leader evil-commentary epkg elisp-slime-nav diff-hl counsel company cider bind-map auto-compile ample-theme)))
+ '(rainbow-identifiers-choose-face-function (quote rainbow-identifiers-cie-l*a*b*-choose-face))
+ '(rainbow-identifiers-cie-l*a*b*-color-count 1024)
+ '(rainbow-identifiers-cie-l*a*b*-lightness 80)
+ '(rainbow-identifiers-cie-l*a*b*-saturation 25)
  '(ring-bell-function (quote ignore))
  '(solarized-distinct-doc-face t)
  '(solarized-high-contrast-mode-line t)
