@@ -852,7 +852,36 @@ Will work on both org-mode and any mode that accepts plain html."
         org-hide-emphasis-markers t
         org-return-follows-link t
         org-startup-with-inline-images t)
-  ;; Keybinds
+
+  (defun org-metaright2 (&optional arg)
+    "My evil version of `org-metaright', to be bound to M-l and
+forward to downcase-word"
+    (interactive "P")
+    (cond
+     ((run-hook-with-args-until-success 'org-metaright-hook))
+     ((org-at-table-p) (call-interactively 'org-table-move-column))
+     ((org-at-drawer-p) (call-interactively 'org-indent-drawer))
+     ((org-at-block-p) (call-interactively 'org-indent-block))
+     ((org-with-limited-levels
+       (or (org-at-heading-p)
+           (and (org-region-active-p)
+                (save-excursion
+                  (goto-char (region-beginning))
+                  (org-at-heading-p)))))
+      (when (org-check-for-hidden 'headlines) (org-hidden-tree-error))
+      (call-interactively 'org-do-demote))
+     ;; At an inline task.
+     ((org-at-heading-p)
+      (call-interactively 'org-inlinetask-demote))
+     ((or (org-at-item-p)
+          (and (org-region-active-p)
+               (save-excursion
+                 (goto-char (region-beginning))
+                 (org-at-item-p))))
+      (when (org-check-for-hidden 'items) (org-hidden-tree-error))
+      (call-interactively 'org-indent-item))
+     (t (call-interactively 'downcase-word))))
+
   (evil-define-key 'normal org-mode-map
     [C-return] (lambda () (interactive) (org-insert-heading-respect-content) (evil-append 1))
     [M-return] (lambda () (interactive) (org-meta-return) (evil-append 1))
@@ -864,7 +893,9 @@ Will work on both org-mode and any mode that accepts plain html."
     "<" 'org-metaleft
     ">" 'org-metaright
     "\M-n" 'org-metadown
-    "\M-p" 'org-metaup)
+    "\M-p" 'org-metaup
+    "\M-h" 'org-metaleft
+    "\M-l" 'org-metaright2)
   (evil-define-key 'insert org-mode-map
     "\C-j" 'org-return
     "\M-j" 'org-meta-return)
