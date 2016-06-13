@@ -1170,7 +1170,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   (setq sp-cancel-autoskip-on-backward-movement nil
         sp-show-pair-from-inside nil
         sp-show-pair-delay 0
-        sp-autoskip-closing-pair 't
+        sp-autoskip-closing-pair 'always
         sp-highlight-pair-overlay nil)
   (defun conditionally-enable-smartparens-mode ()
     "Enable `smartparens-mode' in the minibuffer, during `eval-expression'."
