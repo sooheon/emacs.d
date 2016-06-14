@@ -1160,9 +1160,12 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
         shell-pop-shell-type '("terminal" "*terminal*"
                                (lambda () (term explicit-shell-file-name))))
   :config
-  (define-key term-raw-map (kbd "s-v") 'term-paste)
-  (evil-define-key 'normal term-raw-map "p" 'term-paste)
-  (add-hook 'term-mode-hook (lambda () (toggle-truncate-lines 1))))
+  (use-package term
+    :config
+    (setq term-suppress-hard-newline t)
+    (define-key term-raw-map (kbd "s-v") 'term-paste)
+    (evil-define-key 'normal term-raw-map "p" 'term-paste)
+    (add-hook 'term-mode-hook (lambda () (toggle-truncate-lines 1)))))
 
 (use-package smartparens
   :defer t
