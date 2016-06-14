@@ -1288,10 +1288,8 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :config (ws-butler-global-mode))
 
 (progn ;; Personalize
-  (let ((file (expand-file-name (concat (user-real-login-name) ".el")
-                                emacs-d)))
-    (when (file-exists-p file)
-      (load file))))
+  (let ((layers (concat emacs-d "layers/")))
+    (load (concat layers "sooheon.el"))))
 
 (progn ;; Startup
   (message "Loading %s...done (%.3fs)" user-init-file
