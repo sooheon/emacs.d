@@ -64,7 +64,7 @@ tell application \"Terminal\"
   activate
   tell application \"System Events\" to keystroke \"t\" using {command down}
   delay 0.2
-  do script with command \"cd %s\" in window 1
+  do script \"cd %s\" in window 1
 end tell
 "
            default-directory)))
