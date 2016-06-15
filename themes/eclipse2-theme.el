@@ -34,7 +34,7 @@
     "Color theme from Eclipse.")
 
 (let ((class '((class color) (min-colors 88) (background light)))
-      (eclipse-bg "#F6F6EF")
+      (eclipse-bg "#F7F7F8")
       (eclipse-fg "#000000")
       (eclipse-comment "#3F7F5F")
       (eclipse-const "#110099")
@@ -61,7 +61,7 @@
             (compilation-error :underline t :inherit error)
             (highlight :background "PaleTurquoise2")
             (fringe :background ,eclipse-bg)
-            (region :background "#e1beb6")
+            (region :background "#D2D2D2")
             (secondary-selection :background "#e9e2c5" :foreground ,eclipse-fg)
             (whitespace-indentation :background "LightYellow" :foreground "lightgray")
             (term)
@@ -138,7 +138,7 @@
             (cider-instrumented-face)
 
             ;; Ivy
-            (ivy-current-match :background ,eclipse-light-blu)))))
+            (ivy-current-match :background "#e1beb6")))))
 
 (custom-theme-set-variables
  'eclipse2

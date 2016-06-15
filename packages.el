@@ -44,6 +44,7 @@
     flycheck
     flyspell-correct
     git-modes
+    gist
     highlight-escape-sequences
     hydra
     iedit
@@ -60,6 +61,7 @@
     py-yapf
     queue
     rainbow-delimiters
+    rainbow-mode
     reveal-in-osx-finder
     sentence-navigation
     shackle
@@ -70,7 +72,10 @@
     spacemacs-theme
     speck
     spinner
+    super-save
     swiper
+    term-manager
+    typo
     undo-tree
     use-package
     which-key
