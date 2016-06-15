@@ -681,7 +681,11 @@
     (define-key map "\"" nil)           ; lispy-doublequote
     (define-key map "\C-d" 'lispy-delete)
     (define-key map (kbd "M-)") nil)
-    (define-key map (kbd "DEL") 'lispy-delete-backward))
+    (define-key map (kbd "DEL") 'lispy-delete-backward)
+    (define-key map (kbd "C-)") nil)
+    (define-key map (kbd "C-(") nil)
+    (define-key map (kbd "C-}") nil)
+    (define-key map (kbd "C-{") nil))
   (lispy-define-key lispy-mode-map-special ">" 'lispy-slurp-or-barf-right)
   (lispy-define-key lispy-mode-map-special "<" 'lispy-slurp-or-barf-left)
 
@@ -1162,7 +1166,8 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :config
   (use-package term
     :config
-    (setq term-suppress-hard-newline t)
+    (setq term-suppress-hard-newline t
+          term-scroll-to-bottom-on-output t)
     (define-key term-raw-map (kbd "s-v") 'term-paste)
     (evil-define-key 'normal term-raw-map "p" 'term-paste)
     (add-hook 'term-mode-hook (lambda () (toggle-truncate-lines 1)))))
