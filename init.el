@@ -46,7 +46,9 @@
       highlight-nonselected-windows t
       backup-inhibited t
       kill-buffer-query-functions nil
-      enable-recursive-minibuffers t)
+      enable-recursive-minibuffers t
+      ;; https://github.com/railwaycat/emacs-mac-port/issues/78
+      mac-pass-command-to-system nil)
 (minibuffer-depth-indicate-mode 1)
 (defalias 'yes-or-no-p 'y-or-n-p)
 (add-hook 'server-switch-hook 'raise-frame)
@@ -1158,7 +1160,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   (bind-key "M-a" 'sentence-nav-backward))
 
 (use-package shell-pop
-  :bind (("s-t" . shell-pop))
+  :bind (("s-`" . shell-pop))
   :init
   (setq shell-pop-window-position 'bottom
         shell-pop-window-height 30
