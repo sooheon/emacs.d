@@ -997,6 +997,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
     "o" 'osx-dictionary-open-dictionary.app))
 
 (use-package pdf-tools
+  :disabled t
   :defer t
   :mode (("\\.pdf\\'" . pdf-view-mode))
   :init
