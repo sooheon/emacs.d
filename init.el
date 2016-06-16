@@ -855,7 +855,8 @@ Will work on both org-mode and any mode that accepts plain html."
         org-footnote-auto-adjust t
         org-hide-emphasis-markers t
         org-return-follows-link t
-        org-startup-with-inline-images t)
+        org-startup-with-inline-images t
+        org-log-done 'time)
 
   (defun org-metaright2 (&optional arg)
     "My evil version of `org-metaright', to be bound to M-l and
@@ -886,6 +887,10 @@ forward to downcase-word"
       (call-interactively 'org-indent-item))
      (t (call-interactively 'downcase-word))))
 
+  (define-key org-mode-map "\M-n" 'org-metadown)
+  (define-key org-mode-map "\M-p" 'org-metaup)
+  (define-key org-mode-map "\M-h" 'org-metaleft)
+  (define-key org-mode-map "\M-l" 'org-metaright2)
   (evil-define-key 'normal org-mode-map
     [C-return] (lambda () (interactive) (org-insert-heading-respect-content) (evil-append 1))
     [M-return] (lambda () (interactive) (org-meta-return) (evil-append 1))
@@ -895,11 +900,7 @@ forward to downcase-word"
     "^" 'org-beginning-of-line
     ;; "-" 'org-ctrl-c-minus
     "<" 'org-metaleft
-    ">" 'org-metaright
-    "\M-n" 'org-metadown
-    "\M-p" 'org-metaup
-    "\M-h" 'org-metaleft
-    "\M-l" 'org-metaright2)
+    ">" 'org-metaright)
   (evil-define-key 'insert org-mode-map
     "\C-j" 'org-return
     "\M-j" 'org-meta-return)
