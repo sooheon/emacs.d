@@ -423,6 +423,66 @@
   (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
     (add-hook hook 'turn-on-elisp-slime-nav-mode)))
 
+(use-package circe
+  :defer t
+  :init
+  (defun sooheon--switch-to-circe ()
+    "Switch to CIRCE buffers using completing-read, or start
+CIRCE if no buffers open."
+    (interactive)
+    (let (candidates (list))
+      (dolist (buf (buffer-list) candidates)
+        (if (equal 'circe-channel-mode (with-current-buffer buf major-mode))
+            (setq candidates (append (list (buffer-name buf)) candidates))))
+      (if candidates
+          (switch-to-buffer (completing-read "IRC buffer: " candidates))
+        (circe "Freenode"))))
+  (evil-leader/set-key "ai" 'sooheon--switch-to-circe)
+  (setq circe-network-options
+        '(("Freenode"
+           :nick "sooheon"
+           :channels ("#emacs" "#clojure" "#lesswrong" "##crawl")
+           :nickserv-password "qwefasdf")))
+  :config
+  (setq circe-reduce-lurker-spam t
+        tracking-position 'after-modes
+        tracking-most-recent-first t)
+  (enable-circe-color-nicks)
+  (require 'lui-autopaste)
+  (add-hook 'circe-channel-mode-hook 'enable-lui-autopaste))
+
+(use-package erc
+  :disabled t
+  :defer t
+  :init
+  (defun sooheon--erc ()
+    (interactive)
+    (erc :server "irc.freenode.net"
+         :port 6667
+         :nick "sooheon"))
+  (defun sooheon--switch-to-erc ()
+    "Switch to ERC buffers using completing-read, or start ERC
+if no buffers open."
+    (interactive)
+    (let (candidates (list))
+      (dolist (buf (buffer-list) candidates)
+        (if (equal 'erc-mode (with-current-buffer buf major-mode))
+            (setq candidates (append (list (buffer-name buf)) candidates))))
+      (if candidates
+          (switch-to-buffer (completing-read "IRC buffer: " candidates))
+        (call-interactively 'sooheon--erc))))
+  (evil-leader/set-key "ai" 'sooheon--switch-to-erc)
+  :config
+  (setq erc-hide-list '("JOIN" "NICK" "PART" "QUIT" "MODE"
+                        "324" "329" "332" "333" "353" "477")
+        erc-track-shorten-aggressively 'max
+        erc-track-position-in-mode-line t
+        erc-prompt-for-password nil
+        erc-autojoin-channels-alist
+        '(("freenode.net" "#clojure" "#lesswrong" "##crawl"))
+        erc-join-buffer 'bury
+        erc-nickserv-passwords '((freenode (("sooheon" . "qwefasdf"))))))
+
 (use-package evil-commentary
   :diminish evil-commentary-mode
   :commands (evil-commentary
