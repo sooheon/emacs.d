@@ -85,10 +85,9 @@
 (use-package evil
   :init
   (setq-default evil-want-C-u-scroll t
-                ;; evil-want-fine-undo 'fine
                 evil-cross-lines t
                 evil-symbol-word-search t
-                ;; evil-move-cursor-back nil
+                evil-move-cursor-back nil
                 evil-want-C-i-jump t
                 evil-disable-insert-state-bindings t
                 evil-search-module 'evil-search
