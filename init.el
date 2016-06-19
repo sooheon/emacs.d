@@ -658,7 +658,7 @@ if no buffers open."
   (setq ivy-extra-directories '("./")
         ivy-count-format "%d "
         ivy-height 12
-        ivy-re-builders-alist '((counsel-M-x . ivy--regex-fuzzy)
+        ivy-re-builders-alist '(;; (counsel-M-x . ivy--regex-fuzzy)
                                 (t . ivy--regex-plus))
         ivy-initial-inputs-alist '((org-refile . "^")
                                    (org-agenda-refile . "^")
