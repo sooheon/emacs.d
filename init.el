@@ -423,30 +423,35 @@
     (add-hook hook 'turn-on-elisp-slime-nav-mode)))
 
 (use-package circe
+  :disabled t
   :defer t
   :init
+  (setq circe-network-options '(("Freenode"
+                                 :nick "sooheon"
+                                 :channels ("#emacs" "#clojure" "#haskell"
+                                            "##crawl"
+                                            ;; "#lesswrong"
+                                            )
+                                 :nickserv-password "qwefasdf")))
   (defun sooheon--switch-to-circe ()
     "Switch to CIRCE buffers using completing-read, or start
 CIRCE if no buffers open."
     (interactive)
     (let (candidates (list))
       (dolist (buf (buffer-list) candidates)
-        (if (equal 'circe-channel-mode (with-current-buffer buf major-mode))
+        (if (or (equal 'circe-channel-mode (with-current-buffer buf major-mode))
+                (equal 'circe-server-mode (with-current-buffer buf major-mode)))
             (setq candidates (append (list (buffer-name buf)) candidates))))
       (if candidates
           (switch-to-buffer (completing-read "IRC buffer: " candidates))
         (circe "Freenode"))))
   (evil-leader/set-key "ai" 'sooheon--switch-to-circe)
-  (setq circe-network-options
-        '(("Freenode"
-           :nick "sooheon"
-           :channels ("#emacs" "#clojure" "#lesswrong" "##crawl")
-           :nickserv-password "qwefasdf")))
   :config
   (setq circe-reduce-lurker-spam t
-        tracking-position 'after-modes
+        tracking-position 'end
         tracking-most-recent-first t)
   (enable-circe-color-nicks)
+  (enable-circe-highlight-all-nicks)
   (require 'lui-autopaste)
   (add-hook 'circe-channel-mode-hook 'enable-lui-autopaste))
 
