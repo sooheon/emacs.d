@@ -643,6 +643,12 @@ if no buffers open."
   :bind (([remap isearch-forward] . counsel-grep-or-swiper)
          ("s-f" . counsel-grep-or-swiper)))
 
+(use-package inf-clojure
+  :defer t
+  :config
+  (setq inf-clojure-program "planck")
+  (add-hook 'inf-clojure-mode-hook #'smartparens-mode))
+
 (use-package ivy
   :diminish ivy-mode
   :commands (magit-status epkg-describe-package)
