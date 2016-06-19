@@ -280,7 +280,9 @@
 (use-package clojure-mode
   :defer t
   :mode ("\\.boot\\'" . clojure-mode)
-  :interpreter ("!.*boot\\s-*" . clojure-mode)
+  :init
+  (add-to-list 'magic-mode-alist '("#!.*boot\\s-*$" . clojure-mode))
+  (add-to-list 'magic-mode-alist '("#!.*planck\\s-*$" . clojurescript-mode))
   :config
   ;; This is for clojure-semantic, the library file is clojure.el
   (load-library "clojure"))
