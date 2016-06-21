@@ -164,3 +164,5 @@ already narrowed."
     (set-face-attribute 'default nil :height new-height)
     (message (format "Font height is now %d" new-height))))
 (bind-key "s--" 'dec-face-height)
+
+(provide 'sooheon)
