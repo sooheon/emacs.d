@@ -268,7 +268,8 @@
         cider-prompt-save-file-on-load nil
         cider-repl-use-clojure-font-lock t
         cider-font-lock-dynamically t
-        cider-mode-line '(:eval (format " [%s]" (cider--modeline-info))))
+        cider-mode-line '(:eval (format " [%s]" (cider--modeline-info)))
+        cider-default-repl-command "boot")
   ;; (defadvice cider-jump-to-var (before add-evil-jump activate)
   ;;   (evil-set-jump))
   (evil-define-key 'normal cider-mode-map "K" 'cider-doc)
@@ -1324,8 +1325,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :config
   (setq undo-tree-visualizer-timestamps t
         undo-tree-visualizer-diff t
-        undo-tree-auto-save-history t
-        undo-tree-history-directory-alist `(("." . ,(expand-file-name "var" emacs-d)))))
+        undo-tree-auto-save-history t))
 
 (use-package which-key
   :diminish which-key-mode
