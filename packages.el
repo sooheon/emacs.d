@@ -14,6 +14,7 @@
     avy
     bind-map
     cider
+    circe
     clojure-mode
     closql
     company
