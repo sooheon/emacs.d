@@ -6,6 +6,7 @@
          (float-time (time-subtract before-user-init-time before-init-time)))
 (setq user-init-file (or load-file-name buffer-file-name))
 (setq emacs-d (file-name-directory user-init-file))
+(add-to-list 'load-path (concat emacs-d "layers/"))
 (setq package-user-dir (expand-file-name "elpa" emacs-d))
 (package-initialize)
 
