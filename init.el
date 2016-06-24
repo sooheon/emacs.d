@@ -960,7 +960,8 @@ Will work on both org-mode and any mode that accepts plain html."
         org-hide-emphasis-markers t
         org-return-follows-link t
         org-startup-with-inline-images t
-        org-log-done 'time)
+        org-log-done 'time
+        org-highlight-latex-and-related '(latex script entities))
 
   (defun org-metaright2 (&optional arg)
     "My evil version of `org-metaright', to be bound to M-l and
