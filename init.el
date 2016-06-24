@@ -234,12 +234,13 @@
   :init (global-auto-revert-mode 1))
 
 (use-package company
-  :defer 2
   :diminish (company-mode . "co")
+  :init
+  (add-hook 'prog-mode-hook 'company-mode)
   :config
   (setq company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
-                            company-preview-if-just-one-frontend))
-  (setq company-backends '(company-elisp
+                            company-preview-if-just-one-frontend)
+        company-backends '(company-elisp
                            company-css
                            ;; company-semantic
                            company-capf
@@ -248,10 +249,11 @@
                             company-etags
                             company-keywords)
                            company-files
-                           company-dabbrev))
-  (setq company-idle-delay 0.2
-        company-minimum-prefix-length 2)
-  (global-company-mode)
+                           company-dabbrev)
+        company-idle-delay 0.2
+        company-minimum-prefix-length 2
+        company-dabbrev-other-buffers t
+        company-require-match nil)
   (let ((m company-active-map))
     (define-key m [escape] (lambda () (interactive)
                              (company-abort)
@@ -442,38 +444,6 @@ With a prefix argument, use comint-mode."
   (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
     (add-hook hook 'turn-on-elisp-slime-nav-mode)))
 
-(use-package circe
-  :disabled t
-  :defer t
-  :init
-  (setq circe-network-options '(("Freenode"
-                                 :nick "sooheon"
-                                 :channels ("#emacs" "#clojure" "#haskell"
-                                            "##crawl"
-                                            ;; "#lesswrong"
-                                            )
-                                 :nickserv-password "qwefasdf")))
-  (defun sooheon--switch-to-circe ()
-    "Switch to CIRCE buffers using completing-read, or start
-CIRCE if no buffers open."
-    (interactive)
-    (let (candidates (list))
-      (dolist (buf (buffer-list) candidates)
-        (if (or (equal 'circe-channel-mode (with-current-buffer buf major-mode))
-                (equal 'circe-server-mode (with-current-buffer buf major-mode)))
-            (setq candidates (append (list (buffer-name buf)) candidates))))
-      (if candidates
-          (switch-to-buffer (completing-read "IRC buffer: " candidates))
-        (circe "Freenode"))))
-  (evil-leader/set-key "ai" 'sooheon--switch-to-circe)
-  :config
-  (setq circe-reduce-lurker-spam t
-        tracking-position 'end
-        tracking-most-recent-first t)
-  (enable-circe-color-nicks)
-  (enable-circe-highlight-all-nicks)
-  (require 'lui-autopaste)
-  (add-hook 'circe-channel-mode-hook 'enable-lui-autopaste))
 (use-package circe
   :disabled t
   :defer t
