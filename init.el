@@ -576,6 +576,14 @@ if no buffers open."
               ("C-S-a" . evil-numbers/inc-at-pt)
               ("C-S-x" . evil-numbers/dec-at-pt)))
 
+(use-package expand-region
+  :commands er/expand-region
+  :init
+  (bind-key (kbd "M-2") (lambda (arg)
+                          (interactive "p")
+                          (progn (evil-insert 1)
+                                 (er/expand-region arg)))))
+
 (use-package flycheck
   :defer t
   :config
