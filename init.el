@@ -946,6 +946,7 @@ Will work on both org-mode and any mode that accepts plain html."
   :defer 10
   :diminish org-indent-mode
   :config
+  (add-hook 'org-mode-hook 'smartparens-mode)
   (add-to-list 'load-path (expand-file-name "lib/org/contrib/lisp/" emacs-d))
   (setq org-src-fontify-natively t
         ;; org-startup-indented t
@@ -1282,11 +1283,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 (use-package smartparens
   :defer t
   :init
-  (setq sp-cancel-autoskip-on-backward-movement t
-        sp-autoskip-closing-pair 'always
-        sp-show-pair-from-inside nil
-        sp-show-pair-delay 0
-        sp-highlight-pair-overlay nil)
   (defun conditionally-enable-smartparens-mode ()
     "Enable `smartparens-mode' in the minibuffer, during `eval-expression'."
     (if (eq this-command 'eval-expression)
@@ -1295,6 +1291,11 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   (add-hook 'prog-mode-hook 'smartparens-mode)
   :config
   (require 'smartparens-config)
+  (setq sp-cancel-autoskip-on-backward-movement nil
+        sp-autoskip-closing-pair 'always
+        sp-show-pair-from-inside nil
+        sp-show-pair-delay 0
+        sp-highlight-pair-overlay nil)
   (show-smartparens-global-mode 1)
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
   (defun soo-end-of-sexp-or-next ()
