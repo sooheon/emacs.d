@@ -260,17 +260,35 @@
     (define-key m "\C-p" 'company-select-previous)
     (define-key m [tab] 'company-complete-common)))
 
+(use-package compile
+  :defer t
+  :init
+  (define-key prog-mode-map [C-f9] #'compile)
+  (define-key prog-mode-map [f9] #'endless/compile-please)
+  :config
+  (setq compilation-ask-about-save nil
+        compilation-scroll-output 'next-error
+        compilation-skip-threshold 2)
+  (defun endless/compile-please (comint)
+    "Compile without confirmation.
+With a prefix argument, use comint-mode."
+    (interactive "P")
+    ;; Do the command without a prompt.
+    (save-window-excursion
+      (compile (eval compile-command) (and comint t)))
+    (pop-to-buffer (get-buffer "*compilation*"))))
+
 (use-package cider
   :defer t
   :init
   (add-hook 'clojure-mode-hook 'cider-mode)
-  :config
   (setq cider-repl-pop-to-buffer-on-connect nil
         cider-prompt-save-file-on-load nil
         cider-repl-use-clojure-font-lock t
         cider-font-lock-dynamically t
         cider-mode-line '(:eval (format " [%s]" (cider--modeline-info)))
         cider-default-repl-command "boot")
+  :config
   ;; (defadvice cider-jump-to-var (before add-evil-jump activate)
   ;;   (evil-set-jump))
   (evil-define-key 'normal cider-mode-map "K" 'cider-doc)
