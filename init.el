@@ -770,6 +770,8 @@ if no buffers open."
         lispy-safe-copy t
         lispy-safe-delete t
         lispy-comment-use-single-semicolon t)
+  (add-to-list 'lispy-parens-preceding-syntax-alist
+               '(clojurescript-mode . ("[`'~@]+" "\\|" "#" "\\|" "#\\?@?")))
   (lispy-set-key-theme '(special
                          c-digits
                          paredit))
