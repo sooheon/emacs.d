@@ -47,14 +47,22 @@ point reaches the beginning or end of the buffer, stop there."
 
 (bind-key "C-a" #'spacemacs/smart-move-beginning-of-line)
 
-(defun soo--delete-window-or-bury-buffer (&optional window)
+(defun soo--close-window-dwim (&optional window)
+  "DWIM window closing function.
+If window is a *Help* window, call `quit-window' so that the
+buffer will not be selected again with `other-buffer'. When there
+are multiple windows in frame, call `delete-window' on current
+window. If there is only one window in frame, call
+`bury-buffer'."
   (interactive)
   (let ((window (window-normalize-window window)))
-    (if (not (window-parent window))
-        (call-interactively 'bury-buffer)
-      (call-interactively 'delete-window))))
+    (if (eq major-mode 'help-mode)
+        (call-interactively 'quit-window)
+      (if (window-parent window)
+          (call-interactively 'delete-window)
+        (call-interactively 'bury-buffer)))))
 
-(bind-key "s-w" #'soo--delete-window-or-bury-buffer)
+(bind-key "s-w" #'soo--close-window-dwim)
 
 (defun soo--terminal-pop ()
   (interactive)
@@ -82,8 +90,7 @@ end tell
              (setq mac-right-option-modifier 'meta))
     (progn (message "Setting right option key to nil")
            (setq mac-right-option-modifier nil))))
-(evil-leader/set-key
-  "t\C-o" 'sooheon--toggle-right-option-key)
+(evil-leader/set-key "t\C-o" 'sooheon--toggle-right-option-key)
 
 ;; fill/un-fill with one key: http://tinyurl.com/gn2tswy
 (defun endless/fill-or-unfill ()
