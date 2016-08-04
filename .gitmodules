@@ -13,3 +13,9 @@
 [submodule "org"]
         path = lib/org
         url = git://orgmode.org/org-mode.git
+[submodule "soap"]
+	path = lib/soap
+	url = git@github.com:abo-abo/soap.git
+[submodule "lpy"]
+	path = lib/lpy
+	url = git@github.com:abo-abo/lpy.git

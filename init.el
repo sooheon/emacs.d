@@ -1,85 +1,87 @@
 ;;; init.el --- user-init-file                    -*- lexical-binding: t -*-
 
-(defvar before-user-init-time (current-time)
-  "Value of `current-time' when Emacs begins loading `user-init-file'.")
-(message "Loading Emacs...done (%.3fs)"
-         (float-time (time-subtract before-user-init-time before-init-time)))
-(setq user-init-file (or load-file-name buffer-file-name))
-(setq emacs-d (file-name-directory user-init-file))
+;;* Base directory
+(defvar user-init-file (or load-file-name buffer-file-name))
+(defvar emacs-d (file-name-directory user-init-file))
 (add-to-list 'load-path (concat emacs-d "layers/"))
 (setq package-user-dir (expand-file-name "elpa" emacs-d))
 (package-initialize)
+(let ((emacs-lib (expand-file-name "lib/" emacs-d)))
+  (mapc (lambda (x)
+          (add-to-list 'load-path (expand-file-name x emacs-lib)))
+        (delete ".." (directory-files emacs-lib))))
+(add-to-list 'load-path (expand-file-name "modes/" emacs-d))
 
-(message "Loading %s..." user-init-file)
-
-;; Theme
+;;* Theme
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" user-emacs-directory))
 ;; (load-theme 'eclipse2 t)
-;; Font
+;;** Font
 (ignore-errors (set-frame-font "Input Mono Narrow"))
-;; Customize
-(scroll-bar-mode 0)
-(tool-bar-mode 0)
-(menu-bar-mode 0)
-(hl-line-mode 1)
-(setq-default inhibit-startup-screen t
-              initial-scratch-message ""
-              initial-major-mode 'emacs-lisp-mode
-              load-prefer-newer t
-              create-lockfiles nil      ; Don't create #foo.file#
-              fill-column 80)
+;;* Customize
+(defmacro csetq (variable value)
+  `(funcall (or (get ',variable 'custom-set) 'set-default) ',variable ,value))
+;;** Decorations
+(csetq tool-bar-mode nil)
+(csetq menu-bar-mode nil)
+(csetq scroll-bar-mode nil)
+(csetq inhibit-startup-screen t)
+(csetq initial-scratch-message "")
+(setq text-quoting-style 'grave)
+(csetq initial-major-mode 'emacs-lisp-mode)
+(csetq create-lockfiles nil)
+(csetq fill-column 80)
+(hl-line-mode -1)
 (eval '(setq inhibit-startup-echo-area-message "sooheon"))
 (setq frame-title-format '((:eval (if buffer-file-name
                                       (abbreviate-file-name buffer-file-name)
                                     "%b"))
                            (:eval (if (buffer-modified-p) " •"))
                            " - Emacs"))
-;; Navigation within buffer
+;;** Navigation within buffer
 (setq recenter-positions '(top middle bottom))
-;; Finding files
-(setq vc-follow-symlinks t)
-(setq find-file-suppress-same-file-warnings t)
-(setq read-buffer-completion-ignore-case t)
-;; Editor behavior
-(setq default-input-method "korean-hangul"
-      indent-tabs-mode nil
-      ring-bell-function 'ignore
-      highlight-nonselected-windows t
-      backup-inhibited t
-      kill-buffer-query-functions nil
-      enable-recursive-minibuffers t
-      ;; https://github.com/railwaycat/emacs-mac-port/issues/78
-      mac-pass-command-to-system nil)
+;;** Finding files
+(csetq vc-follow-symlinks t)
+(csetq find-file-suppress-same-file-warnings t)
+(csetq read-file-name-completion-ignore-case t)
+(csetq read-buffer-completion-ignore-case t)
+(prefer-coding-system 'utf-8)
+;;** minibuffer interaction
+(csetq enable-recursive-minibuffers t)
+(setq minibuffer-message-timeout 1)
 (minibuffer-depth-indicate-mode 1)
+;;** editor behavior
+(csetq default-input-method "korean-hangul")
+(csetq indent-tabs-mode nil)
+(setq ring-bell-function 'ignore)
+(csetq highlight-nonselected-windows t)
+(csetq backup-inhibited t)
 (defalias 'yes-or-no-p 'y-or-n-p)
+(setq kill-buffer-query-functions nil)
+;; https://github.com/railwaycat/emacs-mac-port/issues/78
+(csetq mac-pass-command-to-system nil)
 (add-hook 'server-switch-hook 'raise-frame)
-(setq eval-expression-print-length nil
-      eval-expression-print-level nil
-      sentence-end-double-space nil
+(csetq eval-expression-print-length nil)
+(csetq eval-expression-print-level nil)
+(setq sentence-end-double-space nil
       search-default-mode 'character-fold-to-regexp
       replace-character-fold t)
-;; Shell
-(setq shell-file-name "/usr/local/bin/bash")
-(setq explicit-shell-file-name "/usr/local/bin/fish")
-;; Internals
-(setq gc-cons-threshold (* 10 1024 1024)
-      ad-redefinition-action 'accept)
+;;** internals
+(csetq gc-cons-threshold (* 10 1024 1024))
+(csetq ad-redefinition-action 'accept)
+;;** shell
+(csetq shell-file-name "/usr/local/bin/bash")
+(csetq explicit-shell-file-name "/usr/local/bin/fish")
 ;; Set PATHs--see: http://tinyurl.com/ctf9h3a
 (setenv "PATH" "/Users/sooheon/.cabal/bin:/Users/sooheon/.local/bin:/usr/local/Cellar/pyenv-virtualenv/20160315/shims:/Users/sooheon/.pyenv/shims:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Library/TeX/texbin")
 (setenv "MANPATH" "/usr/local/opt/coreutils/libexec/gnuman:/usr/local/opt/findutils/libexec/gnuman:/usr/local/share/man")
 (setq exec-path '("/Users/sooheon/.cabal/bin" "/Users/sooheon/.local/bin" "/usr/local/Cellar/pyenv-virtualenv/20160315/shims" "/Users/sooheon/.pyenv/shims" "/usr/local/opt/coreutils/libexec/gnubin" "/usr/local/opt/findutils/libexec/gnubin" "/usr/local/bin" "/usr/bin" "/bin" "/usr/sbin" "/sbin" "/opt/X11/bin" "/Library/TeX/texbin" "/usr/local/Cellar/emacs/HEAD/libexec/emacs/25.1.50/x86_64-apple-darwin15.5.0"))
 
-;; borg
-(add-to-list 'load-path (expand-file-name "lib/borg" emacs-d))
-(require 'borg)
-(borg-initialize)
-
-;; use-package
+;;* Bootstrap
+;;** package.el
+(setq package-archives '(("melpa" . "http://melpa.org/packages/")
+                         ("gnu" . "http://elpa.gnu.org/packages/")))
 (eval-when-compile
   (require 'use-package))
-(require 'diminish)
-(require 'bind-key)
-(setq use-package-verbose t)
 
 (use-package no-littering :demand t)
 
@@ -178,12 +180,6 @@
   :init (setq epkg-repository (expand-file-name "var/epkgs/" emacs-d))
   (evil-leader/set-key "aep" 'epkg-describe-package))
 
-(use-package package
-  :config
-  (setq package-archives '(("melpa" . "http://melpa.org/packages/")
-                           ("gnu" . "http://elpa.gnu.org/packages/")))
-  (evil-leader/set-key "ap" 'package-list-packages))
-
 (use-package custom
   :config
   (setq custom-file (expand-file-name "custom.el" emacs-d))
@@ -191,11 +187,6 @@
     (load custom-file)))
 
 (use-package server :config (or (server-running-p) (server-mode)))
-
-(progn ; startup
-  (message "Loading early birds...done (%.3fs)"
-           (float-time (time-subtract (current-time)
-                                      before-user-init-time))))
 
 ;;; Long tail
 
@@ -1406,18 +1397,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 (require 'sooheon)
 (require 'soo-haskell)
 (require 'soo-python)
-
-(progn ;; Startup
-  (message "Loading %s...done (%.3fs)" user-init-file
-           (float-time (time-subtract (current-time)
-                                      before-user-init-time)))
-  (add-hook 'after-init-hook
-            (lambda ()
-              (message
-               "Loading %s...done (%.3fs) [after-init]" user-init-file
-               (float-time (time-subtract (current-time)
-                                          before-user-init-time))))
-            t))
 
 ;; Local Variables:
 ;; indent-tabs-mode: nil

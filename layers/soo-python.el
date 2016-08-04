@@ -28,6 +28,8 @@
   (define-key python-mode-map (kbd "C-j") 'newline-and-indent)
   (define-key python-mode-map (kbd "C-m") 'newline))
 
+(add-to-list 'load-path "~/.emacs.d/lib/lpy")
+(add-to-list 'load-path "~/.emacs.d/lib/soap")
 (require 'lpy)
 
 (use-package lpy
@@ -57,6 +59,7 @@
   :defer t
   :diminish anaconda-mode
   :init
+  (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
   (setq anaconda-mode-installation-directory (expand-file-name "etc/anaconda-mode" emacs-d))
   (add-hook 'python-mode-hook 'anaconda-mode)
   :config
@@ -66,8 +69,7 @@
   (defadvice anaconda-mode-goto (before python/anaconda-mode-goto activate)
     (evil--jumps-push))
   (require 'company-anaconda)
-  (add-to-list 'company-backends 'company-anaconda)
-  (add-hook 'python-mode-hook 'anaconda-eldoc-mode))
+  (add-to-list 'company-backends 'company-anaconda))
 
 (use-package py-yapf
   :commands py-yapf-buffer
