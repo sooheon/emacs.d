@@ -28,6 +28,8 @@
   (define-key python-mode-map (kbd "C-j") 'newline-and-indent)
   (define-key python-mode-map (kbd "C-m") 'newline))
 
+(require 'lpy)
+
 (use-package lpy
   :defer t
   :init

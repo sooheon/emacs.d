@@ -1405,6 +1405,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 ;; Personalize
 (require 'sooheon)
 (require 'soo-haskell)
+(require 'soo-python)
 
 (progn ;; Startup
   (message "Loading %s...done (%.3fs)" user-init-file
