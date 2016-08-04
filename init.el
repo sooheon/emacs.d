@@ -14,7 +14,7 @@
 
 ;; Theme
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" user-emacs-directory))
-(load-theme 'eclipse2 t)
+;; (load-theme 'eclipse2 t)
 ;; Font
 (ignore-errors (set-frame-font "Input Mono Narrow"))
 ;; Customize
