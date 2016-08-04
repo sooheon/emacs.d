@@ -13,13 +13,13 @@
 
 ;;* Theme
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" user-emacs-directory))
-;; (load-theme 'eclipse2 t)
-;;** Font
+(load-theme 'zenburn t)
+;;** font
 (ignore-errors (set-frame-font "Input Mono Narrow"))
-;;* Customize
+;;* customize
 (defmacro csetq (variable value)
   `(funcall (or (get ',variable 'custom-set) 'set-default) ',variable ,value))
-;;** Decorations
+;;** decorations
 (csetq tool-bar-mode nil)
 (csetq menu-bar-mode nil)
 (csetq scroll-bar-mode nil)
@@ -82,7 +82,7 @@
 (eval-when-compile
   (require 'use-package))
 
-(use-package no-littering :demand t)
+(require 'no-littering)
 
 (use-package evil
   :init

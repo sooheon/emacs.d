@@ -24,13 +24,11 @@
 
 (use-package python
   :defer t
+  :init
+  (add-hook 'python-mode-hook (lambda () (require 'lpy)))
   :config
   (define-key python-mode-map (kbd "C-j") 'newline-and-indent)
   (define-key python-mode-map (kbd "C-m") 'newline))
-
-(add-to-list 'load-path "~/.emacs.d/lib/lpy")
-(add-to-list 'load-path "~/.emacs.d/lib/soap")
-(require 'lpy)
 
 (use-package lpy
   :defer t
