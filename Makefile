@@ -1,5 +1,3 @@
-.FORCE:
-
 emacs ?= emacs
 
 BASEDIR := $(shell pwd)

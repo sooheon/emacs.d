@@ -1,8 +1,7 @@
 ;;; init.el --- user-init-file                    -*- lexical-binding: t -*-
 
 ;;* Base directory
-(defvar user-init-file (or load-file-name buffer-file-name))
-(defvar emacs-d (file-name-directory user-init-file))
+(defvar emacs-d (file-name-directory (file-chase-links load-file-name)))
 (add-to-list 'load-path (concat emacs-d "layers/"))
 (setq package-user-dir (expand-file-name "elpa" emacs-d))
 (package-initialize)
@@ -937,6 +936,7 @@ Will work on both org-mode and any mode that accepts plain html."
   (super-save-mode 1))
 
 (use-package org
+  :disabled t
   :defer 10
   :diminish org-indent-mode
   :config
@@ -1067,13 +1067,14 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
                                    (self-insert-command 1)))))
 
 (use-package org-download
-  :after org
+  :defer t
   :config
   (org-download-enable)
   (setq org-download-method 'attach))
 
 (use-package ox
-  :after org
+  :disabled t
+  :defer t
   :config
   (setq org-export-backends '(ascii html latex odt gfm)
         org-export-coding-system 'utf-8
