@@ -143,7 +143,8 @@
     "wK" 'evil-window-move-very-top
     "wJ" 'evil-window-move-very-bottom
     "w=" 'balance-windows
-    "wo" 'delete-other-windows
+    "wm" 'delete-other-windows
+    "wo" 'other-window
     "ww" 'evil-window-next
     "ws" 'evil-window-split
     "wv" 'evil-window-vsplit
