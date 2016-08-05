@@ -159,6 +159,16 @@ already narrowed."
 ;; (bind-key "s--" 'dec-face-height)
 
 ;;;###autoload
+(defun youtube-dl ()
+  (interactive)
+  (let* ((str (current-kill 0))
+         (default-directory "~/Downloads")
+         (proc (get-buffer-process (ansi-term "/bin/bash"))))
+    (term-send-string
+     proc
+     (concat "cd ~/Downloads && youtube-dl " str "\n"))))
+
+;;;###autoload
 (defun update-all-autoloads ()
   (interactive)
   (cd (expand-file-name "lisp" emacs-d))
