@@ -32,7 +32,8 @@
 (csetq create-lockfiles nil)
 (csetq fill-column 80)
 (csetq truncate-lines t)
-(hl-line-mode 1)
+(global-hl-line-mode 1)
+(blink-cursor-mode -1)
 (eval '(setq inhibit-startup-echo-area-message "sooheon"))
 (setq frame-title-format '((:eval (if buffer-file-name
                                       (abbreviate-file-name buffer-file-name)
@@ -40,6 +41,7 @@
                            (:eval (if (buffer-modified-p) " •"))
                            " - Emacs"))
 (add-to-list 'fringe-indicator-alist '(continuation nil right-curly-arrow)) ; not working right now
+(csetq scroll-preserve-screen-position t)
 ;;** Navigation within buffer
 (setq recenter-positions '(top middle bottom))
 ;;** Finding files
@@ -100,24 +102,6 @@
                 evil-disable-insert-state-bindings t
                 evil-search-module 'evil-search
                 evil-ex-search-persistent-highlight nil)
-  ;; (defmacro spacemacs|define-text-object (key name start end)
-  ;;   (let ((inner-name (make-symbol (concat "evil-inner-" name)))
-  ;;         (outer-name (make-symbol (concat "evil-outer-" name)))
-  ;;         (start-regex (regexp-opt (list start)))
-  ;;         (end-regex (regexp-opt (list end))))
-  ;;     `(progn
-  ;;        (evil-define-text-object ,inner-name (count &optional beg end type)
-  ;;          (evil-select-paren ,start-regex ,end-regex beg end type count nil))
-  ;;        (evil-define-text-object ,outer-name (count &optional beg end type)
-  ;;          (evil-select-paren ,start-regex ,end-regex beg end type count t))
-  ;;        (define-key evil-inner-text-objects-map ,key (quote ,inner-name))
-  ;;        (define-key evil-outer-text-objects-map ,key (quote ,outer-name))
-  ;;        (with-eval-after-load 'evil-surround
-  ;;          (push (cons (string-to-char ,key)
-  ;;                      (if ,end
-  ;;                          (cons ,start ,end)
-  ;;                        ,start))
-  ;;                evil-surround-pairs-alist)))))
   :config
   (evil-mode 1)
   (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word)
@@ -177,12 +161,6 @@
   (add-hook 'auto-compile-inhibit-compile-hook
             'auto-compile-inhibit-compile-detached-git-head))
 
-(use-package epkg
-  :defer t
-  :commands epkg-describe-package
-  :init (setq epkg-repository (expand-file-name "var/epkgs/" emacs-d))
-  (evil-leader/set-key "aep" 'epkg-describe-package))
-
 (use-package custom
   :config
   (setq custom-file (expand-file-name "lisp/custom.el" emacs-d))
@@ -190,8 +168,6 @@
     (load custom-file)))
 
 (use-package server :config (or (server-running-p) (server-mode)))
-
-;;; Long tail
 
 (defvar sooheon--avy-keys '(?w ?e ?r ?s ?d ?x ?c ?u ?i ?o ?v ?n ?m ?l ?k ?j ?f))
 
@@ -1399,10 +1375,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :diminish ws-butler-mode
   :config (ws-butler-global-mode))
 
-;; Personalize
-;; (require 'soo-haskell)
-;; (require 'soo-python)
-
+;;** hooks
 (load (expand-file-name "lisp/auto.el" emacs-d))
 (add-hook 'python-mode-hook 'soo-python-hook)
 

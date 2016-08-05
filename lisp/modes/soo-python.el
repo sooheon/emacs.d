@@ -32,6 +32,7 @@
     (jedi:setup))
   (remove-hook 'post-command-hook 'jedi:handle-post-command t)
   (setq lispy-no-space t)
+  (setq forward-sexp-function 'ora-c-forward-sexp-function)
   (lpy-mode)
   (setq completion-at-point-functions '(lispy-python-completion-at-point t)))
 

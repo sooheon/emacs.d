@@ -24,8 +24,6 @@
     diff-hl
     diminish
     elisp-slime-nav
-    emacsql
-    epkg
     evil
     evil-commentary
     evil-cleverparens

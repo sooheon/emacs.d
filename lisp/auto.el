@@ -1,8 +1,3 @@
-(setq scroll-preserve-screen-position t
-      ;; scroll-margin 0
-      ;; scroll-conservatively 0
-      )
-(blink-cursor-mode -1)
 (global-set-key "\C-x\C-b" 'ibuffer)
 (global-set-key (kbd "s-u") 'universal-argument)
 (global-set-key (kbd "s-W") 'delete-frame)
@@ -15,7 +10,7 @@
 (set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
 
 ;;;###autoload
-(defun spacemacs/smart-move-beginning-of-line (arg)
+(defun soo-move-beginning-of-line (arg)
   "Move point back to indentation of beginning of line.
 Move point to the first non-whitespace character on this line.
 If point is already there, move to the beginning of the line.
@@ -34,7 +29,7 @@ point reaches the beginning or end of the buffer, stop there."
     (when (= orig-point (point))
       (move-beginning-of-line 1))))
 
-(bind-key "C-a" 'spacemacs/smart-move-beginning-of-line)
+(bind-key "C-a" 'soo-move-beginning-of-line)
 
 ;;;###autoload
 (defun soo--close-window-dwim (&optional window)
@@ -52,8 +47,9 @@ window. If there is only one window in frame, call
           (call-interactively 'delete-window)
         (call-interactively 'bury-buffer)))))
 
-(bind-key "s-w" #'soo--close-window-dwim)
+(bind-key "s-w" 'soo--close-window-dwim)
 
+;;;###autoload
 (defun soo--terminal-pop ()
   (interactive)
   (do-applescript
@@ -67,12 +63,12 @@ end tell
 "
            default-directory)))
 
-(define-key evil-normal-state-map "got" #'soo--terminal-pop)
+(define-key evil-normal-state-map "got" 'soo--terminal-pop)
 
 (setq mac-option-modifier 'meta
       mac-command-modifier 'super)
 
-;; Right alt nil for deadkeys
+;;;###autoload
 (defun sooheon--toggle-right-option-key ()
   (interactive)
   (if (eq mac-right-option-modifier nil)
@@ -82,7 +78,7 @@ end tell
            (setq mac-right-option-modifier nil))))
 (evil-leader/set-key "t\C-o" 'sooheon--toggle-right-option-key)
 
-;; fill/un-fill with one key: http://tinyurl.com/gn2tswy
+;;;###autoload
 (defun endless/fill-or-unfill ()
   "Like `fill-paragraph', but unfill if used twice."
   (interactive)
@@ -92,10 +88,10 @@ end tell
                     (point-max))
            fill-column)))
     (call-interactively #'fill-paragraph)))
-(bind-key [remap fill-paragraph] #'endless/fill-or-unfill)
 
-;; Narrow or widen dwim
-;; http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
+(bind-key [remap fill-paragraph] 'endless/fill-or-unfill)
+
+;;;###autoload
 (defun narrow-or-widen-dwim (p)
   "Widen if buffer is narrowed, narrow-dwim otherwise.
 Dwim means: region, org-src-block, org-subtree, or defun,
@@ -127,7 +123,7 @@ already narrowed."
 (add-hook 'LaTeX-mode-hook
           (lambda () (define-key LaTeX-mode-map "\C-xn" nil)))
 
-;; Deleting with S-backspace work with cleverparens
+;;;###autoload
 (defun sooheon--delete-to-bol ()
   (interactive)
   (if (fboundp 'lispyville-delete)
@@ -175,3 +171,51 @@ already narrowed."
     (mapcar #'update-directory-autoloads
             '("" "modes" ;; "git/org-fu"
               ))))
+
+;;;###autoload
+(defun ora-c-forward-sexp-function (arg)
+  (let ((forward-sexp-function nil))
+    (forward-sexp arg))
+  (when (and (eq (char-after) ?.)
+             (looking-back "[0-9]+" (line-beginning-position)))
+    (forward-char)
+    (skip-chars-forward "0-9")))
+
+;;;###autoload
+(evil-define-text-object evil-inner-$ (count &optional beg end type)
+  (evil-select-paren "\\$" "\\$" beg end type count nil))
+
+;;;###autoload
+(evil-define-text-object evil-outer-$ (count &optional beg end type)
+  (evil-select-paren "\\$" "\\$" beg end type count t))
+
+(define-key evil-inner-text-objects-map "$" 'evil-inner-$)
+(define-key evil-outer-text-objects-map "$" 'evil-outer-$)
+(with-eval-after-load 'evil-surround
+  (push '(36 "$" . "$") evil-surround-pairs-alist))
+
+;;;###autoload
+(evil-define-text-object evil-inner-* (count &optional beg end type)
+  (evil-select-paren "\\*" "\\*" beg end type count nil))
+
+;;;###autoload
+(evil-define-text-object evil-outer-* (count &optional beg end type)
+  (evil-select-paren "\\*" "\\*" beg end type count t))
+
+(define-key evil-inner-text-objects-map "*" 'evil-inner-*)
+(define-key evil-outer-text-objects-map "*" 'evil-outer-*)
+(with-eval-after-load 'evil-surround
+  (push '(42 "*" . "*") evil-surround-pairs-alist))
+
+;;;###autoload
+(evil-define-text-object evil-inner-/ (count &optional beg end type)
+  (evil-select-paren "\\/" "\\/" beg end type count nil))
+
+;;;###autoload
+(evil-define-text-object evil-outer-/ (count &optional beg end type)
+  (evil-select-paren "\\/" "\\/" beg end type count t))
+
+(define-key evil-inner-text-objects-map "/" 'evil-inner-/)
+(define-key evil-outer-text-objects-map "/" 'evil-outer-/)
+(with-eval-after-load 'evil-surround
+  (push '(47 . "/") evil-surround-pairs-alist))
