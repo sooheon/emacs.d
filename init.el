@@ -13,7 +13,7 @@
 
 ;;* Theme
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" user-emacs-directory))
-(load-theme 'zenburn t)
+(load-theme 'eclipse2 t)
 ;;** font
 (ignore-errors (set-frame-font "Input Mono Narrow"))
 ;;* customize
@@ -214,11 +214,8 @@
         (browse-url-at-point)))))
 
 (use-package ace-link
-  :commands (ace-link-info ace-link-eww ace-link-help)
-  :init
-  (ace-link-setup-default)
-  (when (boundp 'org-mode-map)
-    (define-key org-mode-map "\M-o" 'ace-link-org)))
+  :config
+  (ace-link-setup-default))
 
 (use-package autorevert
   :diminish auto-revert-mode
@@ -407,8 +404,6 @@ With a prefix argument, use comint-mode."
       ;; Finally, switch to that window
       (other-window 1)))
   (define-key dired-mode-map "Y" 'ora-dired-rsync))
-
-(use-package dired+ :after dired :diminish dired-omit-mode)
 
 (use-package ediff
   :defer t
@@ -1396,7 +1391,7 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 
 ;; Personalize
 (require 'sooheon)
-(require 'soo-haskell)
+;; (require 'soo-haskell)
 (require 'soo-python)
 
 ;; Local Variables:

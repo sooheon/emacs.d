@@ -8,7 +8,6 @@
 
 (defconst soo-packages
   '(ace-link
-    ample-theme
     anaconda-mode
     auto-compile
     avy
@@ -24,7 +23,6 @@
     dash
     diff-hl
     diminish
-    dired+
     elisp-slime-nav
     emacsql
     epkg
@@ -48,18 +46,21 @@
     gist
     highlight-escape-sequences
     hydra
+    jedi
+    lispy
+    lispyville
     iedit
     ivy
     ivy-hydra
     magit
     markdown-mode
-    markdown-toc
     osx-dictionary
-    packed
     pandoc-mode
     pdf-tools
     projectile
     py-yapf
+    pyenv-mode
+    pyenv-mode-auto
     queue
     rainbow-delimiters
     rainbow-mode
@@ -72,7 +73,6 @@
     solarized-theme
     spacemacs-theme
     speck
-    spinner
     super-save
     swiper
     term-manager
@@ -86,16 +86,17 @@
     ws-butler
     zenburn-theme))
 
-(setq package-selected-packages soo-packages)
-
-;; Install required
+;; install required
 (dolist (package soo-packages)
   (unless (package-installed-p package)
     (ignore-errors
       (package-install package))))
 
-;; Upgrade installed
+;; upgrade installed
 (save-window-excursion
   (package-list-packages t)
   (package-menu-mark-upgrades)
-  (package-menu-execute t))
+  (condition-case nil
+      (package-menu-execute t)
+    (error
+     (package-menu-execute))))

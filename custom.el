@@ -4,6 +4,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(auto-image-file-mode t)
+ '(custom-safe-themes
+   (quote
+    ("fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
  '(eldoc-idle-delay 0)
  '(evil-leader/leader "SPC")
  '(evil-want-C-w-delete t)
@@ -16,9 +19,6 @@
  '(nrepl-message-colors
    (quote
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
- '(package-selected-packages
-   (quote
-    (ace-link ample-theme anaconda-mode auto-compile avy bind-map cider clojure-mode closql company company-anaconda counsel counsel-projectile dash diff-hl diminish dired+ elisp-slime-nav emacsql epkg evil evil-commentary evil-cleverparens evil-leader evil-magit evil-matchit evil-multiedit evil-numbers evil-snipe evil-surround evil-textobj-anyblock evil-visualstar finalize flx flycheck flyspell-correct git-modes gist highlight-escape-sequences hydra iedit ivy ivy-hydra magit markdown-mode markdown-toc osx-dictionary packed pandoc-mode pdf-tools projectile py-yapf queue rainbow-delimiters rainbow-mode reveal-in-osx-finder sentence-navigation shackle shell-pop smartparens smex solarized-theme spacemacs-theme speck spinner super-save swiper term-manager typo undo-tree use-package which-key window-numbering with-editor worf ws-butler zenburn-theme)))
  '(rainbow-identifiers-choose-face-function (quote rainbow-identifiers-cie-l*a*b*-choose-face))
  '(rainbow-identifiers-cie-l*a*b*-color-count 1024)
  '(rainbow-identifiers-cie-l*a*b*-lightness 80)

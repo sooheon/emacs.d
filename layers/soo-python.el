@@ -42,6 +42,7 @@
   (define-key lpy-mode-map (kbd "M-C-f") 'lispy-forward))
 
 (use-package pyenv-mode
+  :disabled t
   :if (executable-find "pyenv")
   :commands (pyenv-mode-set pyenv-mode-unset)
   :init
