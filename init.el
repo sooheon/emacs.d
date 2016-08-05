@@ -11,7 +11,7 @@
   (mapc (lambda (x)
           (add-to-list 'load-path (expand-file-name x emacs-lib)))
         (delete ".." (directory-files emacs-lib))))
-(add-to-list 'load-path (expand-file-name "modes/" emacs-d))
+(add-to-list 'load-path (expand-file-name "lisp" emacs-d))
 
 ;;* Theme
 (add-to-list 'custom-theme-load-path (expand-file-name "lib/themes" user-emacs-directory))
@@ -81,7 +81,7 @@
 
 ;;* Bootstrap
 ;;** autoloads
-(load (concat emacs-d "loaddefs.el") nil t)
+(load (concat emacs-d "lisp/loaddefs.el") nil t)
 ;;** package.el
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")))
@@ -185,7 +185,7 @@
 
 (use-package custom
   :config
-  (setq custom-file (expand-file-name "custom.el" emacs-d))
+  (setq custom-file (expand-file-name "lisp/custom.el" emacs-d))
   (when (file-exists-p custom-file)
     (load custom-file)))
 
@@ -1400,11 +1400,10 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :config (ws-butler-global-mode))
 
 ;; Personalize
-;; (require 'sooheon)
 ;; (require 'soo-haskell)
 ;; (require 'soo-python)
 
-(load (expand-file-name "auto.el" emacs-d))
+(load (expand-file-name "lisp/auto.el" emacs-d))
 (add-hook 'python-mode-hook 'soo-python-hook)
 
 ;; Local Variables:

@@ -43,6 +43,7 @@
     flx
     flycheck
     flyspell-correct
+    function-args
     git-modes
     gist
     highlight-escape-sequences

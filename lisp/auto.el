@@ -165,7 +165,7 @@ already narrowed."
 ;;;###autoload
 (defun update-all-autoloads ()
   (interactive)
-  (cd emacs-d)
+  (cd (expand-file-name "lisp" emacs-d))
   (let ((generated-autoload-file
          (expand-file-name "loaddefs.el")))
     (when (not (file-exists-p generated-autoload-file))

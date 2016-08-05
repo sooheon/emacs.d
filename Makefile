@@ -8,16 +8,22 @@ profile:
         (setq load-file-name \"$(abspath init.el)\"))" \
 	-f profile-dotemacs
 
+install: upgrade
+	cd lib/org && make compile && make autoloads
+	cd $(BASEDIR) make run
+
 pull:
 	git pull
 	git submodule init
 	git submodule update
 
 upgrade: pull
-	cd lib/org && make compile && make autoloads
-	cd $(BASEDIR) && $(emacs) -batch -l packages.el
+	cd $(BASEDIR) && $(emacs) -batch -l lisp/packages.el
 
 up: upgrade
+	run
+
+run:
 	$(emacs) -Q -l init.el
 
-.PHONY: profile pull upgrade up
+.PHONY: profile install pull upgrade up run

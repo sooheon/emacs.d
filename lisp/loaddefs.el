@@ -11,12 +11,12 @@
 
 ;;;***
 
-;;;### (autoloads nil nil ("custom.el" "init.el" "modes/soo-haskell.el"
-;;;;;;  "packages.el") (22436 7930 0 0))
+;;;### (autoloads nil nil ("custom.el" "modes/soo-haskell.el" "packages.el")
+;;;;;;  (22436 8989 0 0))
 
 ;;;***
 
-;;;### (autoloads nil "auto" "auto.el" (22436 7413 0 0))
+;;;### (autoloads nil "auto" "auto.el" (22436 9967 0 0))
 ;;; Generated autoloads from auto.el
 
 (autoload 'spacemacs/smart-move-beginning-of-line "auto" "\
