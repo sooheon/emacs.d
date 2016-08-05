@@ -205,6 +205,7 @@
   :init (global-auto-revert-mode 1))
 
 (use-package company
+  :defer t
   :diminish (company-mode . "co")
   :init
   (add-hook 'prog-mode-hook 'company-mode)
@@ -212,7 +213,7 @@
   (setq company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
                             company-preview-if-just-one-frontend)
         company-backends '(company-elisp
-                           company-css
+                           ;; company-css
                            ;; company-semantic
                            company-capf
                            (company-dabbrev-code
@@ -224,14 +225,15 @@
         company-idle-delay 0.2
         company-minimum-prefix-length 2
         company-dabbrev-other-buffers t
-        company-require-match nil)
-  (let ((m company-active-map))
-    (define-key m [escape] (lambda () (interactive)
-                             (company-abort)
-                             (evil-normal-state)))
-    (define-key m "\C-n" 'company-select-next)
-    (define-key m "\C-p" 'company-select-previous)
-    (define-key m [tab] 'company-complete-common)))
+        company-require-match nil
+        company-elisp-detect-function-context nil)
+  (let ((map company-active-map))
+    (define-key map [escape] (lambda () (interactive)
+                               (company-abort)
+                               (evil-normal-state)))
+    (define-key map "\C-n" 'company-select-next)
+    (define-key map "\C-p" 'company-select-previous)
+    (define-key map [tab] 'company-complete-common)))
 
 (use-package compile
   :defer t
@@ -250,34 +252,6 @@ With a prefix argument, use comint-mode."
     (save-window-excursion
       (compile (eval compile-command) (and comint t)))
     (pop-to-buffer (get-buffer "*compilation*"))))
-
-(use-package cider
-  :defer t
-  :init
-  (add-hook 'clojure-mode-hook 'cider-mode)
-  (setq cider-repl-pop-to-buffer-on-connect nil
-        cider-prompt-save-file-on-load nil
-        cider-repl-use-clojure-font-lock t
-        cider-font-lock-dynamically t
-        cider-mode-line '(:eval (format " [%s]" (cider--modeline-info)))
-        cider-default-repl-command "boot")
-  :config
-  ;; (defadvice cider-jump-to-var (before add-evil-jump activate)
-  ;;   (evil-set-jump))
-  (evil-define-key 'normal cider-mode-map "K" 'cider-doc)
-  (evil-set-initial-state 'cider-docview-mode 'insert)
-  (evil-set-initial-state 'cider-stacktrace-mode 'insert)
-  (add-hook 'cider-mode-hook 'eldoc-mode))
-
-(use-package clojure-mode
-  :defer t
-  :mode ("\\.boot\\'" . clojure-mode)
-  :init
-  (add-to-list 'magic-mode-alist '("#!.*boot\\s-*$" . clojure-mode))
-  (add-to-list 'magic-mode-alist '("#!.*planck\\s-*$" . clojurescript-mode))
-  :config
-  ;; This is for clojure-semantic, the library file is clojure.el
-  (load-library "clojure"))
 
 (use-package diff-hl
   :defer 7
@@ -364,30 +338,7 @@ With a prefix argument, use comint-mode."
     "gp" 'magit-dispatch-popup
     "got" 'soo--terminal-pop
     "gof" 'reveal-in-osx-finder
-    "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1)))
-  ;; Use rsync in dired: http://oremacs.com/2016/02/24/dired-rsync/
-  (defun ora-dired-rsync (dest)
-    (interactive (list (expand-file-name
-                        (read-file-name
-                         "Rsync to:"
-                         (dired-dwim-target-directory)))))
-    (let ((files (dired-get-marked-files nil current-prefix-arg))
-          (tmtxt/rsync-command "rsync -arvz --progress "))
-      ;; Add all selected file names as arguments to the rsync command
-      (dolist (file files)
-        (setq tmtxt/rsync-command
-              (concat tmtxt/rsync-command
-                      (shell-quote-argument file)
-                      " ")))
-      ;; Append the destination
-      (setq tmtxt/rsync-command
-            (concat tmtxt/rsync-command
-                    (shell-quote-argument dest)))
-      ;; Run the async shell command
-      (async-shell-command tmtxt/rsync-command "*rsync*")
-      ;; Finally, switch to that window
-      (other-window 1)))
-  (define-key dired-mode-map "Y" 'ora-dired-rsync))
+    "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1))))
 
 (use-package ediff
   :defer t
@@ -651,12 +602,6 @@ if no buffers open."
   :bind (([remap isearch-forward] . counsel-grep-or-swiper)
          ("s-f" . counsel-grep-or-swiper)))
 
-(use-package inf-clojure
-  :defer t
-  :config
-  (setq inf-clojure-program "planck")
-  (add-hook 'inf-clojure-mode-hook #'smartparens-mode))
-
 (use-package ivy
   :diminish ivy-mode
   :commands (magit-status epkg-describe-package)
@@ -883,7 +828,7 @@ Will work on both org-mode and any mode that accepts plain html."
   )
 
 (use-package multiple-cursors
-  :defer t
+  :commands (mc/mark-next-like-this mc/mark-all-dwim)
   :init
   (evil-define-key 'visual global-map "m" 'mc/mark-all-like-this-dwim)
   ;; Malabarba keybinds

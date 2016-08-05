@@ -55,7 +55,7 @@
     ivy-hydra
     magit
     markdown-mode
-    multiple-cursors
+    ;; multiple-cursors
     org-download
     osx-dictionary
     pandoc-mode
