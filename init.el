@@ -1,8 +1,10 @@
 ;;; init.el --- user-init-file                    -*- lexical-binding: t -*-
 
 ;;* Base directory
-(defvar emacs-d (file-name-directory (file-chase-links load-file-name)))
-(add-to-list 'load-path (concat emacs-d "layers/"))
+(defvar emacs-d
+  (file-name-directory
+   (file-chase-links load-file-name))
+  "The giant turtle on which the world rests.")
 (setq package-user-dir (expand-file-name "elpa" emacs-d))
 (package-initialize)
 (let ((emacs-lib (expand-file-name "lib/" emacs-d)))
@@ -12,7 +14,7 @@
 (add-to-list 'load-path (expand-file-name "modes/" emacs-d))
 
 ;;* Theme
-(add-to-list 'custom-theme-load-path (expand-file-name "themes" user-emacs-directory))
+(add-to-list 'custom-theme-load-path (expand-file-name "lib/themes" user-emacs-directory))
 (load-theme 'eclipse2 t)
 ;;** font
 (ignore-errors (set-frame-font "Input Mono Narrow"))
@@ -29,13 +31,15 @@
 (csetq initial-major-mode 'emacs-lisp-mode)
 (csetq create-lockfiles nil)
 (csetq fill-column 80)
-(hl-line-mode -1)
+(csetq truncate-lines t)
+(hl-line-mode 1)
 (eval '(setq inhibit-startup-echo-area-message "sooheon"))
 (setq frame-title-format '((:eval (if buffer-file-name
                                       (abbreviate-file-name buffer-file-name)
                                     "%b"))
                            (:eval (if (buffer-modified-p) " •"))
                            " - Emacs"))
+(add-to-list 'fringe-indicator-alist '(continuation nil right-curly-arrow)) ; not working right now
 ;;** Navigation within buffer
 (setq recenter-positions '(top middle bottom))
 ;;** Finding files
@@ -76,6 +80,8 @@
 (setq exec-path '("/Users/sooheon/.cabal/bin" "/Users/sooheon/.local/bin" "/usr/local/Cellar/pyenv-virtualenv/20160315/shims" "/Users/sooheon/.pyenv/shims" "/usr/local/opt/coreutils/libexec/gnubin" "/usr/local/opt/findutils/libexec/gnubin" "/usr/local/bin" "/usr/bin" "/bin" "/usr/sbin" "/sbin" "/opt/X11/bin" "/Library/TeX/texbin" "/usr/local/Cellar/emacs/HEAD/libexec/emacs/25.1.50/x86_64-apple-darwin15.5.0"))
 
 ;;* Bootstrap
+;;** autoloads
+(load (concat emacs-d "loaddefs.el") nil t)
 ;;** package.el
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")))
@@ -94,41 +100,39 @@
                 evil-disable-insert-state-bindings t
                 evil-search-module 'evil-search
                 evil-ex-search-persistent-highlight nil)
-  (defmacro spacemacs|define-text-object (key name start end)
-    (let ((inner-name (make-symbol (concat "evil-inner-" name)))
-          (outer-name (make-symbol (concat "evil-outer-" name)))
-          (start-regex (regexp-opt (list start)))
-          (end-regex (regexp-opt (list end))))
-      `(progn
-         (evil-define-text-object ,inner-name (count &optional beg end type)
-           (evil-select-paren ,start-regex ,end-regex beg end type count nil))
-         (evil-define-text-object ,outer-name (count &optional beg end type)
-           (evil-select-paren ,start-regex ,end-regex beg end type count t))
-         (define-key evil-inner-text-objects-map ,key (quote ,inner-name))
-         (define-key evil-outer-text-objects-map ,key (quote ,outer-name))
-         (with-eval-after-load 'evil-surround
-           (push (cons (string-to-char ,key)
-                       (if ,end
-                           (cons ,start ,end)
-                         ,start))
-                 evil-surround-pairs-alist)))))
+  ;; (defmacro spacemacs|define-text-object (key name start end)
+  ;;   (let ((inner-name (make-symbol (concat "evil-inner-" name)))
+  ;;         (outer-name (make-symbol (concat "evil-outer-" name)))
+  ;;         (start-regex (regexp-opt (list start)))
+  ;;         (end-regex (regexp-opt (list end))))
+  ;;     `(progn
+  ;;        (evil-define-text-object ,inner-name (count &optional beg end type)
+  ;;          (evil-select-paren ,start-regex ,end-regex beg end type count nil))
+  ;;        (evil-define-text-object ,outer-name (count &optional beg end type)
+  ;;          (evil-select-paren ,start-regex ,end-regex beg end type count t))
+  ;;        (define-key evil-inner-text-objects-map ,key (quote ,inner-name))
+  ;;        (define-key evil-outer-text-objects-map ,key (quote ,outer-name))
+  ;;        (with-eval-after-load 'evil-surround
+  ;;          (push (cons (string-to-char ,key)
+  ;;                      (if ,end
+  ;;                          (cons ,start ,end)
+  ;;                        ,start))
+  ;;                evil-surround-pairs-alist)))))
   :config
   (evil-mode 1)
   (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word)
   ;; define text objects
-  (spacemacs|define-text-object "$" "dollar" "$" "$")
-  (spacemacs|define-text-object "*" "star" "*" "*")
-  ;; (spacemacs|define-text-object "8" "block-star" "/*" "*/")
-  ;; (spacemacs|define-text-object "|" "bar" "|" "|")
-  (spacemacs|define-text-object "%" "percent" "%" "%")
-  (spacemacs|define-text-object "/" "slash" "/" "/")
-  (spacemacs|define-text-object "_" "underscore" "_" "_")
-  (spacemacs|define-text-object "-" "hyphen" "-" "-")
-  (spacemacs|define-text-object "~" "tilde" "~" "~")
-  (spacemacs|define-text-object "=" "equal" "=" "=")
-  (evil-define-text-object evil-inner-buffer (count)
-    (list (point-min) (point-max)))
-  (define-key evil-inner-text-objects-map "g" 'evil-inner-buffer))
+  ;; (spacemacs|define-text-object "$" "dollar" "$" "$")
+  ;; (spacemacs|define-text-object "*" "star" "*" "*")
+  ;; ;; (spacemacs|define-text-object "8" "block-star" "/*" "*/")
+  ;; ;; (spacemacs|define-text-object "|" "bar" "|" "|")
+  ;; ;; (spacemacs|define-text-object "%" "percent" "%" "%")
+  ;; (spacemacs|define-text-object "/" "slash" "/" "/")
+  ;; (spacemacs|define-text-object "_" "underscore" "_" "_")
+  ;; (spacemacs|define-text-object "-" "hyphen" "-" "-")
+  ;; (spacemacs|define-text-object "~" "tilde" "~" "~")
+  ;; (spacemacs|define-text-object "=" "equal" "=" "=")
+  )
 
 (use-package evil-leader
   :init
@@ -214,6 +218,9 @@
         (browse-url-at-point)))))
 
 (use-package ace-link
+  :commands (ace-link-info ace-link-woman ace-link-help ace-link-custom)
+  :init
+  (define-key help-mode-map "o" 'ace-link-help)
   :config
   (ace-link-setup-default))
 
@@ -313,7 +320,8 @@ With a prefix argument, use comint-mode."
     (setq dired-omit-verbose nil)
     (setq dired-hide-details-hide-symlink-targets nil)
     (dired-hide-details-mode t)
-    (dired-omit-mode t))
+    ;; (dired-omit-mode t)
+    )
   (add-hook 'dired-mode-hook 'soo--dired-setup)
   :config
   (setq dired-listing-switches "-laGh1v --group-directories-first")
@@ -416,9 +424,7 @@ With a prefix argument, use comint-mode."
 
 (use-package eldoc
   :defer t
-  :diminish eldoc-mode
-  :config
-  (add-hook 'eval-expression-minibuffer-setup-hook #'eldoc-mode))
+  :diminish eldoc-mode)
 
 (use-package elisp-slime-nav
   :diminish elisp-slime-nav-mode
@@ -508,13 +514,19 @@ if no buffers open."
   (evil-commentary-mode))
 
 (use-package evil-cleverparens-text-objects
+  :commands (evil-cp-a-form
+             evil-cp-inner-form
+             evil-cp-a-comment
+             evil-cp-inner-comment
+             evil-cp-a-defun
+             evil-cp-inner-defun)
   :config
-  (define-key evil-outer-text-objects-map "f" #'evil-cp-a-form)
-  (define-key evil-inner-text-objects-map "f" #'evil-cp-inner-form)
-  (define-key evil-outer-text-objects-map "c" #'evil-cp-a-comment)
-  (define-key evil-inner-text-objects-map "c" #'evil-cp-inner-comment)
-  (define-key evil-outer-text-objects-map "d" #'evil-cp-a-defun)
-  (define-key evil-inner-text-objects-map "d" #'evil-cp-inner-defun))
+  (define-key evil-outer-text-objects-map "f" 'evil-cp-a-form)
+  (define-key evil-inner-text-objects-map "f" 'evil-cp-inner-form)
+  (define-key evil-outer-text-objects-map "c" 'evil-cp-a-comment)
+  (define-key evil-inner-text-objects-map "c" 'evil-cp-inner-comment)
+  (define-key evil-outer-text-objects-map "d" 'evil-cp-a-defun)
+  (define-key evil-inner-text-objects-map "d" 'evil-cp-inner-defun))
 
 (use-package evil-matchit
   :commands (evilmi-jump-items)
@@ -814,7 +826,6 @@ if no buffers open."
   :defer t
   :diminish anaconda-mode
   :init
-  (setq anaconda-mode-installation-directory (expand-file-name "etc/anaconda-mode" emacs-d))
   (add-hook 'python-mode-hook 'anaconda-mode)
   :config
   (evil-define-key 'normal anaconda-mode-map "K" 'anaconda-mode-show-doc)
@@ -924,10 +935,9 @@ Will work on both org-mode and any mode that accepts plain html."
   (define-key endless/mc-map "\C-e" #'mc/edit-ends-of-lines))
 
 (use-package super-save
-  :ensure t
   :diminish super-save-mode
   :config
-  (setq auto-save-default nil)
+  (csetq auto-save-default nil)
   (super-save-mode 1))
 
 (use-package org
@@ -1390,9 +1400,12 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :config (ws-butler-global-mode))
 
 ;; Personalize
-(require 'sooheon)
+;; (require 'sooheon)
 ;; (require 'soo-haskell)
-(require 'soo-python)
+;; (require 'soo-python)
+
+(load (expand-file-name "auto.el" emacs-d))
+(add-hook 'python-mode-hook 'soo-python-hook)
 
 ;; Local Variables:
 ;; indent-tabs-mode: nil

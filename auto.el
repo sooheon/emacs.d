@@ -13,19 +13,8 @@
                                           (reposition-window)))
 (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
 (set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
-(setq-default fringe-indicator-alist '((truncation left-arrow right-arrow)
-                                       (continuation
-                                        nil ;; left-curly-arrow
-                                        right-curly-arrow)
-                                       (overlay-arrow . right-triangle)
-                                       (up . up-arrow)
-                                       (down . down-arrow)
-                                       (top top-left-angle top-right-angle)
-                                       (bottom bottom-left-angle bottom-right-angle top-right-angle top-left-angle)
-                                       (top-bottom left-bracket right-bracket top-right-angle top-left-angle)
-                                       (empty-line . empty-line)
-                                       (unknown . question-mark)))
 
+;;;###autoload
 (defun spacemacs/smart-move-beginning-of-line (arg)
   "Move point back to indentation of beginning of line.
 Move point to the first non-whitespace character on this line.
@@ -45,8 +34,9 @@ point reaches the beginning or end of the buffer, stop there."
     (when (= orig-point (point))
       (move-beginning-of-line 1))))
 
-(bind-key "C-a" #'spacemacs/smart-move-beginning-of-line)
+(bind-key "C-a" 'spacemacs/smart-move-beginning-of-line)
 
+;;;###autoload
 (defun soo--close-window-dwim (&optional window)
   "DWIM window closing function.
 If window is a *Help* window, call `quit-window' so that the
@@ -172,4 +162,16 @@ already narrowed."
 ;;     (message (format "Font height is now %d" new-height))))
 ;; (bind-key "s--" 'dec-face-height)
 
-(provide 'sooheon)
+;;;###autoload
+(defun update-all-autoloads ()
+  (interactive)
+  (cd emacs-d)
+  (let ((generated-autoload-file
+         (expand-file-name "loaddefs.el")))
+    (when (not (file-exists-p generated-autoload-file))
+      (with-current-buffer (find-file-noselect generated-autoload-file)
+        (insert ";;") ;; create the file with non-zero size to appease autoload
+        (save-buffer)))
+    (mapcar #'update-directory-autoloads
+            '("" "modes" ;; "git/org-fu"
+              ))))

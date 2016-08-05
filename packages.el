@@ -38,6 +38,7 @@
     evil-surround
     evil-textobj-anyblock
     evil-visualstar
+    expand-region
     finalize
     flx
     flycheck
@@ -50,10 +51,13 @@
     lispy
     lispyville
     iedit
+    inf-clojure
     ivy
     ivy-hydra
     magit
     markdown-mode
+    multiple-cursors
+    org-download
     osx-dictionary
     pandoc-mode
     pdf-tools
