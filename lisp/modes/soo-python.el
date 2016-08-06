@@ -1,4 +1,6 @@
 (require 'python)
+(csetq python-shell-completion-native-enable nil)
+
 (defvar no-pip
   (string-match "Command not found\\|no pip in"
                 (shell-command-to-string "which pip")))
@@ -26,22 +28,33 @@
 
 (require 'le-python)
 
+(use-package anaconda-mode
+  :diminish anaconda-mode
+  :config
+  (evil-define-key 'normal anaconda-mode-map "K" 'anaconda-mode-show-doc)
+  (evilified-state-evilify anaconda-mode-view-mode anaconda-mode-view-mode-map
+    (kbd "q") 'quit-window)
+  (defadvice anaconda-mode-goto (before python/anaconda-mode-goto activate)
+    (evil--jumps-push))
+  (require 'company-anaconda)
+  (add-to-list 'company-backends 'company-anaconda))
+
 ;;;###autoload
 (defun soo-python-hook ()
-  (unless no-pip
-    (jedi:setup))
-  (remove-hook 'post-command-hook 'jedi:handle-post-command t)
+  ;; (unless no-pip (jedi:setup))
+  ;; (remove-hook 'post-command-hook 'jedi:handle-post-command t)
   (setq lispy-no-space t)
   (setq forward-sexp-function 'ora-c-forward-sexp-function)
   (lpy-mode)
-  (setq completion-at-point-functions '(lispy-python-completion-at-point t)))
+  (anaconda-mode)
+  (anaconda-eldoc-mode))
 
 (defun ora-python-switch-to-shell ()
   (interactive)
   (let ((buffer (process-buffer (lispy--python-proc))))
     (if buffer
         (pop-to-buffer buffer)
-      (run-python "python")
+      (run-python)
       (pop-to-buffer "*Python*"))))
 
 (defun ora-python-shell-send-region (start end &optional nomain)
@@ -68,35 +81,18 @@
     (ora-python-shell-send-region (point-min)
                                   (point-max))))
 
-(use-package pyenv-mode
-  :disabled t
-  :if (executable-find "pyenv")
-  :commands (pyenv-mode-set pyenv-mode-unset)
-  :init
-  (require 'pyenv-mode-auto))
+;; (use-package pyenv-mode
+;;   :disabled t
+;;   :if (executable-find "pyenv")
+;;   :commands (pyenv-mode-set pyenv-mode-unset)
+;;   :init
+;;   (require 'pyenv-mode-auto))
 
-(use-package company-jedi
-  :disabled t
-  :init
-  (add-hook 'python-mode-hook
-            '(lambda () (add-to-list 'company-backends 'company-jedi))))
-
-(use-package anaconda-mode
-  :disabled t
-  :defer t
-  :diminish anaconda-mode
-  :init
-  (add-hook 'python-mode-hook 'anaconda-eldoc-mode)
-  (setq anaconda-mode-installation-directory (expand-file-name "etc/anaconda-mode" emacs-d))
-  (add-hook 'python-mode-hook 'anaconda-mode)
-  :config
-  (evil-define-key 'normal anaconda-mode-map "K" 'anaconda-mode-show-doc)
-  (evilified-state-evilify anaconda-mode-view-mode anaconda-mode-view-mode-map
-    (kbd "q") 'quit-window)
-  (defadvice anaconda-mode-goto (before python/anaconda-mode-goto activate)
-    (evil--jumps-push))
-  (require 'company-anaconda)
-  (add-to-list 'company-backends 'company-anaconda))
+;; (use-package company-jedi
+;;   :disabled t
+;;   :init
+;;   (add-hook 'python-mode-hook
+;;             '(lambda () (add-to-list 'company-backends 'company-jedi))))
 
 (use-package py-yapf
   :commands py-yapf-buffer

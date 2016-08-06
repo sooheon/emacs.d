@@ -1,9 +1,9 @@
 (defconst emacs-d (file-name-directory (or load-file-name buffer-file-name))
   "The giant turtle on whose shell the world rests.")
 (setq package-user-dir (expand-file-name "elpa" emacs-d))
-(package-initialize)
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")))
+(package-initialize)
 (package-refresh-contents)
 
 (defconst soo-packages

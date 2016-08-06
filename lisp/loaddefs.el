@@ -1,7 +1,29 @@
 ;;
 
+;;;### (autoloads nil "modes/soo-clojure" "modes/soo-clojure.el"
+;;;;;;  (22436 21844 0 0))
+;;; Generated autoloads from modes/soo-clojure.el
+
+(autoload 'soo-clojure-hook "modes/soo-clojure" "\
+
+
+\(fn)" nil nil)
+
+;;;***
+
+;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22436 36446
+;;;;;;  0 0))
+;;; Generated autoloads from modes/soo-org.el
+
+(autoload 'soo-org-hook "modes/soo-org" "\
+
+
+\(fn)" nil nil)
+
+;;;***
+
 ;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22436
-;;;;;;  11203 0 0))
+;;;;;;  38932 0 0))
 ;;; Generated autoloads from modes/soo-python.el
 
 (autoload 'soo-python-hook "modes/soo-python" "\
@@ -12,11 +34,11 @@
 ;;;***
 
 ;;;### (autoloads nil nil ("custom.el" "modes/soo-haskell.el" "packages.el")
-;;;;;;  (22436 10728 0 0))
+;;;;;;  (22436 37454 0 0))
 
 ;;;***
 
-;;;### (autoloads nil "auto" "auto.el" (22436 11394 0 0))
+;;;### (autoloads nil "auto" "auto.el" (22436 12841 0 0))
 ;;; Generated autoloads from auto.el
 
 (autoload 'soo-move-beginning-of-line "auto" "\
@@ -39,6 +61,11 @@ window. If there is only one window in frame, call
 `bury-buffer'.
 
 \(fn &optional WINDOW)" t nil)
+
+(autoload 'soo--terminal-pop "auto" "\
+
+
+\(fn)" t nil)
 
 (autoload 'sooheon--toggle-right-option-key "auto" "\
 
@@ -66,6 +93,11 @@ already narrowed.
 
 \(fn)" t nil)
 
+(autoload 'youtube-dl "auto" "\
+
+
+\(fn)" t nil)
+
 (autoload 'update-all-autoloads "auto" "\
 
 
@@ -75,5 +107,17 @@ already narrowed.
 
 
 \(fn ARG)" nil nil)
+
+(evil-define-text-object evil-inner-$ (count &optional beg end type) (evil-select-paren "\\$" "\\$" beg end type count nil))
+
+(evil-define-text-object evil-outer-$ (count &optional beg end type) (evil-select-paren "\\$" "\\$" beg end type count t))
+
+(evil-define-text-object evil-inner-* (count &optional beg end type) (evil-select-paren "\\*" "\\*" beg end type count nil))
+
+(evil-define-text-object evil-outer-* (count &optional beg end type) (evil-select-paren "\\*" "\\*" beg end type count t))
+
+(evil-define-text-object evil-inner-/ (count &optional beg end type) (evil-select-paren "\\/" "\\/" beg end type count nil))
+
+(evil-define-text-object evil-outer-/ (count &optional beg end type) (evil-select-paren "\\/" "\\/" beg end type count t))
 
 ;;;***

@@ -10,7 +10,7 @@
 (set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
 
 ;;;###autoload
-(defun soo-move-beginning-of-line (arg)
+(defun smart-move-beginning-of-line (arg)
   "Move point back to indentation of beginning of line.
 Move point to the first non-whitespace character on this line.
 If point is already there, move to the beginning of the line.
@@ -29,7 +29,7 @@ point reaches the beginning or end of the buffer, stop there."
     (when (= orig-point (point))
       (move-beginning-of-line 1))))
 
-(bind-key "C-a" 'soo-move-beginning-of-line)
+(global-set-key [remap move-beginning-of-line] 'smart-move-beginning-of-line)
 
 ;;;###autoload
 (defun soo--close-window-dwim (&optional window)
@@ -199,8 +199,10 @@ already narrowed."
 (evil-define-text-object evil-outer-$ (count &optional beg end type)
   (evil-select-paren "\\$" "\\$" beg end type count t))
 
-(define-key evil-inner-text-objects-map "$" 'evil-inner-$)
-(define-key evil-outer-text-objects-map "$" 'evil-outer-$)
+(with-eval-after-load 'evil
+  (define-key evil-inner-text-objects-map "$" 'evil-inner-$)
+  (define-key evil-outer-text-objects-map "$" 'evil-outer-$))
+
 (with-eval-after-load 'evil-surround
   (push '(36 "$" . "$") evil-surround-pairs-alist))
 
@@ -212,8 +214,10 @@ already narrowed."
 (evil-define-text-object evil-outer-* (count &optional beg end type)
   (evil-select-paren "\\*" "\\*" beg end type count t))
 
-(define-key evil-inner-text-objects-map "*" 'evil-inner-*)
-(define-key evil-outer-text-objects-map "*" 'evil-outer-*)
+(with-eval-after-load 'evil
+  (define-key evil-inner-text-objects-map "*" 'evil-inner-*)
+  (define-key evil-outer-text-objects-map "*" 'evil-outer-*))
+
 (with-eval-after-load 'evil-surround
   (push '(42 "*" . "*") evil-surround-pairs-alist))
 
@@ -225,7 +229,9 @@ already narrowed."
 (evil-define-text-object evil-outer-/ (count &optional beg end type)
   (evil-select-paren "\\/" "\\/" beg end type count t))
 
-(define-key evil-inner-text-objects-map "/" 'evil-inner-/)
-(define-key evil-outer-text-objects-map "/" 'evil-outer-/)
+(with-eval-after-load 'evil
+  (define-key evil-inner-text-objects-map "/" 'evil-inner-/)
+  (define-key evil-outer-text-objects-map "/" 'evil-outer-/))
+
 (with-eval-after-load 'evil-surround
   (push '(47 . "/") evil-surround-pairs-alist))

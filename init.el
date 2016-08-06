@@ -6,6 +6,7 @@
    (file-chase-links load-file-name))
   "The giant turtle on which the world rests.")
 (setq package-user-dir (expand-file-name "elpa" emacs-d))
+(defvar lisp-d (expand-file-name "lisp" emacs-d))
 (package-initialize)
 (let ((emacs-lib (expand-file-name "lib/" emacs-d)))
   (mapc (lambda (x)
@@ -14,13 +15,16 @@
 (add-to-list 'load-path (expand-file-name "lisp" emacs-d))
 
 ;;* Theme
-(add-to-list 'custom-theme-load-path (expand-file-name "lib/themes" user-emacs-directory))
-(load-theme 'eclipse2 t)
+(add-to-list 'custom-theme-load-path (expand-file-name "themes" lisp-d))
+(set-background-color "#F9F9F9")
+;; (load-theme 'eclipse2 t)
 ;;** font
 (ignore-errors (set-frame-font "Input Mono Narrow"))
 ;;* customize
 (defmacro csetq (variable value)
   `(funcall (or (get ',variable 'custom-set) 'set-default) ',variable ,value))
+(csetq custom-file (expand-file-name "custom.el" lisp-d))
+(when (file-exists-p custom-file) (load custom-file))
 ;;** decorations
 (csetq tool-bar-mode nil)
 (csetq menu-bar-mode nil)
@@ -32,7 +36,7 @@
 (csetq create-lockfiles nil)
 (csetq fill-column 80)
 (csetq truncate-lines t)
-(global-hl-line-mode 1)
+(global-hl-line-mode -1)
 (blink-cursor-mode -1)
 (eval '(setq inhibit-startup-echo-area-message "sooheon"))
 (setq frame-title-format '((:eval (if buffer-file-name
@@ -62,6 +66,7 @@
 (csetq backup-inhibited t)
 (defalias 'yes-or-no-p 'y-or-n-p)
 (setq kill-buffer-query-functions nil)
+(csetq load-prefer-newer t)
 ;; https://github.com/railwaycat/emacs-mac-port/issues/78
 (csetq mac-pass-command-to-system nil)
 (add-hook 'server-switch-hook 'raise-frame)
@@ -82,8 +87,6 @@
 (setq exec-path '("/Users/sooheon/.cabal/bin" "/Users/sooheon/.local/bin" "/usr/local/Cellar/pyenv-virtualenv/20160315/shims" "/Users/sooheon/.pyenv/shims" "/usr/local/opt/coreutils/libexec/gnubin" "/usr/local/opt/findutils/libexec/gnubin" "/usr/local/bin" "/usr/bin" "/bin" "/usr/sbin" "/sbin" "/opt/X11/bin" "/Library/TeX/texbin" "/usr/local/Cellar/emacs/HEAD/libexec/emacs/25.1.50/x86_64-apple-darwin15.5.0"))
 
 ;;* Bootstrap
-;;** autoloads
-(load (concat emacs-d "lisp/loaddefs.el") nil t)
 ;;** package.el
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")))
@@ -92,31 +95,17 @@
 
 (require 'no-littering)
 
-(use-package evil
-  :init
-  (setq-default evil-want-C-u-scroll t
-                evil-cross-lines t
-                evil-symbol-word-search t
-                evil-move-cursor-back nil
-                evil-want-C-i-jump t
-                evil-disable-insert-state-bindings t
-                evil-search-module 'evil-search
-                evil-ex-search-persistent-highlight nil)
-  :config
-  (evil-mode 1)
-  (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word)
-  ;; define text objects
-  ;; (spacemacs|define-text-object "$" "dollar" "$" "$")
-  ;; (spacemacs|define-text-object "*" "star" "*" "*")
-  ;; ;; (spacemacs|define-text-object "8" "block-star" "/*" "*/")
-  ;; ;; (spacemacs|define-text-object "|" "bar" "|" "|")
-  ;; ;; (spacemacs|define-text-object "%" "percent" "%" "%")
-  ;; (spacemacs|define-text-object "/" "slash" "/" "/")
-  ;; (spacemacs|define-text-object "_" "underscore" "_" "_")
-  ;; (spacemacs|define-text-object "-" "hyphen" "-" "-")
-  ;; (spacemacs|define-text-object "~" "tilde" "~" "~")
-  ;; (spacemacs|define-text-object "=" "equal" "=" "=")
-  )
+(setq-default evil-want-C-u-scroll t
+              evil-cross-lines t
+              evil-symbol-word-search t
+              evil-move-cursor-back nil
+              evil-want-C-i-jump t
+              evil-disable-insert-state-bindings t
+              evil-search-module 'evil-search
+              evil-ex-search-persistent-highlight nil)
+(require 'evil)
+(evil-mode 1)
+(define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word)
 
 (use-package evil-leader
   :init
@@ -149,7 +138,6 @@
   (define-key evil-evilified-state-map " " evil-leader--default-map))
 
 (use-package auto-compile
-  :demand t
   :config
   (auto-compile-on-load-mode)
   (auto-compile-on-save-mode)
@@ -160,12 +148,6 @@
   (setq auto-compile-update-autoloads t)
   (add-hook 'auto-compile-inhibit-compile-hook
             'auto-compile-inhibit-compile-detached-git-head))
-
-(use-package custom
-  :config
-  (setq custom-file (expand-file-name "lisp/custom.el" emacs-d))
-  (when (file-exists-p custom-file)
-    (load custom-file)))
 
 (use-package server :config (or (server-running-p) (server-mode)))
 
@@ -267,7 +249,7 @@ With a prefix argument, use comint-mode."
   (delete ".elc" completion-ignored-extensions)
   (define-key evil-normal-state-map "-" 'dired-jump)
   (defun soo--dired-setup ()
-    (setq dired-omit-verbose nil)
+    ;; (setq dired-omit-verbose nil)
     (setq dired-hide-details-hide-symlink-targets nil)
     (dired-hide-details-mode t)
     ;; (dired-omit-mode t)
@@ -736,32 +718,6 @@ if no buffers open."
   (define-key lispyville-mode-map "\M-n" 'lispyville-drag-forward)
   (define-key lispyville-mode-map "\M-p" 'lispyville-drag-backward))
 
-(use-package lpy
-  :disabled t
-  :defer t
-  :init
-  (use-package soap :defer t)
-  (add-hook 'python-mode-hook 'lpy-mode))
-
-(use-package anaconda-mode
-  :defer t
-  :diminish anaconda-mode
-  :init
-  (add-hook 'python-mode-hook 'anaconda-mode)
-  :config
-  (evil-define-key 'normal anaconda-mode-map "K" 'anaconda-mode-show-doc)
-  (evilified-state-evilify anaconda-mode-view-mode anaconda-mode-view-mode-map
-    (kbd "q") 'quit-window)
-  (defadvice anaconda-mode-goto (before python/anaconda-mode-goto activate)
-    (evil--jumps-push))
-  (require 'company-anaconda)
-  (add-to-list 'company-backends 'company-anaconda))
-
-(use-package py-yapf
-  :commands py-yapf-buffer
-  :init
-  (evil-leader/set-key-for-mode 'python-mode "=" 'py-yapf-buffer))
-
 (use-package magit
   :commands (magit-status magit-dispatch-popup)
   :init
@@ -860,143 +816,6 @@ Will work on both org-mode and any mode that accepts plain html."
   :config
   (csetq auto-save-default nil)
   (super-save-mode 1))
-
-(use-package org
-  :disabled t
-  :defer 10
-  :diminish org-indent-mode
-  :config
-  (add-hook 'org-mode-hook 'smartparens-mode)
-  (add-to-list 'load-path (expand-file-name "lib/org/contrib/lisp/" emacs-d))
-  (setq org-src-fontify-natively t
-        ;; org-startup-indented t
-        org-startup-folded nil
-        org-startup-truncated nil
-        org-adapt-indentation nil
-        org-preview-latex-default-process 'dvisvgm
-        org-inhibit-startup-visibility-stuff nil
-        org-M-RET-may-split-line nil
-        org-catch-invisible-edits nil
-        org-footnote-auto-adjust t
-        org-hide-emphasis-markers t
-        org-return-follows-link t
-        org-startup-with-inline-images t
-        org-log-done 'time
-        org-highlight-latex-and-related '(latex script entities))
-
-  (defun org-metaright2 (&optional arg)
-    "My evil version of `org-metaright', to be bound to M-l and
-forward to downcase-word"
-    (interactive "P")
-    (cond
-     ((run-hook-with-args-until-success 'org-metaright-hook))
-     ((org-at-table-p) (call-interactively 'org-table-move-column))
-     ((org-at-drawer-p) (call-interactively 'org-indent-drawer))
-     ((org-at-block-p) (call-interactively 'org-indent-block))
-     ((org-with-limited-levels
-       (or (org-at-heading-p)
-           (and (org-region-active-p)
-                (save-excursion
-                  (goto-char (region-beginning))
-                  (org-at-heading-p)))))
-      (when (org-check-for-hidden 'headlines) (org-hidden-tree-error))
-      (call-interactively 'org-do-demote))
-     ;; At an inline task.
-     ((org-at-heading-p)
-      (call-interactively 'org-inlinetask-demote))
-     ((or (org-at-item-p)
-          (and (org-region-active-p)
-               (save-excursion
-                 (goto-char (region-beginning))
-                 (org-at-item-p))))
-      (when (org-check-for-hidden 'items) (org-hidden-tree-error))
-      (call-interactively 'org-indent-item))
-     (t (call-interactively 'downcase-word))))
-
-  (define-key org-mode-map "\M-n" 'org-metadown)
-  (define-key org-mode-map "\M-p" 'org-metaup)
-  (define-key org-mode-map "\M-h" 'org-metaleft)
-  (define-key org-mode-map "\M-l" 'org-metaright2)
-  (evil-define-key 'normal org-mode-map
-    [C-return] (lambda () (interactive) (org-insert-heading-respect-content) (evil-append 1))
-    [M-return] (lambda () (interactive) (org-meta-return) (evil-append 1))
-    [return] 'org-open-at-point
-    "t" 'org-todo
-    "$" 'org-end-of-line
-    "^" 'org-beginning-of-line
-    ;; "-" 'org-ctrl-c-minus
-    "<" 'org-metaleft
-    ">" 'org-metaright)
-  (evil-define-key 'insert org-mode-map
-    "\C-j" 'org-return
-    "\M-j" 'org-meta-return)
-
-  ;; Org Babel
-  (setq org-edit-src-content-indentation 0
-        org-src-tab-acts-natively t
-        org-confirm-babel-evaluate nil
-        geiser-default-implementation 'guile
-        org-babel-load-languages '((python . t)
-                                   (clojure . t))
-        org-babel-default-header-args '((:session . "none")
-                                        (:results . "replace")
-                                        (:exports . "code")
-                                        (:cache . "no")
-                                        (:noweb . "no")
-                                        (:hlines . "no")
-                                        (:tangle . "yes")))
-
-  ;; Hydra
-  (defhydra hydra-org-template (:color blue :hint nil)
-    "
-_C_enter  _q_uote    _c_lojure     _L_aTeX:
-_l_atex   _e_xample  _s_cheme      _i_ndex:
-_a_scii   _v_erse    _E_macs-lisp  _I_NCLUDE:
-s_r_c     ^ ^        _p_ython      _H_TML:
-_h_tml    ^ ^        ^ ^           _A_SCII:
-"
-    ("c" (hot-expand-and-edit "clojure"))
-    ("s" (hot-expand-and-edit "scheme"))
-    ("E" (hot-expand-and-edit "emacs-lisp"))
-    ("p" (hot-expand-and-edit "python"))
-    ("r" (hot-expand "<s"))
-    ("e" (hot-expand "<e"))
-    ("q" (hot-expand "<q"))
-    ("v" (hot-expand "<v"))
-    ("C" (hot-expand "<c"))
-    ("l" (hot-expand "<l"))
-    ("h" (hot-expand "<h"))
-    ("a" (hot-expand "<a"))
-    ("L" (hot-expand "<L"))
-    ("i" (hot-expand "<i"))
-    ("I" (hot-expand "<I"))
-    ("H" (hot-expand "<H"))
-    ("A" (hot-expand "<A"))
-    ("<" self-insert-command "ins")
-    ("o" nil "quit")
-    ("C-g" nil))
-  (defun hot-expand (str)
-    "Expand org template."
-    (insert str)
-    (org-try-structure-completion))
-  (defun hot-expand-and-edit (str)
-    "Expand src template for given languange and enter org-edit-special."
-    (hot-expand "<s")
-    (insert str)
-    (forward-line)
-    (evil-normal-state)
-    (org-edit-special)
-    (evil-insert-state))
-  (define-key org-mode-map "<" (lambda () (interactive)
-                                 (if (bolp)
-                                     (hydra-org-template/body)
-                                   (self-insert-command 1)))))
-
-(use-package org-download
-  :defer t
-  :config
-  (org-download-enable)
-  (setq org-download-method 'attach))
 
 (use-package ox
   :disabled t
@@ -1150,13 +969,12 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :init (evil-leader/set-key "C" 'rainbow-mode))
 
 (use-package recentf
-  :demand t
-  :init
-  (setq recentf-max-saved-items 1000
-        recentf-auto-cleanup 'never)
   :config
   (recentf-mode 1)
-  (add-to-list 'recentf-exclude "^/\\(?:ssh\\|su\\|sudo\\)?:"))
+  (setq recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG" "github.*txt$"
+                          ".*png$" ".*cache$" "^/\\(?:ssh\\|su\\|sudo\\)?:"))
+  (setq recentf-max-saved-items 100
+        recentf-auto-cleanup 'never))
 
 (use-package reveal-in-osx-finder
   :if (eq system-type 'darwin)
@@ -1247,8 +1065,9 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 (use-package simple
   :diminish (auto-fill-mode visual-line-mode)
   :init
-  (add-hook 'org-mode-hook 'visual-line-mode)
-  (add-hook 'org-mode-hook 'auto-fill-mode)
+  (evil-define-minor-mode-key 'motion 'visual-line-mode "j" 'evil-next-visual-line)
+  (evil-define-minor-mode-key 'motion 'visual-line-mode "k" 'evil-previous-visual-line)
+  (add-hook 'visual-line-mode-hook 'evil-normalize-keymaps)
   :config
   (column-number-mode))
 
@@ -1271,7 +1090,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :diminish undo-tree-mode
   :bind (("s-Z" . undo-tree-redo)
          ("s-z" . undo-tree-undo))
-  :commands (undo-tree-undo)
   :init
   (global-undo-tree-mode)
   :config
@@ -1321,8 +1139,14 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   :config (ws-butler-global-mode))
 
 ;;** hooks
-(load (expand-file-name "lisp/auto.el" emacs-d))
+(load (expand-file-name "auto.el" lisp-d))
 (add-hook 'python-mode-hook 'soo-python-hook)
+(add-hook 'clojure-mode-hook 'soo-clojure-hook)
+(add-hook 'org-mode-hook 'soo-org-hook)
+
+;;** autoloads
+(load (expand-file-name "loaddefs.el" lisp-d) nil t)
+
 
 ;; Local Variables:
 ;; indent-tabs-mode: nil
