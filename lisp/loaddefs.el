@@ -11,7 +11,7 @@
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22436 36446
+;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22439 30136
 ;;;;;;  0 0))
 ;;; Generated autoloads from modes/soo-org.el
 
@@ -23,7 +23,7 @@
 ;;;***
 
 ;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22436
-;;;;;;  38932 0 0))
+;;;;;;  39357 0 0))
 ;;; Generated autoloads from modes/soo-python.el
 
 (autoload 'soo-python-hook "modes/soo-python" "\
@@ -33,15 +33,15 @@
 
 ;;;***
 
-;;;### (autoloads nil nil ("custom.el" "modes/soo-haskell.el" "packages.el")
-;;;;;;  (22436 37454 0 0))
+;;;### (autoloads nil nil ("custom.el" "keybinds.el" "modes/soo-haskell.el"
+;;;;;;  "packages.el") (22439 30959 0 0))
 
 ;;;***
 
-;;;### (autoloads nil "auto" "auto.el" (22436 12841 0 0))
+;;;### (autoloads nil "auto" "auto.el" (22439 25556 0 0))
 ;;; Generated autoloads from auto.el
 
-(autoload 'soo-move-beginning-of-line "auto" "\
+(autoload 'smart-move-beginning-of-line "auto" "\
 Move point back to indentation of beginning of line.
 Move point to the first non-whitespace character on this line.
 If point is already there, move to the beginning of the line.
@@ -51,6 +51,11 @@ If ARG is not nil or 1, move forward ARG - 1 lines first. If
 point reaches the beginning or end of the buffer, stop there.
 
 \(fn ARG)" t nil)
+
+(autoload 'latexify-line "auto" "\
+
+
+\(fn)" t nil)
 
 (autoload 'soo--close-window-dwim "auto" "\
 DWIM window closing function.
@@ -89,6 +94,16 @@ already narrowed.
 \(fn P)" t nil)
 
 (autoload 'sooheon--delete-to-bol "auto" "\
+
+
+\(fn)" t nil)
+
+(autoload 'inc-face-height "auto" "\
+
+
+\(fn)" t nil)
+
+(autoload 'dec-face-height "auto" "\
 
 
 \(fn)" t nil)

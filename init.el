@@ -7,12 +7,12 @@
   "The giant turtle on which the world rests.")
 (setq package-user-dir (expand-file-name "elpa" emacs-d))
 (defvar lisp-d (expand-file-name "lisp" emacs-d))
-(package-initialize)
 (let ((emacs-lib (expand-file-name "lib/" emacs-d)))
   (mapc (lambda (x)
           (add-to-list 'load-path (expand-file-name x emacs-lib)))
         (delete ".." (directory-files emacs-lib))))
 (add-to-list 'load-path (expand-file-name "lisp" emacs-d))
+(add-to-list 'load-path (expand-file-name "lisp/modes" emacs-d))
 
 ;;* Theme
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" lisp-d))
@@ -46,8 +46,6 @@
                            " - Emacs"))
 (add-to-list 'fringe-indicator-alist '(continuation nil right-curly-arrow)) ; not working right now
 (csetq scroll-preserve-screen-position t)
-;;** Navigation within buffer
-(setq recenter-positions '(top middle bottom))
 ;;** Finding files
 (csetq vc-follow-symlinks t)
 (csetq find-file-suppress-same-file-warnings t)
@@ -81,19 +79,27 @@
 ;;** shell
 (csetq shell-file-name "/usr/local/bin/bash")
 (csetq explicit-shell-file-name "/usr/local/bin/fish")
-;; Set PATHs--see: http://tinyurl.com/ctf9h3a
-(setenv "PATH" "/Users/sooheon/.cabal/bin:/Users/sooheon/.local/bin:/usr/local/Cellar/pyenv-virtualenv/20160315/shims:/Users/sooheon/.pyenv/shims:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Library/TeX/texbin")
-(setenv "MANPATH" "/usr/local/opt/coreutils/libexec/gnuman:/usr/local/opt/findutils/libexec/gnuman:/usr/local/share/man")
-(setq exec-path '("/Users/sooheon/.cabal/bin" "/Users/sooheon/.local/bin" "/usr/local/Cellar/pyenv-virtualenv/20160315/shims" "/Users/sooheon/.pyenv/shims" "/usr/local/opt/coreutils/libexec/gnubin" "/usr/local/opt/findutils/libexec/gnubin" "/usr/local/bin" "/usr/bin" "/bin" "/usr/sbin" "/sbin" "/opt/X11/bin" "/Library/TeX/texbin" "/usr/local/Cellar/emacs/HEAD/libexec/emacs/25.1.50/x86_64-apple-darwin15.5.0"))
+;;** Set PATHs--see: http://tinyurl.com/ctf9h3a
+;; (setenv "PATH" "/Users/sooheon/.cabal/bin:/Users/sooheon/.local/bin:/usr/local/Cellar/pyenv-virtualenv/20160315/shims:/Users/sooheon/.pyenv/shims:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Library/TeX/texbin")
+;; (setenv "MANPATH" "/usr/local/opt/coreutils/libexec/gnuman:/usr/local/opt/findutils/libexec/gnuman:/usr/local/share/man")
+;; (setq exec-path '("/Users/sooheon/.cabal/bin" "/Users/sooheon/.local/bin" "/usr/local/Cellar/pyenv-virtualenv/20160315/shims" "/Users/sooheon/.pyenv/shims" "/usr/local/opt/coreutils/libexec/gnubin" "/usr/local/opt/findutils/libexec/gnubin" "/usr/local/bin" "/usr/bin" "/bin" "/usr/sbin" "/sbin" "/opt/X11/bin" "/Library/TeX/texbin" "/usr/local/Cellar/emacs/HEAD/libexec/emacs/25.1.50/x86_64-apple-darwin15.5.0"))
 
 ;;* Bootstrap
+(require 'no-littering)
+
+;;** hooks
+(add-hook 'python-mode-hook 'soo-python-hook)
+(add-hook 'clojure-mode-hook 'soo-clojure-hook)
+(add-hook 'org-mode-hook 'soo-org-hook)
+
 ;;** package.el
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")))
+(package-initialize)
 (eval-when-compile
   (require 'use-package))
 
-(require 'no-littering)
+(exec-path-from-shell-initialize)
 
 (setq-default evil-want-C-u-scroll t
               evil-cross-lines t
@@ -148,8 +154,6 @@
   (setq auto-compile-update-autoloads t)
   (add-hook 'auto-compile-inhibit-compile-hook
             'auto-compile-inhibit-compile-detached-git-head))
-
-(use-package server :config (or (server-running-p) (server-mode)))
 
 (defvar sooheon--avy-keys '(?w ?e ?r ?s ?d ?x ?c ?u ?i ?o ?v ?n ?m ?l ?k ?j ?f))
 
@@ -570,7 +574,8 @@ if no buffers open."
          ([remap menu-bar-open] . counsel-tmm)
          ("C-c g" . counsel-git)
          ("C-c j" . counsel-git-grep)
-         ("C-x l" . counsel-locate))
+         ("C-x l" . counsel-locate)
+         ("C-c o" . counsel-outline))
   :init
   (evil-leader/set-key
     "hv" 'counsel-describe-variable
@@ -681,7 +686,8 @@ if no buffers open."
     (define-key map "\M-j" 'lispy-split)
     (define-key map "\M-k" 'lispy-kill-sentence)
     (define-key map [M-up] 'sp-splice-sexp-killing-backward)
-    (define-key map [M-down] 'sp-splice-sexp-killing-forward))
+    (define-key map [M-down] 'sp-splice-sexp-killing-forward)
+    (define-key map "\C-," 'lispy-kill-at-point))
   (let ((map lispy-mode-map-paredit))
     (define-key map "\M-n" nil)         ; lispy left
     (define-key map "\M-p" nil)
@@ -1138,17 +1144,16 @@ Will work on both org-mode and any mode that accepts plain html."
   :diminish ws-butler-mode
   :config (ws-butler-global-mode))
 
-;;** hooks
-(load (expand-file-name "auto.el" lisp-d))
-(add-hook 'python-mode-hook 'soo-python-hook)
-(add-hook 'clojure-mode-hook 'soo-clojure-hook)
-(add-hook 'org-mode-hook 'soo-org-hook)
+(run-with-idle-timer
+ 3 nil
+ (lambda () (require 'soo-org)))
 
 ;;** autoloads
+(load (expand-file-name "auto.el" lisp-d) nil t)
 (load (expand-file-name "loaddefs.el" lisp-d) nil t)
 
+;;** keybinds
+(load (expand-file-name "keybinds.el" lisp-d) nil t)
 
-;; Local Variables:
-;; indent-tabs-mode: nil
-;; End:
-;;; init.el ends here
+(require 'server)
+(or (server-running-p) (server-start))

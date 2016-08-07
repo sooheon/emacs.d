@@ -1,14 +1,3 @@
-(global-set-key "\C-x\C-b" 'ibuffer)
-(global-set-key (kbd "s-u") 'universal-argument)
-(global-set-key (kbd "s-W") 'delete-frame)
-(bind-key "s-k" 'kill-this-buffer)
-;; (bind-key "s-K" 'kill-this-buffer)
-(define-key evil-normal-state-map "zf" '(lambda () (interactive)
-                                          (reposition-window)
-                                          (reposition-window)))
-(global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
-(set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
-
 ;;;###autoload
 (defun smart-move-beginning-of-line (arg)
   "Move point back to indentation of beginning of line.
@@ -29,7 +18,16 @@ point reaches the beginning or end of the buffer, stop there."
     (when (= orig-point (point))
       (move-beginning-of-line 1))))
 
-(global-set-key [remap move-beginning-of-line] 'smart-move-beginning-of-line)
+;;;###autoload
+(defun latexify-line ()
+  (interactive)
+  (if (region-active-p)
+      (print "to be impl.")
+    (save-excursion
+      (beginning-of-line)
+      (insert "$$")
+      (end-of-line)
+      (insert "$$"))))
 
 ;;;###autoload
 (defun soo--close-window-dwim (&optional window)
@@ -47,8 +45,6 @@ window. If there is only one window in frame, call
           (call-interactively 'delete-window)
         (call-interactively 'bury-buffer)))))
 
-(bind-key "s-w" 'soo--close-window-dwim)
-
 ;;;###autoload
 (defun soo--terminal-pop ()
   (interactive)
@@ -63,11 +59,6 @@ end tell
 "
            default-directory)))
 
-(define-key evil-normal-state-map "got" 'soo--terminal-pop)
-
-(setq mac-option-modifier 'meta
-      mac-command-modifier 'super)
-
 ;;;###autoload
 (defun sooheon--toggle-right-option-key ()
   (interactive)
@@ -76,7 +67,6 @@ end tell
              (setq mac-right-option-modifier 'meta))
     (progn (message "Setting right option key to nil")
            (setq mac-right-option-modifier nil))))
-(evil-leader/set-key "t\C-o" 'sooheon--toggle-right-option-key)
 
 ;;;###autoload
 (defun endless/fill-or-unfill ()
@@ -88,8 +78,6 @@ end tell
                     (point-max))
            fill-column)))
     (call-interactively #'fill-paragraph)))
-
-(bind-key [remap fill-paragraph] 'endless/fill-or-unfill)
 
 ;;;###autoload
 (defun narrow-or-widen-dwim (p)
@@ -117,12 +105,6 @@ already narrowed."
          (LaTeX-narrow-to-environment))
         (t (narrow-to-defun))))
 
-;; This line actually replaces Emacs' entire narrowing keymap, that's how
-;; much I like this command. Only copy it if that's what you want.
-(define-key ctl-x-map "n" #'narrow-or-widen-dwim)
-(add-hook 'LaTeX-mode-hook
-          (lambda () (define-key LaTeX-mode-map "\C-xn" nil)))
-
 ;;;###autoload
 (defun sooheon--delete-to-bol ()
   (interactive)
@@ -130,33 +112,19 @@ already narrowed."
       (lispyville-delete (line-beginning-position) (point))
     (evil-delete (line-beginning-position) (point))))
 
-;; Other emacs-mac/OSX keybindings
-(bind-key "s-s" 'save-buffer)
-(bind-key "s-q" 'save-buffers-kill-terminal)
-(bind-key "s-v" 'yank)
-(bind-key "s-c" 'evil-yank)
-(bind-key "s-a" 'mark-whole-buffer)
-(bind-key "s-x" 'kill-region)
-(bind-key "s-n" 'make-frame)
-(bind-key "s-l" 'evil-avy-goto-line)
-(bind-key "C-s-f" 'toggle-frame-fullscreen)
-(evil-define-key 'insert global-map
-  "\C-o" 'evil-execute-in-normal-state
-  (kbd "<s-backspace>") 'sooheon--delete-to-bol)
+;;;###autoload
+(defun inc-face-height ()
+  (interactive)
+  (let ((new-height (+ 10 (face-attribute 'default :height))))
+    (set-face-attribute 'default nil :height new-height)
+    (message (format "Font height is now %d" new-height))))
 
-;; (defun inc-face-height ()
-;;   (interactive)
-;;   (let ((new-height (+ 10 (face-attribute 'default :height))))
-;;     (set-face-attribute 'default nil :height new-height)
-;;     (message (format "Font height is now %d" new-height))))
-;; (bind-key "s-=" 'inc-face-height)
-
-;; (defun dec-face-height ()
-;;   (interactive)
-;;   (let ((new-height (- (face-attribute 'default :height) 10)))
-;;     (set-face-attribute 'default nil :height new-height)
-;;     (message (format "Font height is now %d" new-height))))
-;; (bind-key "s--" 'dec-face-height)
+;;;###autoload
+(defun dec-face-height ()
+  (interactive)
+  (let ((new-height (- (face-attribute 'default :height) 10)))
+    (set-face-attribute 'default nil :height new-height)
+    (message (format "Font height is now %d" new-height))))
 
 ;;;###autoload
 (defun youtube-dl ()
@@ -194,44 +162,18 @@ already narrowed."
 ;;;###autoload
 (evil-define-text-object evil-inner-$ (count &optional beg end type)
   (evil-select-paren "\\$" "\\$" beg end type count nil))
-
 ;;;###autoload
 (evil-define-text-object evil-outer-$ (count &optional beg end type)
   (evil-select-paren "\\$" "\\$" beg end type count t))
-
-(with-eval-after-load 'evil
-  (define-key evil-inner-text-objects-map "$" 'evil-inner-$)
-  (define-key evil-outer-text-objects-map "$" 'evil-outer-$))
-
-(with-eval-after-load 'evil-surround
-  (push '(36 "$" . "$") evil-surround-pairs-alist))
-
 ;;;###autoload
 (evil-define-text-object evil-inner-* (count &optional beg end type)
   (evil-select-paren "\\*" "\\*" beg end type count nil))
-
 ;;;###autoload
 (evil-define-text-object evil-outer-* (count &optional beg end type)
   (evil-select-paren "\\*" "\\*" beg end type count t))
-
-(with-eval-after-load 'evil
-  (define-key evil-inner-text-objects-map "*" 'evil-inner-*)
-  (define-key evil-outer-text-objects-map "*" 'evil-outer-*))
-
-(with-eval-after-load 'evil-surround
-  (push '(42 "*" . "*") evil-surround-pairs-alist))
-
 ;;;###autoload
 (evil-define-text-object evil-inner-/ (count &optional beg end type)
   (evil-select-paren "\\/" "\\/" beg end type count nil))
-
 ;;;###autoload
 (evil-define-text-object evil-outer-/ (count &optional beg end type)
   (evil-select-paren "\\/" "\\/" beg end type count t))
-
-(with-eval-after-load 'evil
-  (define-key evil-inner-text-objects-map "/" 'evil-inner-/)
-  (define-key evil-outer-text-objects-map "/" 'evil-outer-/))
-
-(with-eval-after-load 'evil-surround
-  (push '(47 . "/") evil-surround-pairs-alist))

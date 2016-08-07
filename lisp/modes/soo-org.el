@@ -1,20 +1,30 @@
 (require 'org)
+(diminish 'org-indent-mode)
 (require 'org-download)
 (org-download-enable)
 (csetq org-download-method 'attach)
 (require 'worf)
+(define-key worf-mode-map "\M-j" nil)
 
 ;;;###autoload
 (defun soo-org-hook ()
   (worf-mode)
+  (turn-on-org-cdlatex)
   (org-indent-mode 1)
-  (visual-line-mode 1))
+  (visual-line-mode 1)
+  (smartparens-mode))
 
-(diminish 'org-indent-mode)
+(defun org-open-$ ()
+  (interactive)
+  (insert "$$$$")
+  (backward-char 2))
+
+(define-key org-mode-map (kbd "C-s-4") 'org-open-$)
+
 (add-to-list 'load-path (expand-file-name "lib/org/contrib/lisp/" emacs-d))
 (setq org-src-fontify-natively t
       org-startup-folded nil
-      org-preview-latex-default-process 'dvisvgm
+      org-startup-with-latex-preview t
       org-inhibit-startup-visibility-stuff nil
       org-M-RET-may-split-line nil
       org-catch-invisible-edits nil
@@ -23,8 +33,7 @@
       org-return-follows-link t
       org-startup-with-inline-images t
       org-log-done 'time
-      org-highlight-latex-and-related '(latex script entities)
-      org-indent-indentation-per-level 1)
+      org-highlight-latex-and-related '(latex script entities))
 
 (defun org-metaright2 (&optional arg)
   "My evil version of `org-metaright', to be bound to M-l and
@@ -58,7 +67,13 @@ forward to downcase-word"
 (define-key org-mode-map "\M-n" 'org-metadown)
 (define-key org-mode-map "\M-p" 'org-metaup)
 (define-key org-mode-map "\M-h" 'org-metaleft)
+(define-key org-mode-map "\M-H" 'org-shiftmetaleft)
 (define-key org-mode-map "\M-l" 'org-metaright2)
+(define-key org-mode-map "\M-L" 'org-shiftmetaright)
+(define-key org-mode-map "\M-j" (lambda ()
+                                  (interactive)
+                                  (org-meta-return)
+                                  (evil-insert 1)))
 
 (evil-define-key 'normal org-mode-map
   [C-return] (lambda () (interactive) (org-insert-heading-respect-content) (evil-append 1))
@@ -70,9 +85,6 @@ forward to downcase-word"
   ;; "-" 'org-ctrl-c-minus
   "<" 'org-metaleft
   ">" 'org-metaright)
-(evil-define-key 'insert org-mode-map
-  ;; "\C-j" 'org-return
-  "\M-j" 'org-meta-return)
 
 ;; Org Babel
 (setq org-edit-src-content-indentation 0
@@ -134,3 +146,5 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
                                (if (bolp)
                                    (hydra-org-template/body)
                                  (self-insert-command 1))))
+
+(provide 'soo-org)
