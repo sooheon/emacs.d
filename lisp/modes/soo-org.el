@@ -17,14 +17,14 @@
 (defun org-open-$ ()
   (interactive)
   (insert "$$$$")
-  (backward-char 2))
-
+  (backward-char 2)
+  (evil-insert 1))
 (define-key org-mode-map (kbd "C-s-4") 'org-open-$)
 
 (add-to-list 'load-path (expand-file-name "lib/org/contrib/lisp/" emacs-d))
 (setq org-src-fontify-natively t
       org-startup-folded nil
-      org-startup-with-latex-preview t
+      ;; org-startup-with-latex-preview t
       org-inhibit-startup-visibility-stuff nil
       org-M-RET-may-split-line nil
       org-catch-invisible-edits nil

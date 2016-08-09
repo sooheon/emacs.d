@@ -11,7 +11,9 @@
     anaconda-mode
     auto-compile
     avy
+    auctex
     bind-map
+    cdlatex
     cider
     circe
     clojure-mode
@@ -47,7 +49,6 @@
     highlight-escape-sequences
     hydra
     jedi
-    lispy
     lispyville
     iedit
     inf-clojure

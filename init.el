@@ -80,9 +80,9 @@
 (csetq shell-file-name "/usr/local/bin/bash")
 (csetq explicit-shell-file-name "/usr/local/bin/fish")
 ;;** Set PATHs--see: http://tinyurl.com/ctf9h3a
-;; (setenv "PATH" "/Users/sooheon/.cabal/bin:/Users/sooheon/.local/bin:/usr/local/Cellar/pyenv-virtualenv/20160315/shims:/Users/sooheon/.pyenv/shims:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Library/TeX/texbin")
-;; (setenv "MANPATH" "/usr/local/opt/coreutils/libexec/gnuman:/usr/local/opt/findutils/libexec/gnuman:/usr/local/share/man")
-;; (setq exec-path '("/Users/sooheon/.cabal/bin" "/Users/sooheon/.local/bin" "/usr/local/Cellar/pyenv-virtualenv/20160315/shims" "/Users/sooheon/.pyenv/shims" "/usr/local/opt/coreutils/libexec/gnubin" "/usr/local/opt/findutils/libexec/gnubin" "/usr/local/bin" "/usr/bin" "/bin" "/usr/sbin" "/sbin" "/opt/X11/bin" "/Library/TeX/texbin" "/usr/local/Cellar/emacs/HEAD/libexec/emacs/25.1.50/x86_64-apple-darwin15.5.0"))
+(setenv "PATH" "/Users/sooheon/.cabal/bin:/Users/sooheon/.local/bin:/usr/local/Cellar/pyenv-virtualenv/20160315/shims:/Users/sooheon/.pyenv/shims:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Library/TeX/texbin")
+(setenv "MANPATH" "/usr/local/opt/coreutils/libexec/gnuman:/usr/local/opt/findutils/libexec/gnuman:/usr/local/share/man")
+(setq exec-path '("/Users/sooheon/.cabal/bin" "/Users/sooheon/.local/bin" "/usr/local/Cellar/pyenv-virtualenv/20160315/shims" "/Users/sooheon/.pyenv/shims" "/usr/local/opt/coreutils/libexec/gnubin" "/usr/local/opt/findutils/libexec/gnubin" "/usr/local/bin" "/usr/bin" "/bin" "/usr/sbin" "/sbin" "/opt/X11/bin" "/Library/TeX/texbin" "/usr/local/Cellar/emacs/HEAD/libexec/emacs/25.1.50/x86_64-apple-darwin15.5.0"))
 
 ;;* Bootstrap
 (require 'no-littering)
@@ -99,7 +99,8 @@
 (eval-when-compile
   (require 'use-package))
 
-(exec-path-from-shell-initialize)
+;; (exec-path-from-shell-initialize)
+;; (csetq exec-path-from-shell-check-startup-files nil)
 
 (setq-default evil-want-C-u-scroll t
               evil-cross-lines t
@@ -114,26 +115,6 @@
 (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word)
 
 (use-package evil-leader
-  :init
-  (evil-leader/set-key
-    "TAB" 'evil-buffer
-    "u" 'universal-argument
-    "wl" 'evil-window-right
-    "wh" 'evil-window-left
-    "wk" 'evil-window-top
-    "wj" 'evil-window-bottom
-    "wL" 'evil-window-move-far-right
-    "wH" 'evil-window-move-far-left
-    "wK" 'evil-window-move-very-top
-    "wJ" 'evil-window-move-very-bottom
-    "w=" 'balance-windows
-    "wm" 'delete-other-windows
-    "wo" 'other-window
-    "ww" 'evil-window-next
-    "ws" 'evil-window-split
-    "wv" 'evil-window-vsplit
-    "wr" 'evil-window-rotate-downwards
-    "wR" 'evil-window-rotate-upwards)
   :config
   (global-evil-leader-mode))
 
@@ -587,7 +568,8 @@ if no buffers open."
 
 (use-package swiper
   :bind (([remap isearch-forward] . counsel-grep-or-swiper)
-         ("s-f" . counsel-grep-or-swiper)))
+         ("s-f" . counsel-grep-or-swiper)
+         ("C-c u" . swiper-all)))
 
 (use-package ivy
   :diminish ivy-mode
@@ -667,6 +649,7 @@ if no buffers open."
   (add-hook 'smartparens-disabled-hook
             (lambda () (when (member major-mode sp-lisp-modes) (lispy-mode -1))))
   :config
+  (lispy-set-key-theme '(special c-digits paredit))
   (setq lispy-compat '(edebug cider)
         lispy-avy-keys sooheon--avy-keys
         lispy-avy-style-paren 'at-full
@@ -678,16 +661,13 @@ if no buffers open."
         lispy-comment-use-single-semicolon t)
   (add-to-list 'lispy-parens-preceding-syntax-alist
                '(clojurescript-mode . ("[`'~@]+" "\\|" "#" "\\|" "#\\?@?")))
-  (lispy-set-key-theme '(special
-                         c-digits
-                         paredit))
   (dolist (map (list lispy-mode-map-paredit lispy-mode-map-parinfer))
     (define-key map (kbd "C-a") nil)
     (define-key map "\M-j" 'lispy-split)
     (define-key map "\M-k" 'lispy-kill-sentence)
     (define-key map [M-up] 'sp-splice-sexp-killing-backward)
     (define-key map [M-down] 'sp-splice-sexp-killing-forward)
-    (define-key map "\C-," 'lispy-kill-at-point))
+    (define-key map (kbd "C-,") 'lispy-kill-at-point))
   (let ((map lispy-mode-map-paredit))
     (define-key map "\M-n" nil)         ; lispy left
     (define-key map "\M-p" nil)

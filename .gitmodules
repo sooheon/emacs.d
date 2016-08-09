@@ -19,3 +19,6 @@
 [submodule "multiple-cursors"]
 	path = lib/multiple-cursors.el
 	url = git@github.com:magnars/multiple-cursors.el.git
+[submodule "lispy"]
+	path = lib/lispy
+	url = git@github.com:abo-abo/lispy.git

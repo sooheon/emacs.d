@@ -11,7 +11,7 @@
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22439 30136
+;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22440 33516
 ;;;;;;  0 0))
 ;;; Generated autoloads from modes/soo-org.el
 
@@ -34,7 +34,7 @@
 ;;;***
 
 ;;;### (autoloads nil nil ("custom.el" "keybinds.el" "modes/soo-haskell.el"
-;;;;;;  "packages.el") (22439 30959 0 0))
+;;;;;;  "packages.el") (22441 26697 0 0))
 
 ;;;***
 
