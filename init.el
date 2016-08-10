@@ -31,7 +31,6 @@
 (csetq scroll-bar-mode nil)
 (csetq inhibit-startup-screen t)
 (csetq initial-scratch-message "")
-(setq text-quoting-style 'grave)
 (csetq initial-major-mode 'emacs-lisp-mode)
 (csetq create-lockfiles nil)
 (csetq fill-column 80)
@@ -582,11 +581,16 @@ if no buffers open."
     "r" 'ivy-recentf
     "b" 'ivy-switch-buffer)
   :config
+  (defun switch-to-buffer--hack (orig-fun &rest args)
+    (if-let ((win (get-buffer-window (car args))))
+        (select-window win)
+      (apply orig-fun args)))
+  (advice-add 'ivy--switch-buffer-action :around #'switch-to-buffer--hack)
   (with-eval-after-load 'recentf (setq ivy-use-virtual-buffers t))
   (setq ivy-extra-directories '("./")
         ivy-count-format "%d "
         ivy-height 12
-        ivy-re-builders-alist '(;; (counsel-M-x . ivy--regex-fuzzy)
+        ivy-re-builders-alist '((counsel-M-x . ivy--regex-fuzzy)
                                 (t . ivy--regex-plus))
         ivy-initial-inputs-alist '((org-refile . "^")
                                    (org-agenda-refile . "^")
@@ -760,14 +764,7 @@ Will work on both org-mode and any mode that accepts plain html."
     "gk" 'outline-backward-same-level
     "gh" 'outline-up-heading
     ;; next visible heading is not exactly what we want but close enough
-    "gl" 'outline-next-visible-heading)
-
-  ;; Promotion, Demotion
-  ;; (define-key markdown-mode-map "\M-h" 'markdown-promote)
-  ;; (define-key markdown-mode-map "\M-j" 'markdown-move-down)
-  ;; (define-key markdown-mode-map "\M-k" 'markdown-move-up)
-  ;; (define-key markdown-mode-map "\M-l" 'markdown-demote)
-  )
+    "gl" 'outline-next-visible-heading))
 
 (use-package multiple-cursors
   :commands (mc/mark-next-like-this mc/mark-all-dwim)
