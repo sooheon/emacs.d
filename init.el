@@ -413,7 +413,7 @@ if no buffers open."
              evil-cp-inner-comment
              evil-cp-a-defun
              evil-cp-inner-defun)
-  :config
+  :init
   (define-key evil-outer-text-objects-map "f" 'evil-cp-a-form)
   (define-key evil-inner-text-objects-map "f" 'evil-cp-inner-form)
   (define-key evil-outer-text-objects-map "c" 'evil-cp-a-comment)
@@ -422,12 +422,13 @@ if no buffers open."
   (define-key evil-inner-text-objects-map "d" 'evil-cp-inner-defun))
 
 (use-package evil-matchit
+  :disabled t
   :commands (evilmi-jump-items)
   :init
   (evil-define-key 'normal global-map "%" 'evilmi-jump-items)
   (evil-define-key 'visual global-map "%" 'evilmi-jump-items)
   :config
-  (global-evil-matchit-mode))
+  (global-evil-matchit-mode 1))
 
 (use-package evil-textobj-anyblock
   :config
@@ -468,17 +469,19 @@ if no buffers open."
               ("C-S-x" . evil-numbers/dec-at-pt)))
 
 (use-package expand-region
-  :commands er/expand-region
+  :commands (soo-er-and-insert er/expand-region)
   :init
-  (bind-key (kbd "M-2") (lambda (arg)
-                          (interactive "p")
-                          (progn (evil-insert 1)
-                                 (er/expand-region arg)))))
-
-(use-package flycheck
-  :defer t
+  (bind-key (kbd "M-2") 'soo-er-and-insert)
   :config
-  (setq flycheck-global-modes nil))
+  (defun soo-er-and-insert (arg)
+    (interactive "p")
+    (progn (evil-insert 1)
+           (er/expand-region arg)))
+
+  (use-package flycheck
+    :defer t
+    :config
+    (setq flycheck-global-modes nil)))
 
 (use-package gist :defer t)
 
