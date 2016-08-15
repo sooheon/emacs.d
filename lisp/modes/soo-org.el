@@ -1,16 +1,20 @@
 (require 'org)
+;; FIXME: https://bitbucket.org/mituharu/emacs-mac/commits/6e8c84bd419ab425c3359b4ca17e2da9e23136ad
 (diminish 'org-indent-mode)
 (require 'org-download)
 (org-download-enable)
 (csetq org-download-method 'attach)
 (require 'worf)
 (define-key worf-mode-map "\M-j" nil)
+(define-key worf-mode-map "\C-j" nil)
+(define-key worf-mode-map "\[" nil)
+(define-key worf-mode-map "\]" nil)
 
 ;;;###autoload
 (defun soo-org-hook ()
   (worf-mode)
   (turn-on-org-cdlatex)
-  (org-indent-mode 1)
+  ;; (org-indent-mode -1)
   (visual-line-mode 1)
   (smartparens-mode))
 
@@ -23,11 +27,8 @@
 
 (add-to-list 'load-path (expand-file-name "lib/org/contrib/lisp/" emacs-d))
 (setq org-src-fontify-natively t
-      org-startup-folded nil
-      ;; org-startup-with-latex-preview t
-      org-inhibit-startup-visibility-stuff nil
       org-M-RET-may-split-line nil
-      org-catch-invisible-edits nil
+      org-catch-invisible-edits 'show
       org-footnote-auto-adjust t
       org-hide-emphasis-markers t
       org-return-follows-link t
@@ -146,5 +147,16 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
                                (if (bolp)
                                    (hydra-org-template/body)
                                  (self-insert-command 1))))
+
+(use-package ox
+  :disabled t
+  :defer t
+  :config
+  (setq org-export-backends '(ascii html latex odt gfm)
+        org-export-coding-system 'utf-8
+        org-html-html5-fancy t
+        org-html-postamble nil)
+  (fset 'latexify-line
+        (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([95 105 36 escape 65 36 escape] 0 "%d")) arg))))
 
 (provide 'soo-org)

@@ -12,6 +12,7 @@
           (add-to-list 'load-path (expand-file-name x emacs-lib)))
         (delete ".." (directory-files emacs-lib))))
 (add-to-list 'load-path (expand-file-name "lisp" emacs-d))
+(add-to-list 'load-path (expand-file-name "lib/org-mode/contrib/lisp" emacs-d))
 (add-to-list 'load-path (expand-file-name "lisp/modes" emacs-d))
 
 ;;* Theme
@@ -93,7 +94,8 @@
 
 ;;** package.el
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
-                         ("gnu" . "http://elpa.gnu.org/packages/")))
+                         ("gnu" . "http://elpa.gnu.org/packages/")
+                         ("org" . "http://orgmode.org/elpa/")))
 (package-initialize)
 (eval-when-compile
   (require 'use-package))
@@ -508,6 +510,7 @@ if no buffers open."
   (setq flyspell-correct-interface 'flyspell-correct-ivy))
 
 (use-package speck
+  :disabled t
   :defer t
   :commands speck-mode
   :init
@@ -803,17 +806,6 @@ Will work on both org-mode and any mode that accepts plain html."
   (csetq auto-save-default nil)
   (super-save-mode 1))
 
-(use-package ox
-  :disabled t
-  :defer t
-  :config
-  (setq org-export-backends '(ascii html latex odt gfm)
-        org-export-coding-system 'utf-8
-        org-html-html5-fancy t
-        org-html-postamble nil)
-  (fset 'latexify-line
-        (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([95 105 36 escape 65 36 escape] 0 "%d")) arg))))
-
 (use-package osx-dictionary
   :disabled t
   :commands osx-dictionary-search-pointer
@@ -836,16 +828,6 @@ Will work on both org-mode and any mode that accepts plain html."
   (setenv "PKG_CONFIG_PATH" "/usr/local/Cellar/zlib/1.2.8/lib/pkgconfig:/usr/local/lib/pkgconfig:/opt/X11/lib/pkgconfig")
   :config
   (pdf-tools-install))
-
-(use-package worf
-  :diminish worf-mode
-  :after org
-  :init
-  (add-hook 'org-mode-hook 'worf-mode)
-  :config
-  (define-key worf-mode-map "\C-j" nil)
-  (define-key worf-mode-map "\[" nil)
-  (define-key worf-mode-map "\]" nil))
 
 (use-package woman
   :defer t

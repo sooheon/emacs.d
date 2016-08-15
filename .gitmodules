@@ -21,4 +21,7 @@
 	url = git@github.com:magnars/multiple-cursors.el.git
 [submodule "lispy"]
 	path = lib/lispy
-	url = git@github.com:abo-abo/lispy.git
+	url = git@github.com:sooheon/lispy.git
+[submodule "org-mode"]
+	path = lib/org-mode
+	url = git://orgmode.org/org-mode.git

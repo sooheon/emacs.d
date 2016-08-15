@@ -2,7 +2,8 @@
   "The giant turtle on whose shell the world rests.")
 (setq package-user-dir (expand-file-name "elpa" emacs-d))
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
-                         ("gnu" . "http://elpa.gnu.org/packages/")))
+                         ("gnu" . "http://elpa.gnu.org/packages/")
+                         ("org" . "http://orgmode.org/elpa/")))
 (package-initialize)
 (package-refresh-contents)
 
@@ -49,6 +50,7 @@
     highlight-escape-sequences
     hydra
     jedi
+lispy
     lispyville
     iedit
     inf-clojure
@@ -57,7 +59,7 @@
     magit
     markdown-mode
     ;; multiple-cursors
-    org-download
+    org-plus-contrib
     osx-dictionary
     pandoc-mode
     pdf-tools
