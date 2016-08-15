@@ -1,6 +1,6 @@
 (require 'org)
 ;; FIXME: https://bitbucket.org/mituharu/emacs-mac/commits/6e8c84bd419ab425c3359b4ca17e2da9e23136ad
-(define-key org-mode-map (kbd "C-c C-r" nil))
+(define-key org-mode-map (kbd "C-c C-r") nil)
 (diminish 'org-indent-mode)
 (require 'org-download)
 (org-download-enable)
