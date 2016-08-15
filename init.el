@@ -38,8 +38,9 @@
 (csetq truncate-lines t)
 (global-hl-line-mode -1)
 (blink-cursor-mode -1)
+(csetq blink-cursor-blinks 0)
 (eval '(setq inhibit-startup-echo-area-message "sooheon"))
-(setq frame-title-format '((:eval (if buffer-file-name
+(csetq frame-title-format '((:eval (if buffer-file-name
                                       (abbreviate-file-name buffer-file-name)
                                     "%b"))
                            (:eval (if (buffer-modified-p) " •"))
@@ -71,8 +72,7 @@
 (csetq eval-expression-print-length nil)
 (csetq eval-expression-print-level nil)
 (setq sentence-end-double-space nil
-      search-default-mode 'character-fold-to-regexp
-      replace-character-fold t)
+      search-default-mode 'char-fold-to-regexp)
 ;;** internals
 (csetq gc-cons-threshold (* 10 1024 1024))
 (csetq ad-redefinition-action 'accept)
@@ -97,8 +97,7 @@
                          ("gnu" . "http://elpa.gnu.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")))
 (package-initialize)
-(eval-when-compile
-  (require 'use-package))
+(eval-when-compile (require 'use-package))
 
 ;; (exec-path-from-shell-initialize)
 ;; (csetq exec-path-from-shell-check-startup-files nil)
@@ -114,6 +113,8 @@
 (require 'evil)
 (evil-mode 1)
 (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word)
+(setq evil-insert-state-cursor '(t t (lambda () (blink-cursor-mode 1))))
+(setq evil-normal-state-cursor '(t t (lambda () (blink-cursor-mode 0))))
 
 (use-package evil-leader
   :config
@@ -149,17 +150,16 @@
     "xo" 'spacemacs/avy-open-url)
   :config
   (setq avy-keys sooheon--avy-keys)
-  (progn
-    (defun spacemacs/avy-goto-url ()
-      "Use avy to go to an URL in the buffer."
-      (interactive)
-      (avy--generic-jump "https?://" nil 'pre))
-    (defun spacemacs/avy-open-url ()
-      "Use avy to select an URL in the buffer and open it."
-      (interactive)
-      (save-excursion
-        (spacemacs/avy-goto-url)
-        (browse-url-at-point)))))
+  (defun spacemacs/avy-goto-url ()
+    "Use avy to go to an URL in the buffer."
+    (interactive)
+    (avy--generic-jump "https?://" nil 'pre))
+  (defun spacemacs/avy-open-url ()
+    "Use avy to select an URL in the buffer and open it."
+    (interactive)
+    (save-excursion
+      (spacemacs/avy-goto-url)
+      (browse-url-at-point))))
 
 (use-package ace-link
   :commands (ace-link-info ace-link-woman ace-link-help ace-link-custom)
@@ -206,8 +206,8 @@
 (use-package compile
   :defer t
   :init
-  (define-key prog-mode-map [C-f9] #'compile)
-  (define-key prog-mode-map [f9] #'endless/compile-please)
+  (define-key prog-mode-map [C-f9] #'endless/compile-please)
+  (define-key prog-mode-map [f9] #'compile)
   :config
   (setq compilation-ask-about-save nil
         compilation-scroll-output 'next-error
@@ -222,8 +222,8 @@ With a prefix argument, use comint-mode."
     (pop-to-buffer (get-buffer "*compilation*"))))
 
 (use-package diff-hl
-  :defer 7
-  :after magit
+  :defer t
+  :after (projectile magit)
   :config
   (setq diff-hl-draw-borders nil)
   (global-diff-hl-mode)
@@ -288,8 +288,6 @@ With a prefix argument, use comint-mode."
     "-" 'dired-jump
     "0" 'dired-back-to-start-of-files
     "=" 'vinegar/dired-diff
-    (kbd "C-j") 'dired-next-subdir
-    (kbd "C-k") 'dired-prev-subdir
     "I" 'vinegar/dotfiles-toggle
     (kbd "~") '(lambda () (interactive) (find-alternate-file "~/"))
     (kbd "RET") 'dired-find-file
@@ -317,9 +315,7 @@ With a prefix argument, use comint-mode."
                 ediff-merge-split-window-function 'split-window-horizontally)
   (add-hook 'ediff-quit-hook #'winner-undo))
 
-(use-package eldoc
-  :defer t
-  :diminish eldoc-mode)
+(use-package eldoc :defer t :diminish eldoc-mode)
 
 (use-package elisp-slime-nav
   :diminish elisp-slime-nav-mode
@@ -424,13 +420,8 @@ if no buffers open."
   (define-key evil-inner-text-objects-map "d" 'evil-cp-inner-defun))
 
 (use-package evil-matchit
-  :disabled t
-  :commands (evilmi-jump-items)
-  :init
-  (evil-define-key 'normal global-map "%" 'evilmi-jump-items)
-  (evil-define-key 'visual global-map "%" 'evilmi-jump-items)
-  :config
-  (global-evil-matchit-mode 1))
+  :defer t
+  :init (add-hook 'html-mode-hook 'turn-on-evil-matchit-mode))
 
 (use-package evil-textobj-anyblock
   :config
@@ -457,6 +448,8 @@ if no buffers open."
 
 (use-package evil-snipe
   :diminish evil-snipe-local-mode
+  :init
+  (setq evil-snipe-use-vim-sneak-bindings t)
   :config
   (setq evil-snipe-scope 'buffer
         evil-snipe-repeat-scope 'buffer
@@ -478,12 +471,11 @@ if no buffers open."
   (defun soo-er-and-insert (arg)
     (interactive "p")
     (progn (evil-insert 1)
-           (er/expand-region arg)))
+           (er/expand-region arg))))
 
-  (use-package flycheck
-    :defer t
-    :config
-    (setq flycheck-global-modes nil)))
+(use-package flycheck
+  :defer t
+  :config (evil-set-initial-state 'flycheck-error-list-mode 'insert))
 
 (use-package gist :defer t)
 
@@ -537,8 +529,7 @@ if no buffers open."
 
 (use-package highlight-escape-sequences
   :defer
-  :init
-  (add-hook 'prog-mode-hook 'hes-mode))
+  :init (add-hook 'prog-mode-hook 'hes-mode))
 
 (use-package iedit :defer t :init (setq iedit-toggle-key-default nil))
 
@@ -581,7 +572,9 @@ if no buffers open."
   :commands (magit-status epkg-describe-package)
   :bind (("s-b" . ivy-switch-buffer)
          ("C-c C-r" . ivy-resume)
-         ("<f2> j" . counsel-set-variable))
+         ("<f2> j" . counsel-set-variable)
+         ("C-c v" . ivy-push-view)
+         ("C-c V" . ivy-pop-view))
   :init
   (evil-leader/set-key
     "r" 'ivy-recentf
@@ -603,7 +596,10 @@ if no buffers open."
                                    (org-capture-refile . "^")
                                    (man . "^")
                                    (woman . "^"))
-        ivy-action-wrap t)
+        ivy-action-wrap t
+        ivy-sort-matches-functions-alist '((t .nil)
+                                           (ivy-switch-buffer . ivy-sort-function-buffer)
+                                           (counsel-find-file . ivy-sort-function-buffer)))
   (ivy-mode 1)
   (let ((m ivy-minibuffer-map))
     (define-key m [escape] 'minibuffer-keyboard-quit)
@@ -652,6 +648,8 @@ if no buffers open."
       ("o" ivy-occur :exit t))))
 
 (use-package lispy
+  :diminish lispy-mode
+  :ensure t
   :defer t
   :init
   (add-hook 'smartparens-enabled-hook
@@ -697,7 +695,7 @@ if no buffers open."
   (define-key evil-normal-state-map "\M-k" nil))
 
 (use-package lispyville
-  :after lispy
+  :ensure t
   :diminish lispyville-mode
   :commands (lispyville-delete
              lispyville-delete-char-or-splice
@@ -763,6 +761,7 @@ Will work on both org-mode and any mode that accepts plain html."
            (format tag (help-key-description key nil)))
         (insert (format tag ""))
         (forward-char -6))))
+  (add-hook 'markdown-mode-hook (lambda () (auto-fill-mode 1)))
 
   ;; Header navigation in normal state movements
   (evil-define-key 'normal markdown-mode-map
@@ -831,8 +830,7 @@ Will work on both org-mode and any mode that accepts plain html."
 
 (use-package woman
   :defer t
-  :config
-  (evil-set-initial-state 'woman-mode 'insert))
+  :config (evil-set-initial-state 'woman-mode 'insert))
 
 (use-package shackle
   :config
@@ -840,11 +838,12 @@ Will work on both org-mode and any mode that accepts plain html."
   (setq shackle-rules '((compilation-mode :noselect t)
                         (help-mode :noselect t)
                         ("*undo-tree*" :size 0.3)
-                        (woman-mode :popup t))))
+                        (woman-mode :popup t)
+                        (flycheck-error-list-mode :select t))))
 
 (use-package projectile
   :diminish projectile-mode
-  :defer 6
+  :defer 5
   :commands (projectile-switch-project
              projectile-find-file
              projectile-find-dir
@@ -940,9 +939,10 @@ Will work on both org-mode and any mode that accepts plain html."
   :config
   (recentf-mode 1)
   (setq recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG" "github.*txt$"
-                          ".*png$" ".*cache$" "^/\\(?:ssh\\|su\\|sudo\\)?:"))
+                          ".*png$" ".*cache$" "^/\\(?:ssh\\|su\\|sudo\\)?:"
+                          ".*el.gz$"))
   (setq recentf-max-saved-items 100
-        recentf-auto-cleanup 'never))
+        recentf-auto-cleanup 'mode))
 
 (use-package reveal-in-osx-finder
   :if (eq system-type 'darwin)
@@ -988,6 +988,7 @@ Will work on both org-mode and any mode that accepts plain html."
     (add-hook 'term-mode-hook (lambda () (toggle-truncate-lines 1)))))
 
 (use-package smartparens
+  :diminish (smartparens-mode . "sp")
   :defer t
   :init
   (defun conditionally-enable-smartparens-mode ()
@@ -1007,7 +1008,7 @@ Will work on both org-mode and any mode that accepts plain html."
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
   (defun soo-end-of-sexp-or-next ()
     (interactive)
-    (if (looking-at "[])}]")
+    (if (or (looking-at "[])}]") (eolp))
         (sp-end-of-next-sexp)
       (sp-end-of-sexp)))
   (defun soo-insert-at-bos ()
@@ -1028,7 +1029,7 @@ Will work on both org-mode and any mode that accepts plain html."
     "\M-i" 'soo-insert-at-bos
     "\M-a" 'soo-insert-at-eos))
 
-(use-package smex :defer t :config (setq smex-history-length 32))
+(use-package smex :defer t :config (csetq smex-history-length 32))
 
 (use-package simple
   :diminish (auto-fill-mode visual-line-mode)
@@ -1062,14 +1063,14 @@ Will work on both org-mode and any mode that accepts plain html."
   (global-undo-tree-mode)
   :config
   (setq undo-tree-visualizer-timestamps t
-        undo-tree-visualizer-diff t
+        ;; undo-tree-visualizer-diff t
         undo-tree-auto-save-history t))
 
 (use-package which-key
   :diminish which-key-mode
   :init
-  (which-key-mode)
-  (setq which-key-idle-delay 0.5))
+  (setq which-key-idle-delay 0.5)
+  (which-key-mode 1))
 
 (use-package window-numbering
   :bind (("s-0" . select-window-0)
@@ -1107,7 +1108,7 @@ Will work on both org-mode and any mode that accepts plain html."
   :config (ws-butler-global-mode))
 
 (run-with-idle-timer
- 3 nil
+ 5 nil
  (lambda () (require 'soo-org)))
 
 ;;** autoloads
@@ -1119,3 +1120,5 @@ Will work on both org-mode and any mode that accepts plain html."
 
 (require 'server)
 (or (server-running-p) (server-start))
+
+;;; init.el ends here

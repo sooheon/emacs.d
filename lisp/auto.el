@@ -19,17 +19,6 @@ point reaches the beginning or end of the buffer, stop there."
       (move-beginning-of-line 1))))
 
 ;;;###autoload
-(defun latexify-line ()
-  (interactive)
-  (if (region-active-p)
-      (print "to be impl.")
-    (save-excursion
-      (beginning-of-line)
-      (insert "$$")
-      (end-of-line)
-      (insert "$$"))))
-
-;;;###autoload
 (defun soo--close-window-dwim (&optional window)
   "DWIM window closing function.
 If window is a *Help* window, call `quit-window' so that the

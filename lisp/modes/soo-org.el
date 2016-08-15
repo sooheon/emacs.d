@@ -1,5 +1,6 @@
 (require 'org)
 ;; FIXME: https://bitbucket.org/mituharu/emacs-mac/commits/6e8c84bd419ab425c3359b4ca17e2da9e23136ad
+(define-key org-mode-map (kbd "C-c C-r" nil))
 (diminish 'org-indent-mode)
 (require 'org-download)
 (org-download-enable)
@@ -14,9 +15,18 @@
 (defun soo-org-hook ()
   (worf-mode)
   (turn-on-org-cdlatex)
-  ;; (org-indent-mode -1)
-  (visual-line-mode 1)
+  (auto-fill-mode 1)
   (smartparens-mode))
+
+(defun latexify-line ()
+  (interactive)
+  (if (region-active-p)
+      (print "to be impl.")
+    (save-excursion
+      (beginning-of-line)
+      (insert "$$")
+      (end-of-line)
+      (insert "$$"))))
 
 (defun org-open-$ ()
   (interactive)
@@ -155,8 +165,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   (setq org-export-backends '(ascii html latex odt gfm)
         org-export-coding-system 'utf-8
         org-html-html5-fancy t
-        org-html-postamble nil)
-  (fset 'latexify-line
-        (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([95 105 36 escape 65 36 escape] 0 "%d")) arg))))
+        org-html-postamble nil))
 
 (provide 'soo-org)

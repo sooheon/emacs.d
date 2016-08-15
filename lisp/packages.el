@@ -18,6 +18,7 @@
     cider
     circe
     clojure-mode
+    clj-refactor
     closql
     company
     company-anaconda
@@ -30,6 +31,7 @@
     evil
     evil-commentary
     evil-cleverparens
+    evil-exchange
     evil-leader
     evil-magit
     evil-matchit
