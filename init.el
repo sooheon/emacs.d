@@ -597,7 +597,7 @@ if no buffers open."
                                    (man . "^")
                                    (woman . "^"))
         ivy-action-wrap t
-        ivy-sort-matches-functions-alist '((t .nil)
+        ivy-sort-matches-functions-alist '((t . nil)
                                            (ivy-switch-buffer . ivy-sort-function-buffer)
                                            (counsel-find-file . ivy-sort-function-buffer)))
   (ivy-mode 1)
