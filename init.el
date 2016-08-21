@@ -1,9 +1,7 @@
 ;;; init.el --- user-init-file                    -*- lexical-binding: t -*-
 
 ;;* Base directory
-(defvar emacs-d
-  (file-name-directory
-   (file-chase-links load-file-name))
+(defvar emacs-d (directory-file-name "~/.emacs.d/")
   "The giant turtle on which the world rests.")
 (setq package-user-dir (expand-file-name "elpa" emacs-d))
 (defvar lisp-d (expand-file-name "lisp" emacs-d))
@@ -13,11 +11,12 @@
         (delete ".." (directory-files emacs-lib))))
 (add-to-list 'load-path (expand-file-name "lisp" emacs-d))
 (add-to-list 'load-path (expand-file-name "lib/org-mode/contrib/lisp" emacs-d))
+(add-to-list 'load-path (expand-file-name "lib/org-mode/lisp" emacs-d))
 (add-to-list 'load-path (expand-file-name "lisp/modes" emacs-d))
 
 ;;* Theme
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" lisp-d))
-(set-background-color "#F9F9F9")
+;; (set-background-color "#F9F9F9")
 ;; (load-theme 'eclipse2 t)
 ;;** font
 (ignore-errors (set-frame-font "Input Mono Narrow"))
@@ -32,7 +31,6 @@
 (csetq scroll-bar-mode nil)
 (csetq inhibit-startup-screen t)
 (csetq initial-scratch-message "")
-(csetq initial-major-mode 'emacs-lisp-mode)
 (csetq create-lockfiles nil)
 (csetq fill-column 80)
 (csetq truncate-lines t)
@@ -66,13 +64,14 @@
 (defalias 'yes-or-no-p 'y-or-n-p)
 (setq kill-buffer-query-functions nil)
 (csetq load-prefer-newer t)
-;; https://github.com/railwaycat/emacs-mac-port/issues/78
-(csetq mac-pass-command-to-system nil)
+(csetq recenter-positions '(top middle bottom))
+(csetq mac-pass-command-to-system nil) ; https://github.com/railwaycat/emacs-mac-port/issues/78
 (add-hook 'server-switch-hook 'raise-frame)
 (csetq eval-expression-print-length nil)
 (csetq eval-expression-print-level nil)
-(setq sentence-end-double-space nil
-      search-default-mode 'char-fold-to-regexp)
+(csetq sentence-end-double-space nil)
+(csetq search-default-mode 'char-fold-to-regexp)
+(csetq resize-mini-windows t)
 ;;** internals
 (csetq gc-cons-threshold (* 10 1024 1024))
 (csetq ad-redefinition-action 'accept)
@@ -86,18 +85,16 @@
 
 ;;* Bootstrap
 (require 'no-littering)
-
-;;** hooks
-(add-hook 'python-mode-hook 'soo-python-hook)
-(add-hook 'clojure-mode-hook 'soo-clojure-hook)
-(add-hook 'org-mode-hook 'soo-org-hook)
-
-;;** package.el
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")))
 (package-initialize)
 (eval-when-compile (require 'use-package))
+
+;;** hooks
+(add-hook 'python-mode-hook 'soo-python-hook)
+(add-hook 'clojure-mode-hook 'soo-clojure-hook)
+(add-hook 'org-mode-hook 'soo-org-hook)
 
 ;; (exec-path-from-shell-initialize)
 ;; (csetq exec-path-from-shell-check-startup-files nil)
@@ -113,8 +110,8 @@
 (require 'evil)
 (evil-mode 1)
 (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word)
-(setq evil-insert-state-cursor '(t t (lambda () (blink-cursor-mode 1))))
-(setq evil-normal-state-cursor '(t t (lambda () (blink-cursor-mode 0))))
+;; (setq evil-insert-state-cursor '(t t (lambda () (blink-cursor-mode 1))))
+;; (setq evil-normal-state-cursor '(t t (lambda () (blink-cursor-mode 0))))
 
 (use-package evil-leader
   :config
@@ -141,7 +138,6 @@
 (defvar sooheon--avy-keys '(?w ?e ?r ?s ?d ?x ?c ?u ?i ?o ?v ?n ?m ?l ?k ?j ?f))
 
 (use-package avy
-  :defer t
   :commands spacemacs/avy-open-url
   :bind (("s-g" . evil-avy-goto-word-1)
          ([remap goto-line] . evil-avy-goto-line))
@@ -323,9 +319,8 @@ With a prefix argument, use comint-mode."
   :init
   (evil-define-key 'normal emacs-lisp-mode-map
     "K" 'elisp-slime-nav-describe-elisp-thing-at-point)
-  :config
-  (dolist (hook '(emacs-lisp-mode-hook ielm-mode-hook))
-    (add-hook hook 'turn-on-elisp-slime-nav-mode)))
+  (evil-define-key 'normal lisp-interaction-mode-map
+    "K" 'elisp-slime-nav-describe-elisp-thing-at-point))
 
 (use-package circe
   :disabled t
@@ -400,7 +395,6 @@ if no buffers open."
   :init
   (evil-define-key 'normal global-map "gc" 'evil-commentary)
   (evil-define-key 'normal global-map "gy" 'evil-commentary-yank)
-  (define-key global-map (kbd "s-/") 'evil-commentary-line)
   :config
   (evil-commentary-mode))
 
@@ -418,6 +412,10 @@ if no buffers open."
   (define-key evil-inner-text-objects-map "c" 'evil-cp-inner-comment)
   (define-key evil-outer-text-objects-map "d" 'evil-cp-a-defun)
   (define-key evil-inner-text-objects-map "d" 'evil-cp-inner-defun))
+
+(use-package evil-exchange
+  :diminish evil-exchange
+  :init (evil-exchange-cx-install))
 
 (use-package evil-matchit
   :defer t
@@ -467,6 +465,7 @@ if no buffers open."
   :commands (soo-er-and-insert er/expand-region)
   :init
   (bind-key (kbd "M-2") 'soo-er-and-insert)
+  (evil-leader/set-key "v" 'er/expand-region)
   :config
   (defun soo-er-and-insert (arg)
     (interactive "p")
@@ -503,7 +502,6 @@ if no buffers open."
 
 (use-package speck
   :disabled t
-  :defer t
   :commands speck-mode
   :init
   (setq speck-hunspell-coding-system 'utf-8
@@ -525,7 +523,8 @@ if no buffers open."
 (use-package help
   :config
   (setq help-window-select t)
-  (evil-set-initial-state 'help-mode 'insert))
+  (evil-set-initial-state 'help-mode 'insert)
+  (add-hook 'help-mode-hook (lambda () (toggle-truncate-lines 1))))
 
 (use-package highlight-escape-sequences
   :defer
@@ -549,6 +548,7 @@ if no buffers open."
          ([remap yank-pop] . counsel-yank-pop)
          ([remap info-lookup-symbol] . counsel-info-lookup-symbol)
          ([remap menu-bar-open] . counsel-tmm)
+         ([remap list-bookmarks] . counsel-bookmark)
          ("C-c g" . counsel-git)
          ("C-c j" . counsel-git-grep)
          ("C-x l" . counsel-locate)
@@ -565,13 +565,14 @@ if no buffers open."
 (use-package swiper
   :bind (([remap isearch-forward] . counsel-grep-or-swiper)
          ("s-f" . counsel-grep-or-swiper)
-         ("C-c u" . swiper-all)))
+         ("C-c u" . swiper-all)
+         ("C-s" . swiper-all)))
 
 (use-package ivy
   :diminish ivy-mode
   :commands (magit-status epkg-describe-package)
   :bind (("s-b" . ivy-switch-buffer)
-         ("C-c C-r" . ivy-resume)
+         ("C-c r" . ivy-resume)
          ("<f2> j" . counsel-set-variable)
          ("C-c v" . ivy-push-view)
          ("C-c V" . ivy-pop-view))
@@ -669,17 +670,16 @@ if no buffers open."
         lispy-comment-use-single-semicolon t)
   (add-to-list 'lispy-parens-preceding-syntax-alist
                '(clojurescript-mode . ("[`'~@]+" "\\|" "#" "\\|" "#\\?@?")))
-  (dolist (map (list lispy-mode-map-paredit lispy-mode-map-parinfer))
+  (let ((map lispy-mode-map-paredit))
     (define-key map (kbd "C-a") nil)
     (define-key map "\M-j" 'lispy-split)
     (define-key map "\M-k" 'lispy-kill-sentence)
     (define-key map [M-up] 'sp-splice-sexp-killing-backward)
     (define-key map [M-down] 'sp-splice-sexp-killing-forward)
-    (define-key map (kbd "C-,") 'lispy-kill-at-point))
-  (let ((map lispy-mode-map-paredit))
+    (define-key map (kbd "C-,") 'lispy-kill-at-point)
     (define-key map "\M-n" nil)         ; lispy left
     (define-key map "\M-p" nil)
-    (define-key map "\"" nil)           ; lispy-doublequote
+    (define-key map "\"" 'lispy-doublequote)           ; lispy-doublequote
     (define-key map "\C-d" 'lispy-delete)
     (define-key map (kbd "M-)") nil)
     (define-key map (kbd "DEL") 'lispy-delete-backward)
@@ -833,6 +833,7 @@ Will work on both org-mode and any mode that accepts plain html."
   :config (evil-set-initial-state 'woman-mode 'insert))
 
 (use-package shackle
+  :after (help-mode compile undo-tree woman flycheck)
   :config
   (shackle-mode 1)
   (setq shackle-rules '((compilation-mode :noselect t)
@@ -843,7 +844,6 @@ Will work on both org-mode and any mode that accepts plain html."
 
 (use-package projectile
   :diminish projectile-mode
-  :defer 5
   :commands (projectile-switch-project
              projectile-find-file
              projectile-find-dir
@@ -869,10 +869,12 @@ Will work on both org-mode and any mode that accepts plain html."
     "/" 'counsel-projectile-ag)
   :config
   (projectile-global-mode)
-  (defun counsel-projectile-ag ()
+  (defun counsel-projectile-ag (&optional initial-input)
+    "Grep for a string in the current directory or project using ag.
+INITIAL-INPUT can be given as the initial minibuffer input."
     (interactive)
-    (counsel-ag nil (or (ignore-errors (projectile-project-root))
-                        default-directory)))
+    (counsel-ag initial-input (or (ignore-errors (projectile-project-root))
+                                  default-directory)))
   (setq projectile-enable-caching t
         projectile-sort-order 'recentf
         projectile-create-missing-test-files t
@@ -933,7 +935,9 @@ Will work on both org-mode and any mode that accepts plain html."
 (use-package rainbow-mode
   :commands rainbow-mode
   :diminish rainbow-mode
-  :init (evil-leader/set-key "C" 'rainbow-mode))
+  :init
+  (evil-leader/set-key "C" 'rainbow-mode)
+  (add-hook 'css-mode-hook (lambda () (rainbow-mode 1))))
 
 (use-package recentf
   :config
@@ -1038,7 +1042,7 @@ Will work on both org-mode and any mode that accepts plain html."
   (evil-define-minor-mode-key 'motion 'visual-line-mode "k" 'evil-previous-visual-line)
   (add-hook 'visual-line-mode-hook 'evil-normalize-keymaps)
   :config
-  (column-number-mode))
+  (column-number-mode 1))
 
 (use-package typo
   :disabled t
@@ -1046,14 +1050,6 @@ Will work on both org-mode and any mode that accepts plain html."
   (typo-global-mode 1)
   (setq typo-language 'English)
   (add-hook 'text-mode-hook 'typo-mode))
-
-(use-package tramp
-  :defer t
-  :config
-  (add-to-list 'tramp-default-proxies-alist '(nil "\\`root\\'" "/ssh:%h:"))
-  (add-to-list 'tramp-default-proxies-alist '("localhost" nil nil))
-  (add-to-list 'tramp-default-proxies-alist
-               (list (regexp-quote (system-name)) nil nil)))
 
 (use-package undo-tree
   :diminish undo-tree-mode

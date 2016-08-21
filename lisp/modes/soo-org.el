@@ -1,15 +1,17 @@
 (require 'org)
+(require 'ox)
 ;; FIXME: https://bitbucket.org/mituharu/emacs-mac/commits/6e8c84bd419ab425c3359b4ca17e2da9e23136ad
 (define-key org-mode-map (kbd "C-c C-r") nil)
-(diminish 'org-indent-mode)
 (require 'org-download)
 (org-download-enable)
 (csetq org-download-method 'attach)
 (require 'worf)
+(diminish 'worf-mode)
 (define-key worf-mode-map "\M-j" nil)
 (define-key worf-mode-map "\C-j" nil)
 (define-key worf-mode-map "\[" nil)
 (define-key worf-mode-map "\]" nil)
+(diminish 'org-cdlatex-mode)
 
 ;;;###autoload
 (defun soo-org-hook ()
@@ -35,16 +37,18 @@
   (evil-insert 1))
 (define-key org-mode-map (kbd "C-s-4") 'org-open-$)
 
-(add-to-list 'load-path (expand-file-name "lib/org/contrib/lisp/" emacs-d))
 (setq org-src-fontify-natively t
       org-M-RET-may-split-line nil
       org-catch-invisible-edits 'show
       org-footnote-auto-adjust t
       org-hide-emphasis-markers t
       org-return-follows-link t
+      org-startup-with-latex-preview t
       org-startup-with-inline-images t
       org-log-done 'time
-      org-highlight-latex-and-related '(latex script entities))
+      org-highlight-latex-and-related '(latex script entities)
+      org-adapt-indentation nil
+      org-preview-latex-default-process 'dvisvgm)
 
 (defun org-metaright2 (&optional arg)
   "My evil version of `org-metaright', to be bound to M-l and

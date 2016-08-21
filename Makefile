@@ -4,8 +4,9 @@ BASEDIR := $(shell pwd)
 
 profile:
 	$(emacs) -Q -l lib/profile-dotemacs/profile-dotemacs.el \
-	--eval "(setq profile-dotemacs-file \
-        (setq load-file-name \"$(abspath init.el)\"))" \
+	--eval "(progn (setq profile-dotemacs-file \
+	(setq load-file-name \"$(abspath init.el)\")) \
+	(set-background-color \"#F9F9F9\"))" \
 	-f profile-dotemacs
 
 install: upgrade

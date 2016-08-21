@@ -52,7 +52,7 @@
     highlight-escape-sequences
     hydra
     jedi
-lispy
+    lispy
     lispyville
     iedit
     inf-clojure
@@ -61,7 +61,7 @@ lispy
     magit
     markdown-mode
     ;; multiple-cursors
-    org-plus-contrib
+    ;; org-plus-contrib
     osx-dictionary
     pandoc-mode
     pdf-tools

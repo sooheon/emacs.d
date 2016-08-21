@@ -1,7 +1,7 @@
 ;;
 
 ;;;### (autoloads nil "modes/soo-clojure" "modes/soo-clojure.el"
-;;;;;;  (22449 27884 0 0))
+;;;;;;  (22449 60898 0 0))
 ;;; Generated autoloads from modes/soo-clojure.el
 
 (autoload 'soo-clojure-hook "modes/soo-clojure" "\
@@ -11,7 +11,7 @@
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22449 50410
+;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22452 8184
 ;;;;;;  0 0))
 ;;; Generated autoloads from modes/soo-org.el
 
@@ -34,11 +34,11 @@
 ;;;***
 
 ;;;### (autoloads nil nil ("custom.el" "keybinds.el" "modes/soo-haskell.el"
-;;;;;;  "packages.el") (22449 49198 0 0))
+;;;;;;  "packages.el") (22450 35220 0 0))
 
 ;;;***
 
-;;;### (autoloads nil "auto" "auto.el" (22449 27884 0 0))
+;;;### (autoloads nil "auto" "auto.el" (22449 60786 0 0))
 ;;; Generated autoloads from auto.el
 
 (autoload 'smart-move-beginning-of-line "auto" "\
@@ -51,11 +51,6 @@ If ARG is not nil or 1, move forward ARG - 1 lines first. If
 point reaches the beginning or end of the buffer, stop there.
 
 \(fn ARG)" t nil)
-
-(autoload 'latexify-line "auto" "\
-
-
-\(fn)" t nil)
 
 (autoload 'soo--close-window-dwim "auto" "\
 DWIM window closing function.
