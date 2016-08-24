@@ -11,7 +11,18 @@
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22452 8184
+;;;### (autoloads nil "modes/soo-haskell" "modes/soo-haskell.el"
+;;;;;;  (22459 65460 0 0))
+;;; Generated autoloads from modes/soo-haskell.el
+
+(autoload 'soo-haskell-hook "modes/soo-haskell" "\
+
+
+\(fn)" nil nil)
+
+;;;***
+
+;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22459 16288
 ;;;;;;  0 0))
 ;;; Generated autoloads from modes/soo-org.el
 
@@ -33,12 +44,12 @@
 
 ;;;***
 
-;;;### (autoloads nil nil ("custom.el" "keybinds.el" "modes/soo-haskell.el"
-;;;;;;  "packages.el") (22450 35220 0 0))
+;;;### (autoloads nil nil ("custom.el" "keybinds.el" "packages.el")
+;;;;;;  (22458 47399 0 0))
 
 ;;;***
 
-;;;### (autoloads nil "auto" "auto.el" (22449 60786 0 0))
+;;;### (autoloads nil "auto" "auto.el" (22453 37830 0 0))
 ;;; Generated autoloads from auto.el
 
 (autoload 'smart-move-beginning-of-line "auto" "\

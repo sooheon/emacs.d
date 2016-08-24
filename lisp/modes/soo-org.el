@@ -1,7 +1,7 @@
 (require 'org)
 (require 'ox)
 ;; FIXME: https://bitbucket.org/mituharu/emacs-mac/commits/6e8c84bd419ab425c3359b4ca17e2da9e23136ad
-(define-key org-mode-map (kbd "C-c C-r") nil)
+(define-key org-mode-map (kbd "C-c l") 'org-store-link)
 (require 'org-download)
 (org-download-enable)
 (csetq org-download-method 'attach)
@@ -12,6 +12,7 @@
 (define-key worf-mode-map "\[" nil)
 (define-key worf-mode-map "\]" nil)
 (diminish 'org-cdlatex-mode)
+(toggle-truncate-lines -1)
 
 ;;;###autoload
 (defun soo-org-hook ()
@@ -32,12 +33,13 @@
 
 (defun org-open-$ ()
   (interactive)
-  (insert "$$$$")
-  (backward-char 2)
+  (insert "$$")
+  (backward-char 1)
   (evil-insert 1))
 (define-key org-mode-map (kbd "C-s-4") 'org-open-$)
 
-(setq org-src-fontify-natively t
+(setq org-export-in-background t
+      org-src-fontify-natively t
       org-M-RET-may-split-line nil
       org-catch-invisible-edits 'show
       org-footnote-auto-adjust t
@@ -163,7 +165,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
                                  (self-insert-command 1))))
 
 (use-package ox
-  :disabled t
   :defer t
   :config
   (setq org-export-backends '(ascii html latex odt gfm)

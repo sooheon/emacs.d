@@ -11,6 +11,7 @@
 
 (evil-leader/set-key
   "t\C-o" 'sooheon--toggle-right-option-key
+  "tl" 'hl-line-mode
   "sc" 'evil-ex-nohighlight
   "TAB" 'evil-buffer
   "u" 'universal-argument

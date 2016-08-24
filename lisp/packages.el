@@ -33,7 +33,6 @@
     evil-cleverparens
     evil-exchange
     evil-leader
-    evil-magit
     evil-matchit
     evil-multiedit
     evil-numbers
@@ -50,12 +49,14 @@
     git-modes
     gist
     highlight-escape-sequences
+    hindent
     hydra
     jedi
     lispy
     lispyville
     iedit
     inf-clojure
+    intero
     ivy
     ivy-hydra
     magit
@@ -76,6 +77,7 @@
     sentence-navigation
     shackle
     shell-pop
+    shm
     smartparens
     smex
     solarized-theme

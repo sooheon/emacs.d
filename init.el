@@ -16,10 +16,9 @@
 
 ;;* Theme
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" lisp-d))
-;; (set-background-color "#F9F9F9")
-;; (load-theme 'eclipse2 t)
+(load-theme 'eclipse2 t)
 ;;** font
-(ignore-errors (set-frame-font "Input Mono Narrow"))
+(add-to-list 'default-frame-alist '(font . "Input Mono Narrow"))
 ;;* customize
 (defmacro csetq (variable value)
   `(funcall (or (get ',variable 'custom-set) 'set-default) ',variable ,value))
@@ -33,7 +32,6 @@
 (csetq initial-scratch-message "")
 (csetq create-lockfiles nil)
 (csetq fill-column 80)
-(csetq truncate-lines t)
 (global-hl-line-mode -1)
 (blink-cursor-mode -1)
 (csetq blink-cursor-blinks 0)
@@ -79,9 +77,9 @@
 (csetq shell-file-name "/usr/local/bin/bash")
 (csetq explicit-shell-file-name "/usr/local/bin/fish")
 ;;** Set PATHs--see: http://tinyurl.com/ctf9h3a
-(setenv "PATH" "/Users/sooheon/.cabal/bin:/Users/sooheon/.local/bin:/usr/local/Cellar/pyenv-virtualenv/20160315/shims:/Users/sooheon/.pyenv/shims:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Library/TeX/texbin")
-(setenv "MANPATH" "/usr/local/opt/coreutils/libexec/gnuman:/usr/local/opt/findutils/libexec/gnuman:/usr/local/share/man")
-(setq exec-path '("/Users/sooheon/.cabal/bin" "/Users/sooheon/.local/bin" "/usr/local/Cellar/pyenv-virtualenv/20160315/shims" "/Users/sooheon/.pyenv/shims" "/usr/local/opt/coreutils/libexec/gnubin" "/usr/local/opt/findutils/libexec/gnubin" "/usr/local/bin" "/usr/bin" "/bin" "/usr/sbin" "/sbin" "/opt/X11/bin" "/Library/TeX/texbin" "/usr/local/Cellar/emacs/HEAD/libexec/emacs/25.1.50/x86_64-apple-darwin15.5.0"))
+;; (setenv "PATH" "/Users/sooheon/.cabal/bin:/Users/sooheon/.local/bin:/usr/local/Cellar/pyenv-virtualenv/20160315/shims:/Users/sooheon/.pyenv/shims:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Library/TeX/texbin")
+;; (setenv "MANPATH" "/usr/local/opt/coreutils/libexec/gnuman:/usr/local/opt/findutils/libexec/gnuman:/usr/local/share/man")
+;; (setq exec-path '("/Users/sooheon/.cabal/bin" "/Users/sooheon/.local/bin" "/usr/local/Cellar/pyenv-virtualenv/20160315/shims" "/Users/sooheon/.pyenv/shims" "/usr/local/opt/coreutils/libexec/gnubin" "/usr/local/opt/findutils/libexec/gnubin" "/usr/local/bin" "/usr/bin" "/bin" "/usr/sbin" "/sbin" "/opt/X11/bin" "/Library/TeX/texbin" "/usr/local/Cellar/emacs/HEAD/libexec/emacs/25.1.50/x86_64-apple-darwin15.5.0"))
 
 ;;* Bootstrap
 (require 'no-littering)
@@ -89,15 +87,17 @@
                          ("gnu" . "http://elpa.gnu.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")))
 (package-initialize)
-(eval-when-compile (require 'use-package))
+(eval-and-compile
+  (require 'use-package))
 
-;;** hooks
+;;** mode hooks
 (add-hook 'python-mode-hook 'soo-python-hook)
 (add-hook 'clojure-mode-hook 'soo-clojure-hook)
 (add-hook 'org-mode-hook 'soo-org-hook)
+(add-hook 'haskell-mode-hook 'soo-haskell-hook)
 
-;; (exec-path-from-shell-initialize)
-;; (csetq exec-path-from-shell-check-startup-files nil)
+(csetq exec-path-from-shell-check-startup-files nil)
+(exec-path-from-shell-initialize)
 
 (setq-default evil-want-C-u-scroll t
               evil-cross-lines t
@@ -110,6 +110,7 @@
 (require 'evil)
 (evil-mode 1)
 (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word)
+(evil-define-key 'normal global-map "U" 'undo-tree-redo)
 ;; (setq evil-insert-state-cursor '(t t (lambda () (blink-cursor-mode 1))))
 ;; (setq evil-normal-state-cursor '(t t (lambda () (blink-cursor-mode 0))))
 
@@ -118,7 +119,6 @@
   (global-evil-leader-mode))
 
 (use-package evil-evilified-state
-  :load-path "~/.emacs.d/lib/evil-evilified-state"
   :config
   (use-package bind-map :defer t)
   (define-key evil-evilified-state-map " " evil-leader--default-map))
@@ -164,9 +164,10 @@
   :config
   (ace-link-setup-default))
 
-(use-package autorevert
-  :diminish auto-revert-mode
-  :init (global-auto-revert-mode 1))
+(use-package artbollocks-mode
+  :defer t
+  :init (evil-leader/set-key "ta" 'artbollocks-mode)
+  :config (add-hook 'text-mode-hook 'artbollocks-mode))
 
 (use-package company
   :defer t
@@ -355,38 +356,6 @@ CIRCE if no buffers open."
   (require 'lui-autopaste)
   (add-hook 'circe-channel-mode-hook 'enable-lui-autopaste))
 
-(use-package erc
-  :disabled t
-  :defer t
-  :init
-  (defun sooheon--erc ()
-    (interactive)
-    (erc :server "irc.freenode.net"
-         :port 6667
-         :nick "sooheon"))
-  (defun sooheon--switch-to-erc ()
-    "Switch to ERC buffers using completing-read, or start ERC
-if no buffers open."
-    (interactive)
-    (let (candidates (list))
-      (dolist (buf (buffer-list) candidates)
-        (if (equal 'erc-mode (with-current-buffer buf major-mode))
-            (setq candidates (append (list (buffer-name buf)) candidates))))
-      (if candidates
-          (switch-to-buffer (completing-read "IRC buffer: " candidates))
-        (call-interactively 'sooheon--erc))))
-  (evil-leader/set-key "ai" 'sooheon--switch-to-erc)
-  :config
-  (setq erc-hide-list '("JOIN" "NICK" "PART" "QUIT" "MODE"
-                        "324" "329" "332" "333" "353" "477")
-        erc-track-shorten-aggressively 'max
-        erc-track-position-in-mode-line t
-        erc-prompt-for-password nil
-        erc-autojoin-channels-alist
-        '(("freenode.net" "#clojure" "#lesswrong" "##crawl"))
-        erc-join-buffer 'bury
-        erc-nickserv-passwords '((freenode (("sooheon" . "qwefasdf"))))))
-
 (use-package evil-commentary
   :diminish evil-commentary-mode
   :commands (evil-commentary
@@ -415,14 +384,18 @@ if no buffers open."
 
 (use-package evil-exchange
   :diminish evil-exchange
-  :init (evil-exchange-cx-install))
+  :commands evil-exchange/cx
+  :init
+  (define-key evil-operator-state-map "x" 'evil-exchange/cx)
+  (define-key evil-visual-state-map "X" 'evil-exchange))
 
 (use-package evil-matchit
   :defer t
   :init (add-hook 'html-mode-hook 'turn-on-evil-matchit-mode))
 
 (use-package evil-textobj-anyblock
-  :config
+  :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block)
+  :init
   (define-key evil-inner-text-objects-map
     "b" 'evil-textobj-anyblock-inner-block)
   (define-key evil-outer-text-objects-map
@@ -441,8 +414,9 @@ if no buffers open."
   (evil-define-key 'visual evil-surround-mode-map "s" 'evil-surround-region)
   (evil-define-key 'visual evil-surround-mode-map "gs" 'evil-Surround-region)
   (evil-define-key 'visual evil-surround-mode-map "S" 'evil-substitute)
-  (add-hook 'emacs-lisp-mode-hook (lambda ()
-                                    (push '(?` . ("`" . "'")) evil-surround-pairs-alist))))
+  (add-hook 'emacs-lisp-mode-hook
+            (lambda ()
+              (push '(?` . ("`" . "'")) evil-surround-pairs-alist))))
 
 (use-package evil-snipe
   :diminish evil-snipe-local-mode
@@ -451,7 +425,6 @@ if no buffers open."
   :config
   (setq evil-snipe-scope 'buffer
         evil-snipe-repeat-scope 'buffer
-        evil-snipe-show-prompt nil
         evil-snipe-smart-case t
         evil-snipe-repeat-keys nil)
   (evil-snipe-override-mode 1))
@@ -474,7 +447,10 @@ if no buffers open."
 
 (use-package flycheck
   :defer t
-  :config (evil-set-initial-state 'flycheck-error-list-mode 'insert))
+  :config
+  (evil-set-initial-state 'flycheck-error-list-mode 'insert)
+  (setq flycheck-indication-mode nil
+        flycheck-mode-line-prefix "fc"))
 
 (use-package gist :defer t)
 
@@ -518,12 +494,10 @@ if no buffers open."
   ;; (add-hook 'prog-mode-hook 'soo--speck-prog-hook)
   (add-hook 'text-mode-hook 'speck-mode))
 
-(use-package flx :after ivy)
-
 (use-package help
   :config
   (setq help-window-select t)
-  (evil-set-initial-state 'help-mode 'insert)
+  (evil-set-initial-state 'help-mode 'emacs)
   (add-hook 'help-mode-hook (lambda () (toggle-truncate-lines 1))))
 
 (use-package highlight-escape-sequences
@@ -535,118 +509,7 @@ if no buffers open."
 (use-package info
   :config
   (evil-leader/set-key "hi" 'info)
-  (evil-set-initial-state 'Info-mode 'insert))
-
-(use-package counsel
-  :bind (([remap execute-extended-command] . counsel-M-x)
-         ([remap describe-function] . counsel-describe-function)
-         ([remap describe-variable] . counsel-describe-variable)
-         ([remap describe-bindings] . counsel-descbinds)
-         ([remap find-file] . counsel-find-file)
-         ([remap imenu] . counsel-imenu)
-         ([remap load-library] . counsel-load-library)
-         ([remap yank-pop] . counsel-yank-pop)
-         ([remap info-lookup-symbol] . counsel-info-lookup-symbol)
-         ([remap menu-bar-open] . counsel-tmm)
-         ([remap list-bookmarks] . counsel-bookmark)
-         ("C-c g" . counsel-git)
-         ("C-c j" . counsel-git-grep)
-         ("C-x l" . counsel-locate)
-         ("C-c o" . counsel-outline))
-  :init
-  (evil-leader/set-key
-    "hv" 'counsel-describe-variable
-    "hf" 'counsel-describe-function
-    "f" 'counsel-find-file
-    "Th" 'counsel-load-theme
-    "aP" 'counsel-list-processes)
-  (define-key evil-normal-state-map "\M-y" 'counsel-yank-pop))
-
-(use-package swiper
-  :bind (([remap isearch-forward] . counsel-grep-or-swiper)
-         ("s-f" . counsel-grep-or-swiper)
-         ("C-c u" . swiper-all)
-         ("C-s" . swiper-all)))
-
-(use-package ivy
-  :diminish ivy-mode
-  :commands (magit-status epkg-describe-package)
-  :bind (("s-b" . ivy-switch-buffer)
-         ("C-c r" . ivy-resume)
-         ("<f2> j" . counsel-set-variable)
-         ("C-c v" . ivy-push-view)
-         ("C-c V" . ivy-pop-view))
-  :init
-  (evil-leader/set-key
-    "r" 'ivy-recentf
-    "b" 'ivy-switch-buffer)
-  :config
-  (defun switch-to-buffer--hack (orig-fun &rest args)
-    (if-let ((win (get-buffer-window (car args))))
-        (select-window win)
-      (apply orig-fun args)))
-  (advice-add 'ivy--switch-buffer-action :around #'switch-to-buffer--hack)
-  (with-eval-after-load 'recentf (setq ivy-use-virtual-buffers t))
-  (setq ivy-extra-directories '("./")
-        ivy-count-format "%d "
-        ivy-height 12
-        ivy-re-builders-alist '((counsel-M-x . ivy--regex-fuzzy)
-                                (t . ivy--regex-plus))
-        ivy-initial-inputs-alist '((org-refile . "^")
-                                   (org-agenda-refile . "^")
-                                   (org-capture-refile . "^")
-                                   (man . "^")
-                                   (woman . "^"))
-        ivy-action-wrap t
-        ivy-sort-matches-functions-alist '((t . nil)
-                                           (ivy-switch-buffer . ivy-sort-function-buffer)
-                                           (counsel-find-file . ivy-sort-function-buffer)))
-  (ivy-mode 1)
-  (let ((m ivy-minibuffer-map))
-    (define-key m [escape] 'minibuffer-keyboard-quit)
-    (define-key m (kbd "<s-backspace>") (lambda () (interactive) (kill-line 0))))
-  (require 'ivy-hydra)
-  (define-key ivy-minibuffer-map "\C-o"
-    (defhydra soo-ivy (:hint nil :color pink)
-      "
- Move     ^^^^^^^^^^ | Call         ^^^^ | Cancel^^ | Options^^ | Action _w_/_s_/_a_: %s(ivy-action-name)
-----------^^^^^^^^^^-+--------------^^^^-+-------^^-+--------^^-+---------------------------------
- _g_ ^ ^ _k_ ^ ^ _u_ | _f_orward _o_ccur | _i_nsert | _c_alling: %-7s(if ivy-calling \"on\" \"off\") _C_ase-fold: %-10`ivy-case-fold-search
- ^↨^ _h_ ^+^ _l_ ^↕^ | _RET_ done     ^^ | _q_uit   | _m_atcher: %-7s(ivy--matcher-desc) _t_runcate: %-11`truncate-lines
- _G_ ^ ^ _j_ ^ ^ _d_ | _TAB_ alt-done ^^ | ^ ^      | _<_/_>_: shrink/grow
-"
-      ;; arrows
-      ("j" ivy-next-line)
-      ("k" ivy-previous-line)
-      ("l" ivy-alt-done)
-      ("h" ivy-backward-delete-char)
-      ("g" ivy-beginning-of-buffer)
-      ("G" ivy-end-of-buffer)
-      ("d" ivy-scroll-up-command)
-      ("u" ivy-scroll-down-command)
-      ("e" ivy-scroll-down-command)
-      ;; actions
-      ("q" keyboard-escape-quit :exit t)
-      ("C-g" keyboard-escape-quit :exit t)
-      ("<escape>" keyboard-escape-quit :exit t)
-      ("C-o" nil)
-      ("i" nil)
-      ("TAB" ivy-alt-done :exit nil)
-      ("C-j" ivy-alt-done :exit nil)
-      ;; ("d" ivy-done :exit t)
-      ("RET" ivy-done :exit t)
-      ("C-m" ivy-done :exit t)
-      ("f" ivy-call)
-      ("c" ivy-toggle-calling)
-      ("m" ivy-toggle-fuzzy)
-      (">" ivy-minibuffer-grow)
-      ("<" ivy-minibuffer-shrink)
-      ("w" ivy-prev-action)
-      ("s" ivy-next-action)
-      ("a" ivy-read-action)
-      ("t" (setq truncate-lines (not truncate-lines)))
-      ("C" ivy-toggle-case-fold)
-      ("o" ivy-occur :exit t))))
+  (evil-set-initial-state 'Info-mode 'emacs))
 
 (use-package lispy
   :diminish lispy-mode
@@ -704,9 +567,8 @@ if no buffers open."
   :init
   (add-hook 'lispy-mode-hook #'lispyville-mode)
   (setq lispyville-key-theme '(operators
-                               (escape insert hybrid emacs)
+                               escape
                                slurp/barf-cp)
-        lispyville-motions-put-into-special t
         lispyville-barf-stay-with-closing t)
   :config
   (define-key lispyville-mode-map "\M-n" 'lispyville-drag-forward)
@@ -715,35 +577,9 @@ if no buffers open."
 (use-package magit
   :commands (magit-status magit-dispatch-popup)
   :init
-  (define-key evil-normal-state-map "gs" 'magit-status)
-  (define-key evil-normal-state-map "gp" 'magit-dispatch-popup)
   (evil-leader/set-key "g" 'magit-status "G" 'magit-dispatch-popup)
   :config
-  (setq magit-refresh-verbose t
-        magit-refresh-status-buffer nil)
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-modules-unpulled-from-upstream
-                          'magit-insert-unpulled-from-upstream)
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-modules-unpulled-from-pushremote
-                          'magit-insert-unpulled-from-upstream)
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-modules-unpushed-to-upstream
-                          'magit-insert-unpulled-from-upstream)
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-modules-unpushed-to-pushremote
-                          'magit-insert-unpulled-from-upstream)
-  (magit-add-section-hook 'magit-status-sections-hook
-                          'magit-insert-submodules
-                          'magit-insert-unpulled-from-upstream)
-
-  (use-package evil-magit
-    :config
-    (evil-define-key 'normal magit-status-mode-map
-      "n" 'magit-section-forward
-      "p" 'magit-section-backward
-      "\C-n" 'next-line
-      "\C-p" 'previous-line)))
+  (evil-set-initial-state 'magit-submodule-list-mode 'emacs))
 
 (use-package markdown-mode
   :mode ("\\.m[k]d" . markdown-mode)
@@ -835,12 +671,14 @@ Will work on both org-mode and any mode that accepts plain html."
 (use-package shackle
   :after (help-mode compile undo-tree woman flycheck)
   :config
-  (shackle-mode 1)
   (setq shackle-rules '((compilation-mode :noselect t)
-                        (help-mode :noselect t)
+                        (help-mode :noselect t :size 0.4)
                         ("*undo-tree*" :size 0.3)
                         (woman-mode :popup t)
-                        (flycheck-error-list-mode :select t))))
+                        (flycheck-error-list-mode :select t)))
+  (shackle-mode 1))
+
+(require 'soo-ivy)
 
 (use-package projectile
   :diminish projectile-mode
@@ -985,7 +823,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :config
   (use-package term
     :config
-    (setq term-suppress-hard-newline t
+    (setq term-suppress-hard-newline nil
           term-scroll-to-bottom-on-output t)
     (define-key term-raw-map (kbd "s-v") 'term-paste)
     (evil-define-key 'normal term-raw-map "p" 'term-paste)
@@ -1102,6 +940,10 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (use-package ws-butler
   :diminish ws-butler-mode
   :config (ws-butler-global-mode))
+
+(use-package yasnippet
+  :diminish yas-minor-mode
+  :commands (yas-global-mode yas-minor-mode))
 
 (run-with-idle-timer
  5 nil
