@@ -11,7 +11,7 @@
 
 (evil-leader/set-key
   "t\C-o" 'sooheon--toggle-right-option-key
-  "tl" 'hl-line-mode
+  "tl" 'global-hl-line-mode
   "sc" 'evil-ex-nohighlight
   "TAB" 'evil-buffer
   "u" 'universal-argument
@@ -53,7 +53,7 @@
 (global-set-key (kbd "s-s") 'save-buffer)
 (global-set-key (kbd "s-q") 'save-buffers-kill-terminal)
 (global-set-key (kbd "s-v") 'yank)
-(global-set-key (kbd "s-c") 'evil-yank)
+(global-set-key (kbd "s-c") 'kill-ring-save)
 (global-set-key (kbd "s-a") 'mark-whole-buffer)
 (global-set-key (kbd "s-x") 'kill-region)
 (global-set-key (kbd "s-n") 'make-frame)

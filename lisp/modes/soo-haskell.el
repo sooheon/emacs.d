@@ -18,8 +18,9 @@
 
 (use-package hindent
   :diminish hindent-mode
-  :bind (:map hindent-mode-map
-              ("C-c i" . hindent-reformat-buffer))
+  :commands (hindent-reformat-buffer hindent-reformat-decl)
+  :init
+  (evil-leader/set-key "=" 'hindent-reformat-buffer)
   :config
   (setq hindent-style "chris-done"))
 
@@ -37,8 +38,9 @@
             (add-to-list 'sp-no-reindent-after-kill-modes #'haskell-mode)
             (require 'smartparens-haskell)))
 (add-hook 'haskell-mode-hook 'smartparens-mode)
+(add-hook 'haskell-interactive-mode-hook 'smartparens-mode)
 
 ;;;###autoload
 (defun soo-haskell-hook ()
-  (intero-mode)
+  ;; (intero-mode)
   (hindent-mode))

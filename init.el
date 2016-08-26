@@ -29,10 +29,10 @@
 (csetq menu-bar-mode nil)
 (csetq scroll-bar-mode nil)
 (csetq inhibit-startup-screen t)
-(csetq initial-scratch-message "")
+(csetq initial-scratch-message ";; You have power over your mind - not outside events. Realize this, and you \n;; will find strength.\n\n")
 (csetq create-lockfiles nil)
 (csetq fill-column 80)
-(global-hl-line-mode -1)
+(global-hl-line-mode 1)
 (blink-cursor-mode -1)
 (csetq blink-cursor-blinks 0)
 (eval '(setq inhibit-startup-echo-area-message "sooheon"))
@@ -41,8 +41,10 @@
                                     "%b"))
                            (:eval (if (buffer-modified-p) " •"))
                            " - Emacs"))
-(add-to-list 'fringe-indicator-alist '(continuation nil right-curly-arrow)) ; not working right now
-(csetq scroll-preserve-screen-position t)
+(setq scroll-preserve-screen-position t)
+(setq scroll-margin 1)
+(setq scroll-conservatively 0)
+(csetq fringe-indicator-alist '((continuation nil right-curly-arrow) (truncation left-arrow right-arrow) (continuation left-curly-arrow right-curly-arrow) (overlay-arrow . right-triangle) (up . up-arrow) (down . down-arrow) (top top-left-angle top-right-angle) (bottom bottom-left-angle bottom-right-angle top-right-angle top-left-angle) (top-bottom left-bracket right-bracket top-right-angle top-left-angle) (empty-line . empty-line) (unknown . question-mark)))
 ;;** Finding files
 (csetq vc-follow-symlinks t)
 (csetq find-file-suppress-same-file-warnings t)
@@ -81,6 +83,9 @@
 ;; (setenv "MANPATH" "/usr/local/opt/coreutils/libexec/gnuman:/usr/local/opt/findutils/libexec/gnuman:/usr/local/share/man")
 ;; (setq exec-path '("/Users/sooheon/.cabal/bin" "/Users/sooheon/.local/bin" "/usr/local/Cellar/pyenv-virtualenv/20160315/shims" "/Users/sooheon/.pyenv/shims" "/usr/local/opt/coreutils/libexec/gnubin" "/usr/local/opt/findutils/libexec/gnubin" "/usr/local/bin" "/usr/bin" "/bin" "/usr/sbin" "/sbin" "/opt/X11/bin" "/Library/TeX/texbin" "/usr/local/Cellar/emacs/HEAD/libexec/emacs/25.1.50/x86_64-apple-darwin15.5.0"))
 
+;; Use right command as control
+(setq mac-right-command-modifier 'control)
+
 ;;* Bootstrap
 (require 'no-littering)
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
@@ -99,28 +104,24 @@
 (csetq exec-path-from-shell-check-startup-files nil)
 (exec-path-from-shell-initialize)
 
-(setq-default evil-want-C-u-scroll t
-              evil-cross-lines t
-              evil-symbol-word-search t
-              evil-move-cursor-back nil
-              evil-want-C-i-jump t
-              evil-disable-insert-state-bindings t
-              evil-search-module 'evil-search
-              evil-ex-search-persistent-highlight nil)
+(setq evil-want-C-u-scroll t
+      evil-cross-lines t
+      evil-symbol-word-search t
+      evil-move-cursor-back nil
+      evil-want-C-i-jump t
+      evil-disable-insert-state-bindings t
+      evil-search-module 'evil-search
+      evil-ex-search-persistent-highlight nil)
 (require 'evil)
 (evil-mode 1)
-(define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word)
 (evil-define-key 'normal global-map "U" 'undo-tree-redo)
-;; (setq evil-insert-state-cursor '(t t (lambda () (blink-cursor-mode 1))))
-;; (setq evil-normal-state-cursor '(t t (lambda () (blink-cursor-mode 0))))
+(define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word)
 
-(use-package evil-leader
-  :config
-  (global-evil-leader-mode))
+(use-package evil-leader :config (global-evil-leader-mode))
 
 (use-package evil-evilified-state
+  :commands evilified-state-evilify
   :config
-  (use-package bind-map :defer t)
   (define-key evil-evilified-state-map " " evil-leader--default-map))
 
 (use-package auto-compile
@@ -142,8 +143,7 @@
   :bind (("s-g" . evil-avy-goto-word-1)
          ([remap goto-line] . evil-avy-goto-line))
   :init
-  (evil-leader/set-key
-    "xo" 'spacemacs/avy-open-url)
+  (evil-leader/set-key "xo" 'spacemacs/avy-open-url)
   :config
   (setq avy-keys sooheon--avy-keys)
   (defun spacemacs/avy-goto-url ()
@@ -163,6 +163,8 @@
   (define-key help-mode-map "o" 'ace-link-help)
   :config
   (ace-link-setup-default))
+
+(use-package autorevert :diminish auto-revert-mode)
 
 (use-package artbollocks-mode
   :defer t
@@ -192,10 +194,9 @@
         company-dabbrev-other-buffers t
         company-require-match nil
         company-elisp-detect-function-context nil)
+  (defun soo-company-esc () (interactive) (company-abort) (evil-normal-state))
   (let ((map company-active-map))
-    (define-key map [escape] (lambda () (interactive)
-                               (company-abort)
-                               (evil-normal-state)))
+    (define-key map [escape] 'soo-company-esc)
     (define-key map "\C-n" 'company-select-next)
     (define-key map "\C-p" 'company-select-previous)
     (define-key map [tab] 'company-complete-common)))
@@ -203,23 +204,13 @@
 (use-package compile
   :defer t
   :init
-  (define-key prog-mode-map [C-f9] #'endless/compile-please)
   (define-key prog-mode-map [f9] #'compile)
   :config
   (setq compilation-ask-about-save nil
         compilation-scroll-output 'next-error
-        compilation-skip-threshold 2)
-  (defun endless/compile-please (comint)
-    "Compile without confirmation.
-With a prefix argument, use comint-mode."
-    (interactive "P")
-    ;; Do the command without a prompt.
-    (save-window-excursion
-      (compile (eval compile-command) (and comint t)))
-    (pop-to-buffer (get-buffer "*compilation*"))))
+        compilation-skip-threshold 2))
 
 (use-package diff-hl
-  :defer t
   :after (projectile magit)
   :config
   (setq diff-hl-draw-borders nil)
@@ -229,14 +220,11 @@ With a prefix argument, use comint-mode."
 (use-package dired
   :commands dired-jump
   :init
-  (delete ".elc" completion-ignored-extensions)
   (define-key evil-normal-state-map "-" 'dired-jump)
   (defun soo--dired-setup ()
     ;; (setq dired-omit-verbose nil)
     (setq dired-hide-details-hide-symlink-targets nil)
-    (dired-hide-details-mode t)
-    ;; (dired-omit-mode t)
-    )
+    (dired-hide-details-mode t))
   (add-hook 'dired-mode-hook 'soo--dired-setup)
   :config
   (setq dired-listing-switches "-laGh1v --group-directories-first")
@@ -299,7 +287,7 @@ With a prefix argument, use comint-mode."
     "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
     "gs" 'magit-status
     "gp" 'magit-dispatch-popup
-    "got" 'soo--terminal-pop
+    "got" 'soo-terminal-pop
     "gof" 'reveal-in-osx-finder
     "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1))))
 
@@ -384,7 +372,7 @@ CIRCE if no buffers open."
 
 (use-package evil-exchange
   :diminish evil-exchange
-  :commands evil-exchange/cx
+  :commands (evil-exchange evil-exchange/cx)
   :init
   (define-key evil-operator-state-map "x" 'evil-exchange/cx)
   (define-key evil-visual-state-map "X" 'evil-exchange))
@@ -498,7 +486,7 @@ CIRCE if no buffers open."
   :config
   (setq help-window-select t)
   (evil-set-initial-state 'help-mode 'emacs)
-  (add-hook 'help-mode-hook (lambda () (toggle-truncate-lines 1))))
+  (add-hook 'help-mode-hook (lambda () (toggle-truncate-lines -1))))
 
 (use-package highlight-escape-sequences
   :defer
@@ -539,7 +527,7 @@ CIRCE if no buffers open."
     (define-key map "\M-k" 'lispy-kill-sentence)
     (define-key map [M-up] 'sp-splice-sexp-killing-backward)
     (define-key map [M-down] 'sp-splice-sexp-killing-forward)
-    (define-key map (kbd "C-,") 'lispy-kill-at-point)
+    ;; (define-key map (kbd "C-,") 'lispy-kill-at-point)
     (define-key map "\M-n" nil)         ; lispy left
     (define-key map "\M-p" nil)
     (define-key map "\"" 'lispy-doublequote)           ; lispy-doublequote
@@ -565,7 +553,12 @@ CIRCE if no buffers open."
              lispyville-drag-forward
              lispyville-drag-backward)
   :init
-  (add-hook 'lispy-mode-hook #'lispyville-mode)
+  (defun conditionally-enable-lispyville ()
+    "Only turn on lispyville outside of REPLs.
+Keep M-n and M-p reserved for history."
+    (when (not (eq major-mode 'cider-repl-mode))
+      (lispyville-mode 1)))
+  (add-hook 'lispy-mode-hook 'conditionally-enable-lispyville)
   (setq lispyville-key-theme '(operators
                                escape
                                slurp/barf-cp)
@@ -579,7 +572,9 @@ CIRCE if no buffers open."
   :init
   (evil-leader/set-key "g" 'magit-status "G" 'magit-dispatch-popup)
   :config
-  (evil-set-initial-state 'magit-submodule-list-mode 'emacs))
+  (evil-set-initial-state 'magit-submodule-list-mode 'emacs)
+  (setq magit-display-buffer-function
+        'magit-display-buffer-fullframe-status-v1))
 
 (use-package markdown-mode
   :mode ("\\.m[k]d" . markdown-mode)
@@ -666,7 +661,8 @@ Will work on both org-mode and any mode that accepts plain html."
 
 (use-package woman
   :defer t
-  :config (evil-set-initial-state 'woman-mode 'insert))
+  :config (evil-set-initial-state 'woman-mode 'emacs)
+  (bind-key "s-w" 'Man-quit woman-mode-map))
 
 (use-package shackle
   :after (help-mode compile undo-tree woman flycheck)
@@ -767,14 +763,13 @@ INITIAL-INPUT can be given as the initial minibuffer input."
       "run ag in project"))))
 
 (use-package rainbow-delimiters
-  :init
-  (add-hook 'smartparens-mode-hook #'rainbow-delimiters-mode))
+  :init (add-hook 'smartparens-mode-hook #'rainbow-delimiters-mode))
 
 (use-package rainbow-mode
   :commands rainbow-mode
   :diminish rainbow-mode
   :init
-  (evil-leader/set-key "C" 'rainbow-mode)
+  (evil-leader/set-key "tc" 'rainbow-mode)
   (add-hook 'css-mode-hook (lambda () (rainbow-mode 1))))
 
 (use-package recentf
@@ -870,8 +865,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (evil-define-key 'normal smartparens-mode-map
     "\M-i" 'soo-insert-at-bos
     "\M-a" 'soo-insert-at-eos))
-
-(use-package smex :defer t :config (csetq smex-history-length 32))
 
 (use-package simple
   :diminish (auto-fill-mode visual-line-mode)

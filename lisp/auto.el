@@ -35,7 +35,7 @@ window. If there is only one window in frame, call
         (call-interactively 'bury-buffer)))))
 
 ;;;###autoload
-(defun soo--terminal-pop ()
+(defun soo-terminal-pop ()
   (interactive)
   (do-applescript
    (format "

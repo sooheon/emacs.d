@@ -13,6 +13,7 @@
          ("C-c g" . counsel-git)
          ("C-c j" . counsel-git-grep)
          ("C-x l" . counsel-locate)
+         ("C-x C-l" . find-library)
          ("C-c o" . counsel-outline))
   :init
   (evil-leader/set-key
@@ -22,7 +23,9 @@
     "f" 'counsel-find-file
     "th" 'counsel-load-theme
     "aP" 'counsel-list-processes)
-  (define-key evil-normal-state-map "\M-y" 'counsel-yank-pop))
+  (define-key evil-normal-state-map "\M-y" 'counsel-yank-pop)
+  :config
+  (use-package smex :config (csetq smex-history-length 32)))
 
 (use-package swiper
   :bind (([remap isearch-forward] . counsel-grep-or-swiper)
@@ -41,17 +44,19 @@
   (evil-leader/set-key "b" 'ivy-switch-buffer)
   :config
   (require 'flx)
-  (defun switch-to-buffer--hack (orig-fun &rest args)
+  (defun switch-to-existing-buffer (orig-fun &rest args)
     (if-let ((win (get-buffer-window (car args))))
         (select-window win)
       (apply orig-fun args)))
-  (advice-add 'ivy--switch-buffer-action :around #'switch-to-buffer--hack)
-  (with-eval-after-load 'recentf (setq ivy-use-virtual-buffers t))
+  (advice-add 'ivy--switch-buffer-action :around #'switch-to-existing-buffer)
   (setq ivy-extra-directories '("./")
+        ivy-use-virtual-buffers t
         ivy-count-format "%d "
         ivy-height 12
         ivy-re-builders-alist '((counsel-M-x . ivy--regex-fuzzy)
-                                (t . ivy--regex-plus))
+                                ;; (t . ivy--regex-plus)
+                                (swiper . ivy--regex-plus)
+                                (t . ivy--regex-fuzzy))
         ivy-initial-inputs-alist '((org-refile . "^")
                                    (org-agenda-refile . "^")
                                    (org-capture-refile . "^")
@@ -65,6 +70,7 @@
   (let ((m ivy-minibuffer-map))
     (define-key m [escape] 'minibuffer-keyboard-quit)
     (define-key m (kbd "<s-backspace>") (lambda () (interactive) (kill-line 0))))
+
   (require 'ivy-hydra)
   (define-key ivy-minibuffer-map "\C-o"
     (defhydra soo-ivy (:hint nil :color pink)

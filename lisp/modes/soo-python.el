@@ -18,6 +18,7 @@
     ))
 
 (require 'lpy)
+(diminish 'lpy-mode "lpy")
 (define-key lpy-mode-map (kbd "C-h") nil)
 (define-key lpy-mode-map (kbd "[") nil)
 (define-key lpy-mode-map (kbd "(") nil)
@@ -50,6 +51,8 @@
   (anaconda-eldoc-mode))
 
 (defun ora-python-switch-to-shell ()
+  "If *Python* is running, switch to it. Else, run new python
+buffer."
   (interactive)
   (let ((buffer (process-buffer (lispy--python-proc))))
     (if buffer
@@ -74,6 +77,8 @@
                                 2))))))
 
 (defun ora-python-send ()
+  "If region is active, send region to REPL. Else, send entire
+buffer."
   (interactive)
   (if (region-active-p)
       (ora-python-shell-send-region (region-beginning)

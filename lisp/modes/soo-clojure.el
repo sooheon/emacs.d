@@ -20,17 +20,19 @@
         cider-prompt-save-file-on-load 'always-save
         cider-repl-use-clojure-font-lock t
         cider-font-lock-dynamically t
-        cider-mode-line '(:eval (format " [%s]" (cider--modeline-info)))
+        cider-mode-line '(:eval (format " %s" (cider--modeline-info)))
         cider-default-repl-command "boot"
         cider-pprint-fn 'puget)
   ;; (defadvice cider-jump-to-var (before add-evil-jump activate)
   ;;   (evil-set-jump))
   (evil-define-key 'normal cider-mode-map "K" 'cider-doc)
-  (evil-set-initial-state 'cider-docview-mode 'insert)
-  (evil-set-initial-state 'cider-stacktrace-mode 'insert)
-  (evil-set-initial-state 'cider-macroexpansion-mode 'insert)
-  (evil-set-initial-state 'cider-browse-ns-mode 'insert)
-  (add-hook 'cider-mode-hook 'eldoc-mode))
+  (evil-set-initial-state 'cider-docview-mode 'emacs)
+  (evil-set-initial-state 'cider-stacktrace-mode 'emacs)
+  (evil-set-initial-state 'cider-macroexpansion-mode 'emacs)
+  (evil-set-initial-state 'cider-browse-ns-mode 'emacs)
+  (evil-set-initial-state 'cider-test-report-mode 'emacs)
+  (add-hook 'cider-repl-mode-hook 'smartparens-mode)
+  (add-hook 'cider-repl-mode-hook 'company-mode))
 
 (use-package inf-clojure
   :config

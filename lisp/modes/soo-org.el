@@ -12,7 +12,6 @@
 (define-key worf-mode-map "\[" nil)
 (define-key worf-mode-map "\]" nil)
 (diminish 'org-cdlatex-mode)
-(toggle-truncate-lines -1)
 
 ;;;###autoload
 (defun soo-org-hook ()
@@ -38,19 +37,19 @@
   (evil-insert 1))
 (define-key org-mode-map (kbd "C-s-4") 'org-open-$)
 
-(setq org-export-in-background t
-      org-src-fontify-natively t
-      org-M-RET-may-split-line nil
-      org-catch-invisible-edits 'show
-      org-footnote-auto-adjust t
-      org-hide-emphasis-markers t
-      org-return-follows-link t
-      org-startup-with-latex-preview t
-      org-startup-with-inline-images t
-      org-log-done 'time
-      org-highlight-latex-and-related '(latex script entities)
-      org-adapt-indentation nil
-      org-preview-latex-default-process 'dvisvgm)
+(setq-default org-export-in-background t
+              org-src-fontify-natively t
+              org-M-RET-may-split-line nil
+              org-catch-invisible-edits 'show
+              org-footnote-auto-adjust t
+              org-hide-emphasis-markers t
+              org-return-follows-link t
+              org-startup-with-latex-preview t
+              org-startup-with-inline-images t
+              org-log-done 'time
+              org-highlight-latex-and-related '(latex script entities)
+              org-adapt-indentation nil
+              org-preview-latex-default-process 'dvisvgm)
 
 (defun org-metaright2 (&optional arg)
   "My evil version of `org-metaright', to be bound to M-l and

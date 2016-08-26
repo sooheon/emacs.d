@@ -3,7 +3,14 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector
+   ["#eee8d5" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#839496"])
  '(auto-image-file-mode t)
+ '(compilation-message-face (quote default))
+ '(cua-global-mark-cursor-color "#2aa198")
+ '(cua-normal-cursor-color "#657b83")
+ '(cua-overwrite-cursor-color "#b58900")
+ '(cua-read-only-cursor-color "#859900")
  '(custom-safe-themes
    (quote
     ("fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
@@ -12,28 +19,58 @@
  '(evil-want-C-w-delete t)
  '(fci-rule-color "#383838")
  '(frame-resize-pixelwise t)
+ '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
+ '(highlight-symbol-colors
+   (--map
+    (solarized-color-blend it "#fdf6e3" 0.25)
+    (quote
+     ("#b58900" "#2aa198" "#dc322f" "#6c71c4" "#859900" "#cb4b16" "#268bd2"))))
+ '(highlight-symbol-foreground-color "#586e75")
+ '(highlight-tail-colors
+   (quote
+    (("#eee8d5" . 0)
+     ("#B4C342" . 20)
+     ("#69CABF" . 30)
+     ("#69B7F0" . 50)
+     ("#DEB542" . 60)
+     ("#F2804F" . 70)
+     ("#F771AC" . 85)
+     ("#eee8d5" . 100))))
+ '(hl-bg-colors
+   (quote
+    ("#DEB542" "#F2804F" "#FF6E64" "#F771AC" "#9EA0E5" "#69B7F0" "#69CABF" "#B4C342")))
+ '(hl-fg-colors
+   (quote
+    ("#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3")))
  '(indent-tabs-mode nil)
  '(indicate-empty-lines t)
  '(magit-branch-arguments nil)
+ '(magit-diff-use-overlays nil)
  '(menu-bar-mode nil)
  '(nrepl-message-colors
    (quote
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
  '(org-latex-create-formula-image-program (quote imagemagick))
- '(org-preview-latex-default-process (quote imagemagick))
+ '(org-preview-latex-default-process (quote dvisvgm))
  '(package-selected-packages
    (quote
-    (yasnippet evil-evilified-state artbollocks-mode company-quickhelp evil-exchange clj-refactor lispy with-editor undo-tree swiper smartparens queue pyenv-mode projectile magit ivy iedit hydra flycheck finalize evil diminish dash counsel company closql clojure-mode avy anaconda-mode ace-link lispyville auctex exec-path-from-shell cdlatex org-bullets evil-mc git-modes function-args zenburn-theme ws-butler worf window-numbering which-key use-package typo term-manager super-save speck spacemacs-theme solarized-theme smex shm shell-pop shackle sentence-navigation reveal-in-osx-finder rainbow-mode rainbow-delimiters pyenv-mode-auto py-yapf pdf-tools pandoc-mode osx-dictionary multiple-cursors markdown-mode jedi ivy-hydra intero inf-clojure hindent highlight-escape-sequences gist flyspell-correct flx expand-region evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-multiedit evil-matchit evil-magit evil-leader evil-commentary evil-cleverparens epkg elisp-slime-nav diff-hl counsel-projectile company-anaconda circe cider bind-map auto-compile)))
+    (jade yasnippet evil-evilified-state artbollocks-mode company-quickhelp evil-exchange clj-refactor lispy with-editor undo-tree swiper smartparens queue pyenv-mode projectile magit ivy iedit hydra flycheck finalize evil diminish dash counsel company closql clojure-mode avy anaconda-mode ace-link lispyville auctex exec-path-from-shell cdlatex org-bullets evil-mc git-modes function-args zenburn-theme ws-butler worf window-numbering which-key use-package typo term-manager super-save speck spacemacs-theme solarized-theme smex shm shell-pop shackle sentence-navigation reveal-in-osx-finder rainbow-mode rainbow-delimiters pyenv-mode-auto py-yapf pdf-tools pandoc-mode osx-dictionary multiple-cursors markdown-mode jedi ivy-hydra intero inf-clojure hindent highlight-escape-sequences gist flyspell-correct flx expand-region evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-multiedit evil-matchit evil-magit evil-leader evil-commentary evil-cleverparens epkg elisp-slime-nav diff-hl counsel-projectile company-anaconda circe cider bind-map auto-compile)))
+ '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
+ '(pos-tip-background-color "#eee8d5")
+ '(pos-tip-foreground-color "#586e75")
  '(rainbow-identifiers-choose-face-function (quote rainbow-identifiers-cie-l*a*b*-choose-face))
  '(rainbow-identifiers-cie-l*a*b*-color-count 1024)
  '(rainbow-identifiers-cie-l*a*b*-lightness 80)
  '(rainbow-identifiers-cie-l*a*b*-saturation 25)
  '(ring-bell-function (quote ignore))
+ '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#657b83" 0.2))
  '(solarized-distinct-doc-face t)
  '(solarized-high-contrast-mode-line t)
  '(solarized-use-more-italic t)
  '(solarized-use-variable-pitch nil)
  '(tab-always-indent (quote complete))
+ '(term-default-bg-color "#fdf6e3")
+ '(term-default-fg-color "#657b83")
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-color-map
    (quote
@@ -55,7 +92,14 @@
      (320 . "#8CD0D3")
      (340 . "#94BFF3")
      (360 . "#DC8CC3"))))
- '(vc-annotate-very-old-color "#DC8CC3"))
+ '(vc-annotate-very-old-color "#DC8CC3")
+ '(weechat-color-list
+   (quote
+    (unspecified "#fdf6e3" "#eee8d5" "#990A1B" "#dc322f" "#546E00" "#859900" "#7B6000" "#b58900" "#00629D" "#268bd2" "#93115C" "#d33682" "#00736F" "#2aa198" "#657b83" "#839496")))
+ '(xterm-color-names
+   ["#eee8d5" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#073642"])
+ '(xterm-color-names-bright
+   ["#fdf6e3" "#cb4b16" "#93a1a1" "#839496" "#657b83" "#6c71c4" "#586e75" "#002b36"]))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
