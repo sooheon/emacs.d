@@ -436,7 +436,7 @@ CIRCE if no buffers open."
 (use-package flycheck
   :defer t
   :config
-  (evil-set-initial-state 'flycheck-error-list-mode 'insert)
+  (evil-set-initial-state 'flycheck-error-list-mode 'emacs)
   (setq flycheck-indication-mode nil
         flycheck-mode-line-prefix "fc"))
 
@@ -873,6 +873,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (evil-define-minor-mode-key 'motion 'visual-line-mode "k" 'evil-previous-visual-line)
   (add-hook 'visual-line-mode-hook 'evil-normalize-keymaps)
   :config
+  (evil-set-initial-state 'messages-buffer-mode 'emacs)
   (column-number-mode 1))
 
 (use-package typo
