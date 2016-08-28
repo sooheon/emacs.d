@@ -484,7 +484,7 @@ CIRCE if no buffers open."
 
 (use-package help
   :init
-  (setq-default help-window-select t)
+  (csetq help-window-select t)
   :config
   (evil-set-initial-state 'help-mode 'emacs)
   (add-hook 'help-mode-hook (lambda () (toggle-truncate-lines -1))))

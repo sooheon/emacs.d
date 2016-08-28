@@ -19,6 +19,7 @@
  '(evil-want-C-w-delete t)
  '(fci-rule-color "#383838")
  '(frame-resize-pixelwise t)
+ '(help-window-select t)
  '(highlight-changes-colors (quote ("#d33682" "#6c71c4")))
  '(highlight-symbol-colors
    (--map
