@@ -8,7 +8,6 @@
 
 (use-package intero
   :diminish (intero-mode . "int")
-  :defer t
   :config
   (define-key intero-repl-mode-map [tab] 'dabbrev-expand)
   (add-hook 'intero-repl-mode-hook #'smartparens-mode)
@@ -39,8 +38,9 @@
             (require 'smartparens-haskell)))
 (add-hook 'haskell-mode-hook 'smartparens-mode)
 (add-hook 'haskell-interactive-mode-hook 'smartparens-mode)
+(add-hook 'haskell-interactive-mode-hook 'company-mode)
 
 ;;;###autoload
 (defun soo-haskell-hook ()
-  ;; (intero-mode)
+  (intero-mode)
   (hindent-mode))

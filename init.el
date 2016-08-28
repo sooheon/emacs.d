@@ -483,8 +483,9 @@ CIRCE if no buffers open."
   (add-hook 'text-mode-hook 'speck-mode))
 
 (use-package help
+  :init
+  (setq-default help-window-select t)
   :config
-  (setq help-window-select t)
   (evil-set-initial-state 'help-mode 'emacs)
   (add-hook 'help-mode-hook (lambda () (toggle-truncate-lines -1))))
 
@@ -530,8 +531,9 @@ CIRCE if no buffers open."
     ;; (define-key map (kbd "C-,") 'lispy-kill-at-point)
     (define-key map "\M-n" nil)         ; lispy left
     (define-key map "\M-p" nil)
-    (define-key map "\"" 'lispy-doublequote)           ; lispy-doublequote
+    (define-key map "\"" 'lispy-doublequote) ; lispy-doublequote
     (define-key map "\C-d" 'lispy-delete)
+    (define-key map "\M-S" 'sp-splice-sexp-killing-backward)
     (define-key map (kbd "M-)") nil)
     (define-key map (kbd "DEL") 'lispy-delete-backward)
     (define-key map (kbd "C-)") nil)
@@ -665,13 +667,14 @@ Will work on both org-mode and any mode that accepts plain html."
   (bind-key "s-w" 'Man-quit woman-mode-map))
 
 (use-package shackle
-  :after (help-mode compile undo-tree woman flycheck)
-  :config
+  :disabled t
+  :init
   (setq shackle-rules '((compilation-mode :noselect t)
-                        (help-mode :noselect t :size 0.4)
+                        (help-mode :size 0.4)
                         ("*undo-tree*" :size 0.3)
                         (woman-mode :popup t)
                         (flycheck-error-list-mode :select t)))
+  :config
   (shackle-mode 1))
 
 (require 'soo-ivy)
@@ -924,6 +927,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package winner
   :init
+  (evil-define-key 'normal global-map (kbd "C-w u") 'winner-undo)
   (evil-leader/set-key "wu" 'winner-undo)
   (winner-mode t)
   (setq winner-boring-buffers
