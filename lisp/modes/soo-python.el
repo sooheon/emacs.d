@@ -46,9 +46,9 @@
   ;; (remove-hook 'post-command-hook 'jedi:handle-post-command t)
   (setq lispy-no-space t)
   (setq forward-sexp-function 'ora-c-forward-sexp-function)
-  (lpy-mode)
-  (anaconda-mode)
-  (anaconda-eldoc-mode))
+  (lpy-mode 1)
+  (anaconda-mode 1)
+  (anaconda-eldoc-mode 1))
 
 (defun ora-python-switch-to-shell ()
   "If *Python* is running, switch to it. Else, run new python

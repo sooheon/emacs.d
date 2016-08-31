@@ -42,7 +42,7 @@
                             (:eval (if (buffer-modified-p) " •"))
                             " - Emacs"))
 (setq scroll-preserve-screen-position t)
-(setq scroll-margin 1)
+(setq scroll-margin 3)
 (setq scroll-conservatively 101)
 (csetq fringe-indicator-alist '((continuation nil right-curly-arrow) (truncation left-arrow right-arrow) (continuation left-curly-arrow right-curly-arrow) (overlay-arrow . right-triangle) (up . up-arrow) (down . down-arrow) (top top-left-angle top-right-angle) (bottom bottom-left-angle bottom-right-angle top-right-angle top-left-angle) (top-bottom left-bracket right-bracket top-right-angle top-left-angle) (empty-line . empty-line) (unknown . question-mark)))
 ;;** Finding files
@@ -93,6 +93,8 @@
                          ("gnu" . "http://elpa.gnu.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")))
 (package-initialize)
+(with-eval-after-load 'evil
+  (evil-set-initial-state 'package-menu-mode 'insert))
 (eval-and-compile
   (require 'use-package))
 (setq use-package-always-ensure t)
@@ -532,6 +534,11 @@ friend if it has the same major mode."
   :ensure t
   :defer t
   :init
+  (defun conditionally-enable-lispy ()
+    "Enable `smartparens-mode' in the minibuffer, during `eval-expression'."
+    (if (eq this-command 'eval-expression)
+        (lispy-mode 1)))
+  (add-hook 'minibuffer-setup-hook 'conditionally-enable-lispy)
   (add-hook 'smartparens-enabled-hook
             (lambda () (when (member major-mode sp-lisp-modes) (lispy-mode))))
   (add-hook 'smartparens-disabled-hook
@@ -696,12 +703,14 @@ Will work on both org-mode and any mode that accepts plain html."
 
 (use-package shackle
   :config
+  (defun shackle-smart-align ()
+    (if (< (window-width) 160) 'below 'right))
   (setq shackle-rules '((compilation-mode :noselect t)
-                        (help-mode :align t :size 0.4)
-                        (undo-tree-visualizer-mode :align 'below :size 0.3)
+                        (help-mode :align shackle-smart-align :size 0.4)
+                        (undo-tree-visualizer-mode :align t :size 0.3)
                         (woman-mode :popup t)
                         (flycheck-error-list-mode :select t)
-                        (cargo-process-mode :align 'below :size 10))
+                        (cargo-process-mode :align t :size 10))
         shackle-select-reused-windows t)
   (shackle-mode 1))
 
@@ -861,12 +870,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :diminish (smartparens-mode . "sp")
   :defer t
   :init
-  (defun conditionally-enable-smartparens-mode ()
-    "Enable `smartparens-mode' in the minibuffer, during `eval-expression'."
-    (if (eq this-command 'eval-expression)
-        (smartparens-mode)))
-  (add-hook 'minibuffer-setup-hook 'conditionally-enable-smartparens-mode)
-  (add-hook 'prog-mode-hook 'smartparens-mode)
+  (add-hook 'prog-mode-hook 'smartparens-strict-mode)
   :config
   (require 'smartparens-config)
   (setq sp-cancel-autoskip-on-backward-movement nil
