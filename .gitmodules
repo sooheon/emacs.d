@@ -25,3 +25,6 @@
 [submodule "org-mode"]
 	path = lib/org-mode
 	url = git://orgmode.org/org-mode.git
+[submodule "lib/structured-haskell-mode"]
+	path = lib/structured-haskell-mode
+	url = https://github.com/chrisdone/structured-haskell-mode.git

@@ -22,7 +22,7 @@
     "hf" 'counsel-describe-function
     "f" 'counsel-find-file
     "th" 'counsel-load-theme
-    "aP" 'counsel-list-processes)
+    "ap" 'counsel-list-processes)
   (define-key evil-normal-state-map "\M-y" 'counsel-yank-pop)
   :config
   (use-package smex :config (csetq smex-history-length 32)))
@@ -44,11 +44,11 @@
   (evil-leader/set-key "b" 'ivy-switch-buffer)
   :config
   (require 'flx)
-  (defun switch-to-existing-buffer (orig-fun &rest args)
-    (if-let ((win (get-buffer-window (car args))))
-        (select-window win)
-      (apply orig-fun args)))
-  (advice-add 'ivy--switch-buffer-action :around #'switch-to-existing-buffer)
+  ;; (defun switch-to-existing-buffer (orig-fun &rest args)
+  ;;   (if-let ((win (get-buffer-window (car args))))
+  ;;       (select-window win)
+  ;;     (apply orig-fun args)))
+  ;; (advice-add 'ivy--switch-buffer-action :around #'switch-to-existing-buffer)
   (setq ivy-extra-directories '("./")
         ivy-use-virtual-buffers t
         ivy-count-format "%d "

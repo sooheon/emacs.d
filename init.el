@@ -5,10 +5,10 @@
   "The giant turtle on which the world rests.")
 (setq package-user-dir (expand-file-name "elpa" emacs-d))
 (defvar lisp-d (expand-file-name "lisp" emacs-d))
-(let ((emacs-lib (expand-file-name "lib/" emacs-d)))
-  (mapc (lambda (x)
-          (add-to-list 'load-path (expand-file-name x emacs-lib)))
-        (delete ".." (directory-files emacs-lib))))
+(defvar lib-d (expand-file-name "lib/" emacs-d))
+(mapc (lambda (x)
+        (add-to-list 'load-path (expand-file-name x lib-d)))
+      (delete ".." (directory-files lib-d)))
 (add-to-list 'load-path (expand-file-name "lisp" emacs-d))
 (add-to-list 'load-path (expand-file-name "lib/org-mode/contrib/lisp" emacs-d))
 (add-to-list 'load-path (expand-file-name "lib/org-mode/lisp" emacs-d))
@@ -37,13 +37,13 @@
 (csetq blink-cursor-blinks 0)
 (eval '(setq inhibit-startup-echo-area-message "sooheon"))
 (csetq frame-title-format '((:eval (if buffer-file-name
-                                      (abbreviate-file-name buffer-file-name)
-                                    "%b"))
-                           (:eval (if (buffer-modified-p) " •"))
-                           " - Emacs"))
+                                       (abbreviate-file-name buffer-file-name)
+                                     "%b"))
+                            (:eval (if (buffer-modified-p) " •"))
+                            " - Emacs"))
 (setq scroll-preserve-screen-position t)
 (setq scroll-margin 1)
-(setq scroll-conservatively 0)
+(setq scroll-conservatively 101)
 (csetq fringe-indicator-alist '((continuation nil right-curly-arrow) (truncation left-arrow right-arrow) (continuation left-curly-arrow right-curly-arrow) (overlay-arrow . right-triangle) (up . up-arrow) (down . down-arrow) (top top-left-angle top-right-angle) (bottom bottom-left-angle bottom-right-angle top-right-angle top-left-angle) (top-bottom left-bracket right-bracket top-right-angle top-left-angle) (empty-line . empty-line) (unknown . question-mark)))
 ;;** Finding files
 (csetq vc-follow-symlinks t)
@@ -56,6 +56,7 @@
 (setq minibuffer-message-timeout 1)
 (minibuffer-depth-indicate-mode 1)
 ;;** editor behavior
+(electric-indent-mode -1)
 (csetq default-input-method "korean-hangul")
 (csetq indent-tabs-mode nil)
 (setq ring-bell-function 'ignore)
@@ -104,14 +105,15 @@
 (csetq exec-path-from-shell-check-startup-files nil)
 (exec-path-from-shell-initialize)
 
-(setq evil-want-C-u-scroll t
-      evil-cross-lines t
-      evil-symbol-word-search t
-      evil-move-cursor-back nil
-      evil-want-C-i-jump t
-      evil-disable-insert-state-bindings t
-      evil-search-module 'evil-search
-      evil-ex-search-persistent-highlight nil)
+(setq-default evil-want-C-u-scroll t
+              evil-cross-lines t
+              evil-symbol-word-search t
+              evil-move-cursor-back nil
+              evil-want-C-i-jump t
+              evil-disable-insert-state-bindings t
+              evil-search-module 'evil-search
+              evil-ex-search-persistent-highlight nil
+              evil-want-Y-yank-to-eol t)
 (require 'evil)
 (evil-mode 1)
 (evil-define-key 'normal global-map "U" 'undo-tree-redo)
@@ -300,7 +302,10 @@
                 ediff-merge-split-window-function 'split-window-horizontally)
   (add-hook 'ediff-quit-hook #'winner-undo))
 
-(use-package eldoc :defer t :diminish eldoc-mode)
+(use-package eldoc
+  :diminish eldoc-mode
+  :config
+  (global-eldoc-mode -1))
 
 (use-package elisp-slime-nav
   :diminish elisp-slime-nav-mode
@@ -312,16 +317,15 @@
     "K" 'elisp-slime-nav-describe-elisp-thing-at-point))
 
 (use-package circe
-  :disabled t
   :defer t
   :init
   (setq circe-network-options '(("Freenode"
                                  :nick "sooheon"
                                  :channels ("#emacs" "#clojure" "#haskell"
-                                            "##crawl"
-                                            ;; "#lesswrong"
-                                            )
+                                            ;; "##crawl"
+                                            "#lesswrong")
                                  :nickserv-password "qwefasdf")))
+  (evil-leader/set-key "ai" 'sooheon--switch-to-circe)
   (defun sooheon--switch-to-circe ()
     "Switch to CIRCE buffers using completing-read, or start
 CIRCE if no buffers open."
@@ -334,7 +338,6 @@ CIRCE if no buffers open."
       (if candidates
           (switch-to-buffer (completing-read "IRC buffer: " candidates))
         (circe "Freenode"))))
-  (evil-leader/set-key "ai" 'sooheon--switch-to-circe)
   :config
   (setq circe-reduce-lurker-spam t
         tracking-position 'end
@@ -433,10 +436,29 @@ CIRCE if no buffers open."
     (progn (evil-insert 1)
            (er/expand-region arg))))
 
+(use-package dabbrev
+  :defer t
+  :config
+  (defun soo--dabbrev-friend-buffer (other-buffer)
+    "If OTHER-BUFFER is not remote and is in the same project as
+the current buffer, consider it a friend. Otherwise consider it a
+friend if it has the same major mode."
+    (if (and (not
+              (file-remote-p
+               (buffer-file-name other-buffer)))
+             (projectile-project-p))
+        (string= (projectile-project-name)
+                 (with-current-buffer other-buffer
+                   (projectile-project-name)))
+      (eq major-mode
+          (with-current-buffer other-buffer
+            major-mode))))
+  (setq dabbrev-friend-buffer-function #'soo--dabbrev-friend-buffer))
+
 (use-package flycheck
   :defer t
   :config
-  (evil-set-initial-state 'flycheck-error-list-mode 'emacs)
+  (evil-set-initial-state 'flycheck-error-list-mode 'insert)
   (setq flycheck-indication-mode nil
         flycheck-mode-line-prefix "fc"))
 
@@ -486,7 +508,7 @@ CIRCE if no buffers open."
   :init
   (csetq help-window-select t)
   :config
-  (evil-set-initial-state 'help-mode 'emacs)
+  (evil-set-initial-state 'help-mode 'insert)
   (add-hook 'help-mode-hook (lambda () (toggle-truncate-lines -1))))
 
 (use-package highlight-escape-sequences
@@ -498,7 +520,7 @@ CIRCE if no buffers open."
 (use-package info
   :config
   (evil-leader/set-key "hi" 'info)
-  (evil-set-initial-state 'Info-mode 'emacs))
+  (evil-set-initial-state 'Info-mode 'insert))
 
 (use-package lispy
   :diminish lispy-mode
@@ -574,7 +596,7 @@ Keep M-n and M-p reserved for history."
   :init
   (evil-leader/set-key "g" 'magit-status "G" 'magit-dispatch-popup)
   :config
-  (evil-set-initial-state 'magit-submodule-list-mode 'emacs)
+  (evil-set-initial-state 'magit-submodule-list-mode 'insert)
   (setq magit-display-buffer-function
         'magit-display-buffer-fullframe-status-v1))
 
@@ -663,7 +685,7 @@ Will work on both org-mode and any mode that accepts plain html."
 
 (use-package woman
   :defer t
-  :config (evil-set-initial-state 'woman-mode 'emacs)
+  :config (evil-set-initial-state 'woman-mode 'insert)
   (bind-key "s-w" 'Man-quit woman-mode-map))
 
 (use-package shackle
@@ -766,6 +788,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
       "run ag in project"))))
 
 (use-package rainbow-delimiters
+  :disabled t
   :init (add-hook 'smartparens-mode-hook #'rainbow-delimiters-mode))
 
 (use-package rainbow-mode
@@ -876,7 +899,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (evil-define-minor-mode-key 'motion 'visual-line-mode "k" 'evil-previous-visual-line)
   (add-hook 'visual-line-mode-hook 'evil-normalize-keymaps)
   :config
-  (evil-set-initial-state 'messages-buffer-mode 'emacs)
+  (evil-set-initial-state 'messages-buffer-mode 'insert)
   (column-number-mode 1))
 
 (use-package typo

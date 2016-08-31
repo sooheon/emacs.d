@@ -138,7 +138,11 @@
             (cider-instrumented-face)
 
             ;; Ivy
-            (ivy-current-match :background "#e1beb6")))))
+            (ivy-current-match :background "#e1beb6")
+
+            ;; shm
+            (shm-current-face :background "#eee9e5")
+            (shm-quarantine-face :background "seashell")))))
 
 ;; (custom-theme-set-variables
 ;;  'eclipse2
