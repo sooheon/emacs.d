@@ -14,6 +14,7 @@
     avy
     auctex
     bind-map
+    cargo
     cdlatex
     cider
     circe
@@ -71,9 +72,11 @@
     pyenv-mode
     pyenv-mode-auto
     queue
+    racer
     rainbow-delimiters
     rainbow-mode
     reveal-in-osx-finder
+    rust-mode
     sentence-navigation
     shackle
     shell-pop

@@ -101,19 +101,21 @@
 (add-hook 'clojure-mode-hook 'soo-clojure-hook)
 (add-hook 'org-mode-hook 'soo-org-hook)
 (add-hook 'haskell-mode-hook 'soo-haskell-hook)
+(require 'soo-ivy)
+(require 'soo-rust)
 
 (csetq exec-path-from-shell-check-startup-files nil)
 (exec-path-from-shell-initialize)
 
-(setq-default evil-want-C-u-scroll t
-              evil-cross-lines t
-              evil-symbol-word-search t
-              evil-move-cursor-back nil
-              evil-want-C-i-jump t
-              evil-disable-insert-state-bindings t
-              evil-search-module 'evil-search
-              evil-ex-search-persistent-highlight nil
-              evil-want-Y-yank-to-eol t)
+(setq evil-want-C-u-scroll t
+      evil-cross-lines t
+      evil-symbol-word-search t
+      evil-move-cursor-back nil
+      evil-want-C-i-jump t
+      evil-disable-insert-state-bindings t
+      evil-search-module 'evil-search
+      evil-ex-search-persistent-highlight nil
+      evil-want-Y-yank-to-eol t)
 (require 'evil)
 (evil-mode 1)
 (evil-define-key 'normal global-map "U" 'undo-tree-redo)
@@ -698,8 +700,6 @@ Will work on both org-mode and any mode that accepts plain html."
                         (flycheck-error-list-mode :select t)))
   :config
   (shackle-mode 1))
-
-(require 'soo-ivy)
 
 (use-package projectile
   :diminish projectile-mode
