@@ -77,7 +77,7 @@
 (csetq gc-cons-threshold (* 10 1024 1024))
 (csetq ad-redefinition-action 'accept)
 ;;** shell
-(csetq shell-file-name "/usr/local/bin/bash")
+(csetq shell-file-name "/usr/local/bin/fish")
 (csetq explicit-shell-file-name "/usr/local/bin/fish")
 ;;** Set PATHs--see: http://tinyurl.com/ctf9h3a
 ;; (setenv "PATH" "/Users/sooheon/.cabal/bin:/Users/sooheon/.local/bin:/usr/local/Cellar/pyenv-virtualenv/20160315/shims:/Users/sooheon/.pyenv/shims:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Library/TeX/texbin")
@@ -809,8 +809,10 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (setq recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG" "github.*txt$"
                           ".*png$" ".*cache$" "^/\\(?:ssh\\|su\\|sudo\\)?:"
                           ".*el.gz$"))
-  (setq recentf-max-saved-items 100
+  (setq recentf-max-saved-items 1000
         recentf-auto-cleanup 'mode))
+
+(use-package restclient :defer t)
 
 (use-package reveal-in-osx-finder
   :if (eq system-type 'darwin)
@@ -825,7 +827,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :config (save-place-mode))
 
 (use-package sentence-navigation
-  :disabled t
   :defer t
   :init
   (define-key evil-normal-state-map ")" 'sentence-nav-evil-forward)

@@ -56,6 +56,7 @@
         ivy-re-builders-alist '((counsel-M-x . ivy--regex-fuzzy)
                                 ;; (t . ivy--regex-plus)
                                 (swiper . ivy--regex-plus)
+                                (counsel-recentf . ivy--regex-plus)
                                 (t . ivy--regex-fuzzy))
         ivy-initial-inputs-alist '((org-refile . "^")
                                    (org-agenda-refile . "^")

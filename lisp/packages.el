@@ -75,6 +75,7 @@
     racer
     rainbow-delimiters
     rainbow-mode
+    restclient
     reveal-in-osx-finder
     rust-mode
     sentence-navigation

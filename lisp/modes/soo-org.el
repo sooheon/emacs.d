@@ -163,12 +163,10 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
                                    (hydra-org-template/body)
                                  (self-insert-command 1))))
 
-(use-package ox
-  :defer t
-  :config
-  (setq org-export-backends '(ascii html latex odt gfm)
-        org-export-coding-system 'utf-8
-        org-html-html5-fancy t
-        org-html-postamble nil))
+(require 'ox)
+(setq org-export-backends '(ascii html latex odt gfm)
+      org-export-coding-system 'utf-8
+      org-html-html5-fancy t
+      org-html-postamble nil)
 
 (provide 'soo-org)
