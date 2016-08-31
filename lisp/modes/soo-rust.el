@@ -1,7 +1,12 @@
-(use-package rust-mode :ensure t :defer t)
+(use-package rust-mode
+  :defer t
+  :config
+  (add-hook 'rust-mode-hook
+            (lambda ()
+              (setq-local company-tooltip-align-annotations t)))
+  (add-hook 'rust-mode-hook 'eldoc-mode))
 
 (use-package racer
-  :ensure t
   :diminish racer-mode
   :defer t
   :init
@@ -10,7 +15,6 @@
   (setq racer-rust-src-path "/usr/local/src/rust/rustc-1.11.0/src/"))
 
 (use-package cargo
-  :ensure t
   :defer t
   :init (add-hook 'rust-mode-hook 'cargo-minor-mode))
 

@@ -95,14 +95,7 @@
 (package-initialize)
 (eval-and-compile
   (require 'use-package))
-
-;;** mode hooks
-(add-hook 'python-mode-hook 'soo-python-hook)
-(add-hook 'clojure-mode-hook 'soo-clojure-hook)
-(add-hook 'org-mode-hook 'soo-org-hook)
-(add-hook 'haskell-mode-hook 'soo-haskell-hook)
-(require 'soo-ivy)
-(require 'soo-rust)
+(setq use-package-always-ensure t)
 
 (csetq exec-path-from-shell-check-startup-files nil)
 (exec-path-from-shell-initialize)
@@ -121,12 +114,19 @@
 (evil-define-key 'normal global-map "U" 'undo-tree-redo)
 (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word)
 
+;;** mode hooks
+(add-hook 'python-mode-hook 'soo-python-hook)
+(add-hook 'clojure-mode-hook 'soo-clojure-hook)
+(add-hook 'org-mode-hook 'soo-org-hook)
+(add-hook 'haskell-mode-hook 'soo-haskell-hook)
+(require 'soo-ivy)
+(require 'soo-rust)
+
+;;** other modes config
 (use-package evil-leader :config (global-evil-leader-mode))
 
-(use-package evil-evilified-state
-  :commands evilified-state-evilify
-  :config
-  (define-key evil-evilified-state-map " " evil-leader--default-map))
+(require 'evil-evilified-state)
+(define-key evil-evilified-state-map " " evil-leader--default-map)
 
 (use-package auto-compile
   :config
@@ -165,6 +165,7 @@
   :commands (ace-link-info ace-link-woman ace-link-help ace-link-custom)
   :init
   (define-key help-mode-map "o" 'ace-link-help)
+  (evil-define-key 'normal global-map (kbd "s-o") 'ace-link-addr)
   :config
   (ace-link-setup-default))
 
@@ -222,6 +223,7 @@
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh t))
 
 (use-package dired
+  :ensure nil
   :commands dired-jump
   :init
   (define-key evil-normal-state-map "-" 'dired-jump)
@@ -327,7 +329,7 @@
                                             ;; "##crawl"
                                             "#lesswrong")
                                  :nickserv-password "qwefasdf")))
-  (evil-leader/set-key "ai" 'sooheon--switch-to-circe)
+  (evil-leader/set-key "i" 'sooheon--switch-to-circe)
   (defun sooheon--switch-to-circe ()
     "Switch to CIRCE buffers using completing-read, or start
 CIRCE if no buffers open."
@@ -360,7 +362,7 @@ CIRCE if no buffers open."
   :config
   (evil-commentary-mode))
 
-(use-package evil-cleverparens-text-objects
+(use-package evil-cleverparens
   :commands (evil-cp-a-form
              evil-cp-inner-form
              evil-cp-a-comment
@@ -414,9 +416,8 @@ CIRCE if no buffers open."
 (use-package evil-snipe
   :diminish evil-snipe-local-mode
   :init
-  (setq evil-snipe-use-vim-sneak-bindings t)
-  :config
-  (setq evil-snipe-scope 'buffer
+  (setq evil-snipe-use-vim-sneak-bindings t
+        evil-snipe-scope 'buffer
         evil-snipe-repeat-scope 'buffer
         evil-snipe-smart-case t
         evil-snipe-repeat-keys nil)
@@ -507,6 +508,7 @@ friend if it has the same major mode."
   (add-hook 'text-mode-hook 'speck-mode))
 
 (use-package help
+  :ensure nil
   :init
   (csetq help-window-select t)
   :config
@@ -520,6 +522,7 @@ friend if it has the same major mode."
 (use-package iedit :defer t :init (setq iedit-toggle-key-default nil))
 
 (use-package info
+  :ensure nil
   :config
   (evil-leader/set-key "hi" 'info)
   (evil-set-initial-state 'Info-mode 'insert))
@@ -686,19 +689,20 @@ Will work on both org-mode and any mode that accepts plain html."
   (pdf-tools-install))
 
 (use-package woman
+  :ensure nil
   :defer t
   :config (evil-set-initial-state 'woman-mode 'insert)
   (bind-key "s-w" 'Man-quit woman-mode-map))
 
 (use-package shackle
-  :disabled t
-  :init
-  (setq shackle-rules '((compilation-mode :noselect t)
-                        (help-mode :size 0.4)
-                        ("*undo-tree*" :size 0.3)
-                        (woman-mode :popup t)
-                        (flycheck-error-list-mode :select t)))
   :config
+  (setq shackle-rules '((compilation-mode :noselect t)
+                        (help-mode :align t :size 0.4)
+                        (undo-tree-visualizer-mode :align 'below :size 0.3)
+                        (woman-mode :popup t)
+                        (flycheck-error-list-mode :select t)
+                        (cargo-process-mode :align 'below :size 10))
+        shackle-select-reused-windows t)
   (shackle-mode 1))
 
 (use-package projectile
@@ -799,7 +803,8 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (add-hook 'css-mode-hook (lambda () (rainbow-mode 1))))
 
 (use-package recentf
-  :config
+  :ensure nil
+  :init
   (recentf-mode 1)
   (setq recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG" "github.*txt$"
                           ".*png$" ".*cache$" "^/\\(?:ssh\\|su\\|sudo\\)?:"
@@ -812,9 +817,10 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :commands reveal-in-osx-finder
   :init (define-key evil-normal-state-map "gof" 'reveal-in-osx-finder))
 
-(use-package savehist :config (savehist-mode))
+(use-package savehist :ensure nil :config (savehist-mode))
 
 (use-package saveplace
+  :ensure nil
   :if (version< "25" emacs-version)
   :config (save-place-mode))
 
@@ -893,6 +899,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
     "\M-a" 'soo-insert-at-eos))
 
 (use-package simple
+  :ensure nil
   :diminish (auto-fill-mode visual-line-mode)
   :init
   (evil-define-minor-mode-key 'motion 'visual-line-mode "j" 'evil-next-visual-line)
