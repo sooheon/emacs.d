@@ -7,6 +7,7 @@
   (add-hook 'rust-mode-hook 'eldoc-mode))
 
 (use-package racer
+  :disabled t
   :diminish racer-mode
   :defer t
   :init

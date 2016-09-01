@@ -907,10 +907,11 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package simple
   :ensure nil
-  :diminish (auto-fill-mode visual-line-mode)
+  :diminish (auto-fill-function visual-line-mode)
   :init
-  (evil-define-minor-mode-key 'motion 'visual-line-mode "j" 'evil-next-visual-line)
-  (evil-define-minor-mode-key 'motion 'visual-line-mode "k" 'evil-previous-visual-line)
+  (evil-define-minor-mode-key 'motion 'visual-line-mode
+    "k" 'evil-previous-visual-line
+    "j" 'evil-next-visual-line)
   (add-hook 'visual-line-mode-hook 'evil-normalize-keymaps)
   :config
   (evil-set-initial-state 'messages-buffer-mode 'insert)
