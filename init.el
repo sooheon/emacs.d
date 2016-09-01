@@ -42,8 +42,8 @@
                             (:eval (if (buffer-modified-p) " •"))
                             " - Emacs"))
 (setq scroll-preserve-screen-position t)
-(setq scroll-margin 3)
-(setq scroll-conservatively 101)
+;; (setq scroll-margin 3)
+;; (setq scroll-conservatively 101)
 (csetq fringe-indicator-alist '((continuation nil right-curly-arrow) (truncation left-arrow right-arrow) (continuation left-curly-arrow right-curly-arrow) (overlay-arrow . right-triangle) (up . up-arrow) (down . down-arrow) (top top-left-angle top-right-angle) (bottom bottom-left-angle bottom-right-angle top-right-angle top-left-angle) (top-bottom left-bracket right-bracket top-right-angle top-left-angle) (empty-line . empty-line) (unknown . question-mark)))
 ;;** Finding files
 (csetq vc-follow-symlinks t)
@@ -57,6 +57,7 @@
 (minibuffer-depth-indicate-mode 1)
 ;;** editor behavior
 (electric-indent-mode -1)
+(csetq truncate-lines nil)
 (csetq default-input-method "korean-hangul")
 (csetq indent-tabs-mode nil)
 (setq ring-bell-function 'ignore)
@@ -336,10 +337,10 @@
     "Switch to CIRCE buffers using completing-read, or start
 CIRCE if no buffers open."
     (interactive)
-    (let (candidates (list))
+    (let ((candidates (list)))
       (dolist (buf (buffer-list) candidates)
-        (if (or (equal 'circe-channel-mode (with-current-buffer buf major-mode))
-                (equal 'circe-server-mode (with-current-buffer buf major-mode)))
+        (if (memq (with-current-buffer buf major-mode)
+                  '(circe-channel-mode circe-server-mode))
             (setq candidates (append (list (buffer-name buf)) candidates))))
       (if candidates
           (switch-to-buffer (completing-read "IRC buffer: " candidates))
@@ -592,7 +593,8 @@ friend if it has the same major mode."
   (defun conditionally-enable-lispyville ()
     "Only turn on lispyville outside of REPLs.
 Keep M-n and M-p reserved for history."
-    (when (not (eq major-mode 'cider-repl-mode))
+    (unless (or (memq major-mode '(cider-repl-mode))
+                (eq this-command 'eval-expression))
       (lispyville-mode 1)))
   (add-hook 'lispy-mode-hook 'conditionally-enable-lispyville)
   (setq lispyville-key-theme '(operators

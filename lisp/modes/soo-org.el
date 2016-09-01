@@ -18,7 +18,8 @@
   (worf-mode)
   (turn-on-org-cdlatex)
   (auto-fill-mode 1)
-  (smartparens-mode))
+  (smartparens-mode)
+  (toggle-truncate-lines -1))
 
 (defun latexify-line ()
   (interactive)
@@ -26,16 +27,16 @@
       (print "to be impl.")
     (save-excursion
       (beginning-of-line)
-      (insert "$$")
+      (insert "$")
       (end-of-line)
-      (insert "$$"))))
+      (insert "$"))))
 
-(defun org-open-$ ()
-  (interactive)
-  (insert "$$")
-  (backward-char 1)
-  (evil-insert 1))
-(define-key org-mode-map (kbd "C-s-4") 'org-open-$)
+;; (defun org-open-$ ()
+;;   (interactive)
+;;   (insert "$$")
+;;   (backward-char 1)
+;;   (evil-insert 1))
+;; (define-key org-mode-map (kbd "C-$") 'org-open-$)
 
 (setq-default org-export-in-background t
               org-src-fontify-natively t
@@ -168,5 +169,10 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
       org-export-coding-system 'utf-8
       org-html-html5-fancy t
       org-html-postamble nil)
+
+(sp-local-pair 'org-mode "$" "$")
+(sp-local-pair 'org-mode "\\left(" " \\right)")
+(sp-local-pair 'org-mode "\\left[" " \\right]")
+(sp-local-pair 'org-mode "\\left{" " \\right}")
 
 (provide 'soo-org)
