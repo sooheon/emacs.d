@@ -113,10 +113,6 @@
 
 ;;** Themes
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" lisp-d))
-(use-package atom-one-dark-theme :defer t)
-(use-package zenburn-theme :defer t)
-(use-package solarized-theme :defer t)
-(use-package spacemacs-theme :defer t)
 (load-theme 'atom-one-dark t)
 
 ;;** Evil
@@ -278,6 +274,7 @@
 
 (use-package artbollocks-mode
   :defer t
+  :diminish (artbollocks-mode . "ab")
   :init (evil-leader/set-key "ta" 'artbollocks-mode))
 
 (use-package compile
@@ -423,8 +420,8 @@
   (setq circe-network-options '(("Freenode"
                                  :nick "sooheon"
                                  :channels ("#emacs" "#clojure" "#haskell"
-                                            ;; "##crawl"
-                                            "#lesswrong")
+                                            ;; "#lesswrong" "##crawl"
+                                            )
                                  :nickserv-password "qwefasdf")))
   (evil-leader/set-key "i" 'sooheon--switch-to-circe)
   (defun sooheon--switch-to-circe ()
@@ -441,10 +438,8 @@ CIRCE if no buffers open."
         (circe "Freenode"))))
   :config
   (setq circe-reduce-lurker-spam t
-        tracking-position 'end
-        tracking-most-recent-first t)
+        tracking-position 'end)
   (enable-circe-color-nicks)
-  (enable-circe-highlight-all-nicks)
   (require 'lui-autopaste)
   (add-hook 'circe-channel-mode-hook 'enable-lui-autopaste))
 
@@ -577,14 +572,14 @@ friend if it has the same major mode."
   :defer t
   :init
   (defun conditionally-enable-lispy ()
-    "Enable `smartparens-mode' in the minibuffer, during `eval-expression'."
+    "Enable `lispy-mode' in the minibuffer, during `eval-expression'."
     (if (eq this-command 'eval-expression)
         (lispy-mode 1)))
   (add-hook 'minibuffer-setup-hook 'conditionally-enable-lispy)
-  (add-hook 'smartparens-enabled-hook
-            (lambda () (when (member major-mode sp-lisp-modes) (lispy-mode))))
-  (add-hook 'smartparens-disabled-hook
-            (lambda () (when (member major-mode sp-lisp-modes) (lispy-mode -1))))
+  (defun toggle-lispy-for-lisps (arg)
+    (lambda () (when (member major-mode sp-lisp-modes) (lispy-mode arg))))
+  (add-hook 'smartparens-enabled-hook (toggle-lispy-for-lisps 1))
+  (add-hook 'smartparens-disabled-hook (toggle-lispy-for-lisps -1))
   (csetq iedit-toggle-key-default nil)   ; Don't want to use iedit
   :config
   (lispy-set-key-theme '(special c-digits paredit))
@@ -667,18 +662,6 @@ Keep M-n and M-p reserved for history."
   :mode ("\\.m[k]d" . markdown-mode)
   :defer t
   :config
-  ;; Insert key for org-mode and markdown a la C-h k
-  ;; from SE endless http://emacs.stackexchange.com/questions/2206/i-want-to-have-the-kbd-tags-for-my-blog-written-in-org-mode/2208#2208
-  (defun spacemacs/insert-keybinding-markdown (key)
-    "Ask for a key then insert its description.
-Will work on both org-mode and any mode that accepts plain html."
-    (interactive "kType key sequence: ")
-    (let* ((tag "~%s~"))
-      (if (null (equal key "\r"))
-          (insert
-           (format tag (help-key-description key nil)))
-        (insert (format tag ""))
-        (forward-char -6))))
   (add-hook 'markdown-mode-hook (lambda () (auto-fill-mode 1)))
 
   ;; Header navigation in normal state movements
@@ -691,23 +674,10 @@ Will work on both org-mode and any mode that accepts plain html."
 
 (use-package super-save
   :diminish super-save-mode
-  :config
-  (csetq auto-save-default nil)
-  (super-save-mode 1))
-
-(use-package osx-dictionary
-  :disabled t
-  :commands osx-dictionary-search-pointer
   :init
-  (evil-leader/set-key "xwd" 'osx-dictionary-search-pointer)
+  (csetq auto-save-default nil)
   :config
-  (evilified-state-evilify-map osx-dictionary-mode-map
-    :mode osx-dictionary-mode
-    :bindings
-    "q" 'osx-dictionary-quit
-    "r" 'osx-dictionary-read-word
-    "s" 'osx-dictionary-search-input
-    "o" 'osx-dictionary-open-dictionary.app))
+  (super-save-mode 1))
 
 (use-package pdf-tools
   :disabled t
@@ -814,6 +784,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :bind (("C-c t r" . rainbow-mode))
   :diminish rainbow-mode
   :init
+  (evil-leader/set-key "tr" #'rainbow-mode)
   (add-hook 'css-mode-hook #'rainbow-mode))
 
 (use-package recentf
@@ -940,7 +911,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
                         (undo-tree-visualizer-mode :align t :size 0.3)
                         (woman-mode :popup t)
                         (flycheck-error-list-mode :select t)
-                        (cargo-process-mode :align t :size 10))
+                        (cargo-process-mode :align t :size 0.3))
         shackle-select-reused-windows t)
   (shackle-mode 1))
 
@@ -1006,6 +977,8 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (define-key endless/mc-map "\C-a" #'mc/edit-beginnings-of-lines)
   (define-key endless/mc-map "\C-e" #'mc/edit-ends-of-lines))
 
+(use-package hungry-delete :defer t)
+
 ;;** Completion and expansion
 (use-package hippie-exp
   :ensure nil
@@ -1018,7 +991,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :config
   (setq company-tooltip-align-annotations t
         company-tooltip-flip-when-above t
-        company-idle-delay 0.3
+        company-idle-delay 0.2
         company-minimum-prefix-length 2
         company-require-match nil
         company-elisp-detect-function-context nil

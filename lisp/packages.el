@@ -98,7 +98,8 @@
     with-editor
     worf
     ws-butler
-    zenburn-theme))
+    zenburn-theme
+    atom-one-dark-theme))
 
 ;; install required
 (dolist (package soo-packages)

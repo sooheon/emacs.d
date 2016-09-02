@@ -1,5 +1,10 @@
 (require 'python)
+(setq python-indent-offset 4)
 (csetq python-shell-completion-native-enable nil)
+(add-hook 'inferior-python-mode-hook 'company-mode)
+;; (setq python-shell-interpreter "ipython"
+;;       python-shell-interpreter-args "--simple-prompt -i" ; http://tinyurl.com/j44y64d
+;;       )
 
 (defvar no-pip
   (string-match "Command not found\\|no pip in"
@@ -22,10 +27,11 @@
 (define-key lpy-mode-map (kbd "C-h") nil)
 (define-key lpy-mode-map (kbd "[") nil)
 (define-key lpy-mode-map (kbd "(") nil)
+(define-key lpy-mode-map (kbd "=") nil)
 (define-key python-mode-map (kbd "C-j") 'newline-and-indent)
 (define-key python-mode-map (kbd "C-m") 'newline)
-(define-key python-mode-map (kbd "C-c C-z") 'ora-python-switch-to-shell)
-(define-key python-mode-map (kbd "C-c C-l") 'ora-python-send)
+;; (define-key python-mode-map (kbd "C-c C-z") 'ora-python-switch-to-shell)
+;; (define-key python-mode-map (kbd "C-c C-l") 'ora-python-send)
 
 (require 'le-python)
 
@@ -33,8 +39,7 @@
   :diminish anaconda-mode
   :config
   (evil-define-key 'normal anaconda-mode-map "K" 'anaconda-mode-show-doc)
-  (evilified-state-evilify anaconda-mode-view-mode anaconda-mode-view-mode-map
-    (kbd "q") 'quit-window)
+  (evil-set-initial-state 'anaconda-mode-view-mode 'insert)
   (defadvice anaconda-mode-goto (before python/anaconda-mode-goto activate)
     (evil--jumps-push))
   (require 'company-anaconda)

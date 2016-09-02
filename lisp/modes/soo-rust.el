@@ -17,7 +17,12 @@
   :defer t
   :init (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
+(use-package toml-mode
+  :mode "/\\(Cargo.lock\\|\\.cargo/config\\)\\'")
+
 (with-eval-after-load 'smartparens
   (sp-local-pair 'rust-mode "'" nil :actions nil))
+
+(add-hook 'rust-mode-hook #'hungry-delete-mode)
 
 (provide 'soo-rust)
