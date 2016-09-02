@@ -1,13 +1,11 @@
 (use-package rust-mode
   :defer t
+  :init
+  (add-hook 'rust-mode-hook #'eldoc-mode)
   :config
-  (add-hook 'rust-mode-hook
-            (lambda ()
-              (setq-local company-tooltip-align-annotations t)))
-  (add-hook 'rust-mode-hook 'eldoc-mode))
+  (evil-leader/set-key-for-mode 'rust-mode "=" 'rust-format-buffer))
 
 (use-package racer
-  :disabled t
   :diminish racer-mode
   :defer t
   :init

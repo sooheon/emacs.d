@@ -37,9 +37,8 @@
 (global-set-key (kbd "s-w") 'soo--close-window-dwim)
 
 (global-set-key [remap fill-paragraph] 'endless/fill-or-unfill)
-(global-set-key (kbd "C-c d") 'counsel-descbinds)
 
-(define-key evil-normal-state-map "got" 'soo--terminal-pop)
+(define-key evil-normal-state-map "got" 'soo-terminal-pop)
 
 (setq mac-option-modifier 'meta
       mac-command-modifier 'super)

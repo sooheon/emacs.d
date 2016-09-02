@@ -9,14 +9,12 @@
 (mapc (lambda (x)
         (add-to-list 'load-path (expand-file-name x lib-d)))
       (delete ".." (directory-files lib-d)))
+;;** load some packages manually
 (add-to-list 'load-path (expand-file-name "lisp" emacs-d))
 (add-to-list 'load-path (expand-file-name "lib/org-mode/contrib/lisp" emacs-d))
 (add-to-list 'load-path (expand-file-name "lib/org-mode/lisp" emacs-d))
 (add-to-list 'load-path (expand-file-name "lisp/modes" emacs-d))
 
-;;* Theme
-(add-to-list 'custom-theme-load-path (expand-file-name "themes" lisp-d))
-(load-theme 'eclipse2 t)
 ;;** font
 (add-to-list 'default-frame-alist '(font . "Input Mono Narrow"))
 ;;* customize
@@ -31,31 +29,29 @@
 (csetq inhibit-startup-screen t)
 (csetq initial-scratch-message ";; You have power over your mind - not outside events. Realize this, and you \n;; will find strength.\n\n")
 (csetq create-lockfiles nil)
-(csetq fill-column 80)
 (global-hl-line-mode 1)
+(csetq line-spacing 0.1)
 (blink-cursor-mode -1)
 (csetq blink-cursor-blinks 0)
 (eval '(setq inhibit-startup-echo-area-message "sooheon"))
 (csetq frame-title-format '((:eval (if buffer-file-name
                                        (abbreviate-file-name buffer-file-name)
-                                     "%b"))
-                            (:eval (if (buffer-modified-p) " •"))
-                            " - Emacs"))
-(setq scroll-preserve-screen-position t)
-;; (setq scroll-margin 3)
-;; (setq scroll-conservatively 101)
+                                     "%b"))))
+(csetq window-combination-resize t)
 (csetq fringe-indicator-alist '((continuation nil right-curly-arrow) (truncation left-arrow right-arrow) (continuation left-curly-arrow right-curly-arrow) (overlay-arrow . right-triangle) (up . up-arrow) (down . down-arrow) (top top-left-angle top-right-angle) (bottom bottom-left-angle bottom-right-angle top-right-angle top-left-angle) (top-bottom left-bracket right-bracket top-right-angle top-left-angle) (empty-line . empty-line) (unknown . question-mark)))
-;;** Finding files
-(csetq vc-follow-symlinks t)
-(csetq find-file-suppress-same-file-warnings t)
-(csetq read-file-name-completion-ignore-case t)
-(csetq read-buffer-completion-ignore-case t)
-(prefer-coding-system 'utf-8)
 ;;** minibuffer interaction
 (csetq enable-recursive-minibuffers t)
 (setq minibuffer-message-timeout 1)
 (minibuffer-depth-indicate-mode 1)
 ;;** editor behavior
+(setq scroll-preserve-screen-position t)
+;; (setq scroll-margin 3)
+;; (setq scroll-conservatively 101)
+(csetq vc-follow-symlinks t)
+(csetq find-file-suppress-same-file-warnings t)
+(csetq read-file-name-completion-ignore-case t)
+(csetq read-buffer-completion-ignore-case t)
+(prefer-coding-system 'utf-8)
 (electric-indent-mode -1)
 (csetq truncate-lines nil)
 (csetq default-input-method "korean-hangul")
@@ -89,6 +85,7 @@
 (setq mac-right-command-modifier 'control)
 
 ;;* Bootstrap
+;;** Package init
 (require 'no-littering)
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")
@@ -100,9 +97,29 @@
   (require 'use-package))
 (setq use-package-always-ensure t)
 
-(csetq exec-path-from-shell-check-startup-files nil)
-(exec-path-from-shell-initialize)
+;;** Set up environment
+(use-package exec-path-from-shell
+  :if (and (eq system-type 'darwin) (display-graphic-p))
+  :config
+  (csetq exec-path-from-shell-check-startup-files nil)
+  (exec-path-from-shell-initialize))
 
+;;** OSX
+(use-package osx-trash
+  :if (eq system-type 'darwin)
+  :init
+  (csetq delete-by-moving-to-trash t)
+  (osx-trash-setup))
+
+;;** Themes
+(add-to-list 'custom-theme-load-path (expand-file-name "themes" lisp-d))
+(use-package atom-one-dark-theme :defer t)
+(use-package zenburn-theme :defer t)
+(use-package solarized-theme :defer t)
+(use-package spacemacs-theme :defer t)
+(load-theme 'atom-one-dark t)
+
+;;** Evil
 (setq evil-want-C-u-scroll t
       evil-cross-lines t
       evil-symbol-word-search t
@@ -117,20 +134,98 @@
 (evil-define-key 'normal global-map "U" 'undo-tree-redo)
 (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word)
 
-;;** mode hooks
-(add-hook 'python-mode-hook 'soo-python-hook)
-(add-hook 'clojure-mode-hook 'soo-clojure-hook)
-(add-hook 'org-mode-hook 'soo-org-hook)
-(add-hook 'haskell-mode-hook 'soo-haskell-hook)
-(require 'soo-ivy)
-(require 'soo-rust)
-
-;;** other modes config
 (use-package evil-leader :config (global-evil-leader-mode))
+
+(use-package evil-commentary
+  :diminish evil-commentary-mode
+  :commands (evil-commentary
+             evil-commentary-yank
+             evil-commentary-line)
+  :init
+  (evil-define-key 'normal global-map "gc" 'evil-commentary)
+  (evil-define-key 'normal global-map "gy" 'evil-commentary-yank)
+  :config
+  (evil-commentary-mode))
+
+(use-package evil-cleverparens
+  :commands (evil-cp-a-form
+             evil-cp-inner-form
+             evil-cp-a-comment
+             evil-cp-inner-comment
+             evil-cp-a-defun
+             evil-cp-inner-defun)
+  :init
+  (define-key evil-outer-text-objects-map "f" 'evil-cp-a-form)
+  (define-key evil-inner-text-objects-map "f" 'evil-cp-inner-form)
+  (define-key evil-outer-text-objects-map "c" 'evil-cp-a-comment)
+  (define-key evil-inner-text-objects-map "c" 'evil-cp-inner-comment)
+  (define-key evil-outer-text-objects-map "d" 'evil-cp-a-defun)
+  (define-key evil-inner-text-objects-map "d" 'evil-cp-inner-defun))
 
 (require 'evil-evilified-state)
 (define-key evil-evilified-state-map " " evil-leader--default-map)
 
+(use-package evil-exchange
+  :diminish evil-exchange
+  :commands (evil-exchange evil-exchange/cx)
+  :init
+  (define-key evil-operator-state-map "x" 'evil-exchange/cx)
+  (define-key evil-visual-state-map "X" 'evil-exchange))
+
+(use-package evil-matchit
+  :defer t
+  :init (add-hook 'html-mode-hook 'turn-on-evil-matchit-mode))
+
+(use-package evil-textobj-anyblock
+  :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block)
+  :init
+  (define-key evil-inner-text-objects-map
+    "b" 'evil-textobj-anyblock-inner-block)
+  (define-key evil-outer-text-objects-map
+    "b" 'evil-textobj-anyblock-a-block))
+
+(use-package evil-visualstar
+  :commands (evil-visualstar/begin-search-forward
+             evil-visualstar/begin-search-backward)
+  :init
+  (define-key evil-visual-state-map "*" 'evil-visualstar/begin-search-forward)
+  (define-key evil-visual-state-map "#" 'evil-visualstar/begin-search-backward))
+
+(use-package evil-surround
+  :config
+  (global-evil-surround-mode 1)
+  (evil-define-key 'visual evil-surround-mode-map "s" 'evil-surround-region)
+  (evil-define-key 'visual evil-surround-mode-map "gs" 'evil-Surround-region)
+  (evil-define-key 'visual evil-surround-mode-map "S" 'evil-substitute)
+  (add-hook 'emacs-lisp-mode-hook
+            (lambda ()
+              (push '(?` . ("`" . "'")) evil-surround-pairs-alist))))
+
+(use-package evil-snipe
+  :diminish evil-snipe-local-mode
+  :init
+  (setq evil-snipe-use-vim-sneak-bindings t
+        evil-snipe-scope 'buffer
+        evil-snipe-repeat-scope 'buffer
+        evil-snipe-smart-case t
+        evil-snipe-repeat-keys nil)
+  (evil-snipe-override-mode 1))
+
+(use-package evil-numbers
+  :bind (:map evil-normal-state-map
+              ("C-S-a" . evil-numbers/inc-at-pt)
+              ("C-S-x" . evil-numbers/dec-at-pt)))
+
+;;** mode hooks
+(add-hook 'python-mode-hook 'soo-python-hook)
+(add-hook 'clojure-mode-hook 'soo-clojure-hook)
+(add-hook 'org-mode-hook 'soo-org-hook)
+(run-with-idle-timer 5 nil (lambda () (require 'soo-org)))
+(add-hook 'haskell-mode-hook 'soo-haskell-hook)
+(require 'soo-ivy)
+(require 'soo-rust)
+
+;;** general modes config
 (use-package auto-compile
   :config
   (auto-compile-on-load-mode)
@@ -172,42 +267,18 @@
   :config
   (ace-link-setup-default))
 
-(use-package autorevert :diminish auto-revert-mode)
+(use-package autorevert
+  :diminish auto-revert-mode
+  :init (global-auto-revert-mode)
+  :config
+  (setq auto-revert-verbose nil
+        global-auto-revert-non-file-buffers t ; revert Dired buffers too
+        auto-revert-use-notify nil            ; OSX doesn't have file-notify
+        ))
 
 (use-package artbollocks-mode
   :defer t
-  :init (evil-leader/set-key "ta" 'artbollocks-mode)
-  :config (add-hook 'text-mode-hook 'artbollocks-mode))
-
-(use-package company
-  :defer t
-  :diminish (company-mode . "co")
-  :init
-  (add-hook 'prog-mode-hook 'company-mode)
-  :config
-  (setq company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
-                            company-preview-if-just-one-frontend)
-        company-backends '(company-elisp
-                           ;; company-css
-                           ;; company-semantic
-                           company-capf
-                           (company-dabbrev-code
-                            company-gtags
-                            company-etags
-                            company-keywords)
-                           company-files
-                           company-dabbrev)
-        company-idle-delay 0.2
-        company-minimum-prefix-length 2
-        company-dabbrev-other-buffers t
-        company-require-match nil
-        company-elisp-detect-function-context nil)
-  (defun soo-company-esc () (interactive) (company-abort) (evil-normal-state))
-  (let ((map company-active-map))
-    (define-key map [escape] 'soo-company-esc)
-    (define-key map "\C-n" 'company-select-next)
-    (define-key map "\C-p" 'company-select-previous)
-    (define-key map [tab] 'company-complete-common)))
+  :init (evil-leader/set-key "ta" 'artbollocks-mode))
 
 (use-package compile
   :defer t
@@ -218,24 +289,47 @@
         compilation-scroll-output 'next-error
         compilation-skip-threshold 2))
 
-(use-package diff-hl
-  :after (projectile magit)
+(use-package cc-mode
+  :ensure nil
+  :defer t
+  :mode ("\\.h\\'" . c-mode)
   :config
-  (setq diff-hl-draw-borders nil)
-  (global-diff-hl-mode)
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh t))
+  (c-toggle-auto-hungry-state 1))
+
+(use-package irony
+  :defer t
+  :init
+  (add-hook 'c++-mode-hook 'irony-mode)
+  (add-hook 'c-mode-hook 'irony-mode)
+  (add-hook 'objc-mode-hook 'irony-mode)
+  :config
+  (defun soo-irony-hook ()
+    (define-key irony-mode-map [remap completion-at-point]
+      'irony-completion-at-point-async)
+    (define-key irony-mode-map [remap complete-symbol]
+      'irony-completion-at-point-async))
+  (add-hook 'irony-mode-hook 'soo-irony-hook)
+  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
+
+(use-package ggtags
+  :defer t
+  :init
+  (add-hook 'c-mode-common-hook
+            (lambda ()
+              (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+                (ggtags-mode 1)))))
 
 (use-package dired
   :ensure nil
   :commands dired-jump
   :init
   (define-key evil-normal-state-map "-" 'dired-jump)
+  (add-hook 'dired-mode-hook #'soo--dired-setup)
+  :config
   (defun soo--dired-setup ()
     ;; (setq dired-omit-verbose nil)
     (setq dired-hide-details-hide-symlink-targets nil)
     (dired-hide-details-mode t))
-  (add-hook 'dired-mode-hook 'soo--dired-setup)
-  :config
   (setq dired-listing-switches "-laGh1v --group-directories-first")
   (defvar dired-dotfiles-show-p)
   (defun vinegar/dotfiles-toggle ()
@@ -354,94 +448,6 @@ CIRCE if no buffers open."
   (require 'lui-autopaste)
   (add-hook 'circe-channel-mode-hook 'enable-lui-autopaste))
 
-(use-package evil-commentary
-  :diminish evil-commentary-mode
-  :commands (evil-commentary
-             evil-commentary-yank
-             evil-commentary-line)
-  :init
-  (evil-define-key 'normal global-map "gc" 'evil-commentary)
-  (evil-define-key 'normal global-map "gy" 'evil-commentary-yank)
-  :config
-  (evil-commentary-mode))
-
-(use-package evil-cleverparens
-  :commands (evil-cp-a-form
-             evil-cp-inner-form
-             evil-cp-a-comment
-             evil-cp-inner-comment
-             evil-cp-a-defun
-             evil-cp-inner-defun)
-  :init
-  (define-key evil-outer-text-objects-map "f" 'evil-cp-a-form)
-  (define-key evil-inner-text-objects-map "f" 'evil-cp-inner-form)
-  (define-key evil-outer-text-objects-map "c" 'evil-cp-a-comment)
-  (define-key evil-inner-text-objects-map "c" 'evil-cp-inner-comment)
-  (define-key evil-outer-text-objects-map "d" 'evil-cp-a-defun)
-  (define-key evil-inner-text-objects-map "d" 'evil-cp-inner-defun))
-
-(use-package evil-exchange
-  :diminish evil-exchange
-  :commands (evil-exchange evil-exchange/cx)
-  :init
-  (define-key evil-operator-state-map "x" 'evil-exchange/cx)
-  (define-key evil-visual-state-map "X" 'evil-exchange))
-
-(use-package evil-matchit
-  :defer t
-  :init (add-hook 'html-mode-hook 'turn-on-evil-matchit-mode))
-
-(use-package evil-textobj-anyblock
-  :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block)
-  :init
-  (define-key evil-inner-text-objects-map
-    "b" 'evil-textobj-anyblock-inner-block)
-  (define-key evil-outer-text-objects-map
-    "b" 'evil-textobj-anyblock-a-block))
-
-(use-package evil-visualstar
-  :commands (evil-visualstar/begin-search-forward
-             evil-visualstar/begin-search-backward)
-  :init
-  (define-key evil-visual-state-map "*" 'evil-visualstar/begin-search-forward)
-  (define-key evil-visual-state-map "#" 'evil-visualstar/begin-search-backward))
-
-(use-package evil-surround
-  :config
-  (global-evil-surround-mode 1)
-  (evil-define-key 'visual evil-surround-mode-map "s" 'evil-surround-region)
-  (evil-define-key 'visual evil-surround-mode-map "gs" 'evil-Surround-region)
-  (evil-define-key 'visual evil-surround-mode-map "S" 'evil-substitute)
-  (add-hook 'emacs-lisp-mode-hook
-            (lambda ()
-              (push '(?` . ("`" . "'")) evil-surround-pairs-alist))))
-
-(use-package evil-snipe
-  :diminish evil-snipe-local-mode
-  :init
-  (setq evil-snipe-use-vim-sneak-bindings t
-        evil-snipe-scope 'buffer
-        evil-snipe-repeat-scope 'buffer
-        evil-snipe-smart-case t
-        evil-snipe-repeat-keys nil)
-  (evil-snipe-override-mode 1))
-
-(use-package evil-numbers
-  :bind (:map evil-normal-state-map
-              ("C-S-a" . evil-numbers/inc-at-pt)
-              ("C-S-x" . evil-numbers/dec-at-pt)))
-
-(use-package expand-region
-  :commands (soo-er-and-insert er/expand-region)
-  :init
-  (bind-key (kbd "M-2") 'soo-er-and-insert)
-  (evil-leader/set-key "v" 'er/expand-region)
-  :config
-  (defun soo-er-and-insert (arg)
-    (interactive "p")
-    (progn (evil-insert 1)
-           (er/expand-region arg))))
-
 (use-package dabbrev
   :defer t
   :config
@@ -522,17 +528,52 @@ friend if it has the same major mode."
   :defer
   :init (add-hook 'prog-mode-hook 'hes-mode))
 
-(use-package iedit :defer t :init (setq iedit-toggle-key-default nil))
-
 (use-package info
   :ensure nil
   :config
   (evil-leader/set-key "hi" 'info)
   (evil-set-initial-state 'Info-mode 'insert))
 
+;;** Parens and lisp
+(use-package smartparens
+  :diminish (smartparens-mode . "sp")
+  :defer t
+  :init
+  (add-hook 'prog-mode-hook 'smartparens-strict-mode)
+  :config
+  (require 'smartparens-config)
+  (setq sp-cancel-autoskip-on-backward-movement nil
+        sp-autoskip-closing-pair 'always
+        sp-show-pair-from-inside nil
+        sp-show-pair-delay 0
+        sp-highlight-pair-overlay nil)
+  (show-smartparens-global-mode 1)
+  (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
+  (defun soo-end-of-sexp-or-next ()
+    (interactive)
+    (if (or (looking-at "[])}]") (eolp))
+        (sp-end-of-next-sexp)
+      (sp-end-of-sexp)))
+  (defun soo-insert-at-bos ()
+    (interactive)
+    (progn (sp-beginning-of-sexp) (evil-insert-state)))
+  (defun soo-insert-at-eos ()
+    (interactive)
+    (progn (sp-end-of-sexp) (evil-insert-state)))
+  (let ((m smartparens-mode-map))
+    (define-key m (kbd "M-a") 'sp-beginning-of-sexp)
+    (define-key m (kbd "M-e") 'soo-end-of-sexp-or-next)
+    (define-key m [C-backspace] 'sp-backward-kill-sexp)
+    (define-key m (kbd "C-)") 'sp-forward-slurp-sexp)
+    (define-key m (kbd "C-(") 'sp-backward-slurp-sexp)
+    (define-key m (kbd "C-{") 'sp-backward-barf-sexp)
+    (define-key m (kbd "C-}") 'sp-forward-barf-sexp))
+  (evil-define-key 'normal smartparens-mode-map
+    "\M-i" 'soo-insert-at-bos
+    "\M-a" 'soo-insert-at-eos))
+
 (use-package lispy
   :diminish lispy-mode
-  :ensure t
   :defer t
   :init
   (defun conditionally-enable-lispy ()
@@ -544,6 +585,7 @@ friend if it has the same major mode."
             (lambda () (when (member major-mode sp-lisp-modes) (lispy-mode))))
   (add-hook 'smartparens-disabled-hook
             (lambda () (when (member major-mode sp-lisp-modes) (lispy-mode -1))))
+  (csetq iedit-toggle-key-default nil)   ; Don't want to use iedit
   :config
   (lispy-set-key-theme '(special c-digits paredit))
   (setq lispy-compat '(edebug cider)
@@ -577,18 +619,18 @@ friend if it has the same major mode."
     (define-key map (kbd "C-{") nil))
   (lispy-define-key lispy-mode-map-special ">" 'lispy-slurp-or-barf-right)
   (lispy-define-key lispy-mode-map-special "<" 'lispy-slurp-or-barf-left)
-
   ;; Unbind M-k and M-. in evil normal state and use lispy
   (define-key evil-normal-state-map "\M-." nil) ; evil-repeat-pop-next
   (define-key evil-normal-state-map "\M-k" nil))
 
 (use-package lispyville
-  :ensure t
   :diminish lispyville-mode
   :commands (lispyville-delete
              lispyville-delete-char-or-splice
              lispyville-drag-forward
              lispyville-drag-backward)
+  ;; esc from an emacs style mark enters normal state, not visual state.
+  :bind (([remap evil-normal-state] . lispyville-normal-state))
   :init
   (defun conditionally-enable-lispyville ()
     "Only turn on lispyville outside of REPLs.
@@ -613,6 +655,13 @@ Keep M-n and M-p reserved for history."
   (evil-set-initial-state 'magit-submodule-list-mode 'insert)
   (setq magit-display-buffer-function
         'magit-display-buffer-fullframe-status-v1))
+
+(use-package diff-hl
+  :after (projectile magit)
+  :config
+  (setq diff-hl-draw-borders nil)
+  (global-diff-hl-mode)
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh t))
 
 (use-package markdown-mode
   :mode ("\\.m[k]d" . markdown-mode)
@@ -639,34 +688,6 @@ Will work on both org-mode and any mode that accepts plain html."
     "gh" 'outline-up-heading
     ;; next visible heading is not exactly what we want but close enough
     "gl" 'outline-next-visible-heading))
-
-(use-package multiple-cursors
-  :commands (mc/mark-next-like-this mc/mark-all-dwim)
-  :init
-  (evil-define-key 'visual global-map "m" 'mc/mark-all-like-this-dwim)
-  ;; Malabarba keybinds
-  ;; http://endlessparentheses.com/multiple-cursors-keybinds.html
-  (define-key ctl-x-map "\C-m" #'mc/mark-all-dwim)
-  (define-key ctl-x-map (kbd "<return>") mule-keymap)
-  (global-set-key (kbd "M-3") #'mc/mark-next-like-this)
-  (global-set-key (kbd "M-4") #'mc/mark-previous-like-this)
-  (global-set-key (kbd "M-#") #'mc/unmark-next-like-this)
-  (global-set-key (kbd "M-$") #'mc/unmark-previous-like-this)
-  (define-prefix-command 'endless/mc-map)
-  ;; C-x m is usually `compose-mail'. Bind it to something
-  ;; else if you use this command.
-  (define-key ctl-x-map "m" 'endless/mc-map)
-  ;; Really really nice!
-  (define-key endless/mc-map "i" #'mc/insert-numbers)
-  (define-key endless/mc-map "h" #'mc-hide-unmatched-lines-mode)
-  (define-key endless/mc-map "a" #'mc/mark-all-like-this)
-  ;; Occasionally useful
-  (define-key endless/mc-map "d" #'mc/mark-all-symbols-like-this-in-defun)
-  (define-key endless/mc-map "r" #'mc/reverse-regions)
-  (define-key endless/mc-map "s" #'mc/sort-regions)
-  (define-key endless/mc-map "l" #'mc/edit-lines)
-  (define-key endless/mc-map "\C-a" #'mc/edit-beginnings-of-lines)
-  (define-key endless/mc-map "\C-e" #'mc/edit-ends-of-lines))
 
 (use-package super-save
   :diminish super-save-mode
@@ -702,19 +723,6 @@ Will work on both org-mode and any mode that accepts plain html."
   :defer t
   :config (evil-set-initial-state 'woman-mode 'insert)
   (bind-key "s-w" 'Man-quit woman-mode-map))
-
-(use-package shackle
-  :config
-  (defun shackle-smart-align ()
-    (if (< (window-width) 160) 'below 'right))
-  (setq shackle-rules '((compilation-mode :noselect t)
-                        (help-mode :align shackle-smart-align :size 0.4)
-                        (undo-tree-visualizer-mode :align t :size 0.3)
-                        (woman-mode :popup t)
-                        (flycheck-error-list-mode :select t)
-                        (cargo-process-mode :align t :size 10))
-        shackle-select-reused-windows t)
-  (shackle-mode 1))
 
 (use-package projectile
   :diminish projectile-mode
@@ -802,16 +810,11 @@ INITIAL-INPUT can be given as the initial minibuffer input."
               (projectile-switch-project-by-name dir arg)))
       "run ag in project"))))
 
-(use-package rainbow-delimiters
-  :disabled t
-  :init (add-hook 'smartparens-mode-hook #'rainbow-delimiters-mode))
-
 (use-package rainbow-mode
-  :commands rainbow-mode
+  :bind (("C-c t r" . rainbow-mode))
   :diminish rainbow-mode
   :init
-  (evil-leader/set-key "tc" 'rainbow-mode)
-  (add-hook 'css-mode-hook (lambda () (rainbow-mode 1))))
+  (add-hook 'css-mode-hook #'rainbow-mode))
 
 (use-package recentf
   :ensure nil
@@ -819,9 +822,9 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (recentf-mode 1)
   (setq recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG" "github.*txt$"
                           ".*png$" ".*cache$" "^/\\(?:ssh\\|su\\|sudo\\)?:"
-                          ".*el.gz$"))
-  (setq recentf-max-saved-items 1000
-        recentf-auto-cleanup 'mode))
+                          ".*el.gz$" "/\\.get/.*\\'" "/elpa/.*\\"))
+  (setq recentf-max-saved-items 200
+        recentf-auto-cleanup 300))
 
 (use-package restclient :defer t)
 
@@ -851,6 +854,10 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (bind-key "M-e" 'sentence-nav-forward)
   (bind-key "M-a" 'sentence-nav-backward))
 
+(use-package semantic
+  :defer t
+  :init (semantic-mode -1))
+
 (use-package shell-pop
   :bind (("s-`" . shell-pop))
   :init
@@ -867,55 +874,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
     (define-key term-raw-map (kbd "s-v") 'term-paste)
     (evil-define-key 'normal term-raw-map "p" 'term-paste)
     (add-hook 'term-mode-hook (lambda () (toggle-truncate-lines 1)))))
-
-(use-package smartparens
-  :diminish (smartparens-mode . "sp")
-  :defer t
-  :init
-  (add-hook 'prog-mode-hook 'smartparens-strict-mode)
-  :config
-  (require 'smartparens-config)
-  (setq sp-cancel-autoskip-on-backward-movement nil
-        sp-autoskip-closing-pair 'always
-        sp-show-pair-from-inside nil
-        sp-show-pair-delay 0
-        sp-highlight-pair-overlay nil)
-  (show-smartparens-global-mode 1)
-  (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
-  (defun soo-end-of-sexp-or-next ()
-    (interactive)
-    (if (or (looking-at "[])}]") (eolp))
-        (sp-end-of-next-sexp)
-      (sp-end-of-sexp)))
-  (defun soo-insert-at-bos ()
-    (interactive)
-    (progn (sp-beginning-of-sexp) (evil-insert-state)))
-  (defun soo-insert-at-eos ()
-    (interactive)
-    (progn (sp-end-of-sexp) (evil-insert-state)))
-  (let ((m smartparens-mode-map))
-    (define-key m (kbd "M-a") 'sp-beginning-of-sexp)
-    (define-key m (kbd "M-e") 'soo-end-of-sexp-or-next)
-    (define-key m [C-backspace] 'sp-backward-kill-sexp)
-    (define-key m (kbd "C-)") 'sp-forward-slurp-sexp)
-    (define-key m (kbd "C-(") 'sp-backward-slurp-sexp)
-    (define-key m (kbd "C-{") 'sp-backward-barf-sexp)
-    (define-key m (kbd "C-}") 'sp-forward-barf-sexp))
-  (evil-define-key 'normal smartparens-mode-map
-    "\M-i" 'soo-insert-at-bos
-    "\M-a" 'soo-insert-at-eos))
-
-(use-package simple
-  :ensure nil
-  :diminish (auto-fill-function visual-line-mode)
-  :init
-  (evil-define-minor-mode-key 'motion 'visual-line-mode
-    "k" 'evil-previous-visual-line
-    "j" 'evil-next-visual-line)
-  (add-hook 'visual-line-mode-hook 'evil-normalize-keymaps)
-  :config
-  (evil-set-initial-state 'messages-buffer-mode 'insert)
-  (column-number-mode 1))
 
 (use-package typo
   :disabled t
@@ -973,17 +931,123 @@ INITIAL-INPUT can be given as the initial minibuffer input."
                                         "*Apropos*" "*cvs*" "*Buffer List*"
                                         "*Ibuffer*"))))
 
+(use-package shackle
+  :config
+  (defun shackle-smart-align ()
+    (if (< (window-width) 160) 'below 'right))
+  (setq shackle-rules '((compilation-mode :noselect t)
+                        (help-mode :align shackle-smart-align :size 0.4)
+                        (undo-tree-visualizer-mode :align t :size 0.3)
+                        (woman-mode :popup t)
+                        (flycheck-error-list-mode :select t)
+                        (cargo-process-mode :align t :size 10))
+        shackle-select-reused-windows t)
+  (shackle-mode 1))
+
+;;** Basic Editing
+(csetq fill-column 80)
+(add-hook 'text-mode-hook #'auto-fill-mode)
+(diminish 'auto-fill-function)
+
+(use-package simple
+  :ensure nil
+  :diminish visual-line-mode
+  :init
+  (evil-define-minor-mode-key 'motion 'visual-line-mode
+    "k" 'evil-previous-visual-line
+    "j" 'evil-next-visual-line)
+  (add-hook 'visual-line-mode-hook 'evil-normalize-keymaps)
+  :config
+  (evil-set-initial-state 'messages-buffer-mode 'insert)
+  (column-number-mode 1))
+
 (use-package ws-butler
   :diminish ws-butler-mode
-  :config (ws-butler-global-mode))
+  :init (ws-butler-global-mode))
+
+(bind-key [remap just-one-space] #'cycle-spacing)
+
+(use-package expand-region
+  :commands (soo-er-and-insert er/expand-region)
+  :init
+  (bind-key (kbd "M-2") 'soo-er-and-insert)
+  (evil-leader/set-key "v" 'er/expand-region)
+  :config
+  (defun soo-er-and-insert (arg)
+    (interactive "p")
+    (progn (evil-insert 1)
+           (er/expand-region arg))))
+
+(use-package multiple-cursors
+  :commands (mc/mark-next-like-this mc/mark-all-dwim)
+  :init
+  (evil-define-key 'visual global-map "m" 'mc/mark-all-like-this-dwim)
+  ;; Malabarba keybinds
+  ;; http://endlessparentheses.com/multiple-cursors-keybinds.html
+  (define-key ctl-x-map "\C-m" #'mc/mark-all-dwim)
+  (define-key ctl-x-map (kbd "<return>") mule-keymap)
+  (global-set-key (kbd "M-3") #'mc/mark-next-like-this)
+  (global-set-key (kbd "M-4") #'mc/mark-previous-like-this)
+  (global-set-key (kbd "M-#") #'mc/unmark-next-like-this)
+  (global-set-key (kbd "M-$") #'mc/unmark-previous-like-this)
+  (define-prefix-command 'endless/mc-map)
+  ;; C-x m is usually `compose-mail'. Bind it to something
+  ;; else if you use this command.
+  (define-key ctl-x-map "m" 'endless/mc-map)
+  ;; Really really nice!
+  (define-key endless/mc-map "i" #'mc/insert-numbers)
+  (define-key endless/mc-map "h" #'mc-hide-unmatched-lines-mode)
+  (define-key endless/mc-map "a" #'mc/mark-all-like-this)
+  ;; Occasionally useful
+  (define-key endless/mc-map "d" #'mc/mark-all-symbols-like-this-in-defun)
+  (define-key endless/mc-map "r" #'mc/reverse-regions)
+  (define-key endless/mc-map "s" #'mc/sort-regions)
+  (define-key endless/mc-map "l" #'mc/edit-lines)
+  (define-key endless/mc-map "\C-a" #'mc/edit-beginnings-of-lines)
+  (define-key endless/mc-map "\C-e" #'mc/edit-ends-of-lines))
+
+;;** Completion and expansion
+(use-package hippie-exp
+  :ensure nil
+  :bind (([remap dabbrev-expand] . hippie-expand)))
+
+(use-package company
+  :diminish (company-mode . "co")
+  :init
+  (add-hook 'prog-mode-hook 'company-mode)
+  :config
+  (setq company-tooltip-align-annotations t
+        company-tooltip-flip-when-above t
+        company-idle-delay 0.3
+        company-minimum-prefix-length 2
+        company-require-match nil
+        company-elisp-detect-function-context nil
+        company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
+                            company-preview-if-just-one-frontend)
+        company-backends '(company-elisp
+                           ;; company-css
+                           ;; company-semantic
+                           company-capf
+                           (company-dabbrev-code
+                            company-gtags
+                            company-etags
+                            company-keywords)
+                           company-files
+                           company-dabbrev))
+  (defun soo-company-esc () (interactive) (company-abort) (evil-normal-state))
+  (let ((map company-active-map))
+    (define-key map [escape] 'soo-company-esc)
+    (define-key map "\C-n" 'company-select-next)
+    (define-key map "\C-p" 'company-select-previous)
+    (define-key map [tab] 'company-complete-common)))
+
+(use-package company-statistics
+  :after company
+  :config (company-statistics-mode))
 
 (use-package yasnippet
   :diminish yas-minor-mode
   :commands (yas-global-mode yas-minor-mode))
-
-(run-with-idle-timer
- 5 nil
- (lambda () (require 'soo-org)))
 
 ;;** autoloads
 (load (expand-file-name "auto.el" lisp-d) nil t)

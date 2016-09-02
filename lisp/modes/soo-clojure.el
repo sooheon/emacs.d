@@ -7,10 +7,15 @@
   ;; This is for clojure-semantic, the library file is clojure.el
   (load-library "clojure"))
 
+(use-package clj-refactor
+  :config
+  (setq cljr-favor-prefix-notation nil))
+
 ;;;###autoload
 (defun soo-clojure-hook ()
   (lispy-mode 1)
-  (company-mode 1))
+  (company-mode 1)
+  (clj-refactor-mode 1))
 
 (use-package cider
   :config
