@@ -1,10 +1,15 @@
 (require 'python)
-(setq python-indent-offset 4)
 (csetq python-shell-completion-native-enable nil)
 (add-hook 'inferior-python-mode-hook 'company-mode)
-;; (setq python-shell-interpreter "ipython"
-;;       python-shell-interpreter-args "--simple-prompt -i" ; http://tinyurl.com/j44y64d
-;;       )
+(add-hook 'inferior-python-mode-hook 'smartparens-mode)
+(setq python-shell-interpreter "ipython"
+      python-shell-interpreter-args "-i" ; http://tinyurl.com/j44y64d
+      )
+(defun py-yapf-and-send-buffer ()
+  (interactive)
+  (py-yapf-buffer)
+  (python-shell-send-buffer))
+(bind-key "C-c C-c" 'py-yapf-and-send-buffer python-mode-map)
 
 (defvar no-pip
   (string-match "Command not found\\|no pip in"
@@ -28,6 +33,9 @@
 (define-key lpy-mode-map (kbd "[") nil)
 (define-key lpy-mode-map (kbd "(") nil)
 (define-key lpy-mode-map (kbd "=") nil)
+(define-key lpy-mode-map (kbd ">") nil)
+(define-key lpy-mode-map (kbd "<") nil)
+(define-key lpy-mode-map (kbd ",") nil)
 (define-key python-mode-map (kbd "C-j") 'newline-and-indent)
 (define-key python-mode-map (kbd "C-m") 'newline)
 ;; (define-key python-mode-map (kbd "C-c C-z") 'ora-python-switch-to-shell)

@@ -46,7 +46,12 @@ tell application \"Terminal\"
   do script \"cd %s\" in window 1
 end tell
 "
-           default-directory)))
+           (or default-directory "~"))))
+
+(defun soo-terminal-focus ()
+  (interactive)
+  (do-applescript
+   "do shell script \"open -a Terminal\"\n"))
 
 ;;;###autoload
 (defun sooheon--toggle-right-option-key ()
