@@ -535,6 +535,8 @@ friend if it has the same major mode."
   :defer t
   :init
   (add-hook 'prog-mode-hook 'smartparens-strict-mode)
+  (add-hook 'smartparens-strict-mode-hook 'show-smartparens-mode)
+  (add-hook 'smartparens-mode-hook 'show-smartparens-mode)
   :config
   (require 'smartparens-config)
   (setq sp-cancel-autoskip-on-backward-movement nil
@@ -542,7 +544,6 @@ friend if it has the same major mode."
         sp-show-pair-from-inside nil
         sp-show-pair-delay 0
         sp-highlight-pair-overlay nil)
-  (show-smartparens-global-mode 1)
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
   (defun soo-end-of-sexp-or-next ()
     (interactive)
