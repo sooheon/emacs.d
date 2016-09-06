@@ -14,6 +14,7 @@
 (add-to-list 'load-path (expand-file-name "lib/org-mode/contrib/lisp" emacs-d))
 (add-to-list 'load-path (expand-file-name "lib/org-mode/lisp" emacs-d))
 (add-to-list 'load-path (expand-file-name "lisp/modes" emacs-d))
+(add-to-list 'load-path (expand-file-name "lisp/themes/" emacs-d))
 
 ;;** font
 (add-to-list 'default-frame-alist '(font . "Input Mono Narrow"))
@@ -113,7 +114,8 @@
 
 ;;** Themes
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" lisp-d))
-(load-theme 'atom-one-dark t)
+(require 'soo-themes)
+(load-theme 'eclipse2 t)
 
 ;;** Evil
 (setq evil-want-C-u-scroll t
@@ -124,7 +126,8 @@
       evil-disable-insert-state-bindings t
       evil-search-module 'evil-search
       evil-ex-search-persistent-highlight nil
-      evil-want-Y-yank-to-eol t)
+      evil-want-Y-yank-to-eol t
+      evil-ex-substitute-global t)
 (require 'evil)
 (evil-mode 1)
 (evil-define-key 'normal global-map "U" 'undo-tree-redo)
@@ -919,7 +922,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 ;;** Basic Editing
 (csetq fill-column 80)
 (add-hook 'text-mode-hook #'auto-fill-mode)
-(diminish 'auto-fill-function)
+(diminish 'auto-fill-function)          ; auto-fill-mode is called this
 
 (use-package simple
   :ensure nil
