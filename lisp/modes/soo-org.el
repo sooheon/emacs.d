@@ -174,5 +174,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 (sp-local-pair 'org-mode "\\left(" " \\right)")
 (sp-local-pair 'org-mode "\\left[" " \\right]")
 (sp-local-pair 'org-mode "\\left{" " \\right}")
+(sp-local-pair 'org-mode "\\left|" " \\right|")
 
 (provide 'soo-org)
