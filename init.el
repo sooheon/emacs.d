@@ -113,7 +113,7 @@
 
 ;;** Themes
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" lisp-d))
-(load-theme 'atom-one-dark t)
+(load-theme 'eclipse2 t)
 
 ;;** Evil
 (setq evil-want-C-u-scroll t
@@ -124,7 +124,8 @@
       evil-disable-insert-state-bindings t
       evil-search-module 'evil-search
       evil-ex-search-persistent-highlight nil
-      evil-want-Y-yank-to-eol t)
+      evil-want-Y-yank-to-eol t
+      evil-ex-substitute-global t)
 (require 'evil)
 (evil-mode 1)
 (evil-define-key 'normal global-map "U" 'undo-tree-redo)
@@ -572,11 +573,7 @@ friend if it has the same major mode."
   :diminish lispy-mode
   :defer t
   :init
-  (defun conditionally-enable-lispy ()
-    "Enable `lispy-mode' in the minibuffer, during `eval-expression'."
-    (if (eq this-command 'eval-expression)
-        (lispy-mode 1)))
-  (add-hook 'minibuffer-setup-hook 'conditionally-enable-lispy)
+  (add-hook 'eval-expression-minibuffer-setup-hook #'lispy-mode)
   (defun toggle-lispy-for-lisps (arg)
     (lambda () (when (member major-mode sp-lisp-modes) (lispy-mode arg))))
   (add-hook 'smartparens-enabled-hook (toggle-lispy-for-lisps 1))
