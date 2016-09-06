@@ -14,6 +14,7 @@
 (add-to-list 'load-path (expand-file-name "lib/org-mode/contrib/lisp" emacs-d))
 (add-to-list 'load-path (expand-file-name "lib/org-mode/lisp" emacs-d))
 (add-to-list 'load-path (expand-file-name "lisp/modes" emacs-d))
+(add-to-list 'load-path (expand-file-name "lisp/themes/" emacs-d))
 
 ;;** font
 (add-to-list 'default-frame-alist '(font . "Input Mono Narrow"))
@@ -113,6 +114,7 @@
 
 ;;** Themes
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" lisp-d))
+(require 'soo-themes)
 (load-theme 'eclipse2 t)
 
 ;;** Evil
@@ -573,7 +575,11 @@ friend if it has the same major mode."
   :diminish lispy-mode
   :defer t
   :init
-  (add-hook 'eval-expression-minibuffer-setup-hook #'lispy-mode)
+  (defun conditionally-enable-lispy ()
+    "Enable `lispy-mode' in the minibuffer, during `eval-expression'."
+    (if (eq this-command 'eval-expression)
+        (lispy-mode 1)))
+  (add-hook 'minibuffer-setup-hook 'conditionally-enable-lispy)
   (defun toggle-lispy-for-lisps (arg)
     (lambda () (when (member major-mode sp-lisp-modes) (lispy-mode arg))))
   (add-hook 'smartparens-enabled-hook (toggle-lispy-for-lisps 1))
@@ -916,7 +922,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 ;;** Basic Editing
 (csetq fill-column 80)
 (add-hook 'text-mode-hook #'auto-fill-mode)
-(diminish 'auto-fill-function)
+(diminish 'auto-fill-function)          ; auto-fill-mode is called this
 
 (use-package simple
   :ensure nil
