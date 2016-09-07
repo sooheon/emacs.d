@@ -140,14 +140,8 @@
 
 (use-package evil-commentary
   :diminish evil-commentary-mode
-  :commands (evil-commentary
-             evil-commentary-yank
-             evil-commentary-line)
-  :init
-  (evil-define-key 'normal global-map "gc" 'evil-commentary)
-  (evil-define-key 'normal global-map "gy" 'evil-commentary-yank)
-  :config
-  (evil-commentary-mode))
+  :general (nmap "gc" 'evil-commentary
+                 "gy" 'evil-commentary-yank))
 
 (use-package evil-cleverparens
   :commands (evil-cp-a-form
@@ -211,9 +205,9 @@
   (evil-snipe-override-mode 1))
 
 (use-package evil-numbers
-  :bind (:map evil-normal-state-map
-              ("C-S-a" . evil-numbers/inc-at-pt)
-              ("C-S-x" . evil-numbers/dec-at-pt)))
+  :general
+  (nmap "C-S-a" 'evil-numbers/inc-at-pt
+        "C-S-x" 'evil-numbers/dec-at-pt))
 
 ;;** mode hooks
 (add-hook 'python-mode-hook 'soo-python-hook)
@@ -241,8 +235,8 @@
 
 (use-package avy
   :commands spacemacs/avy-open-url
-  :bind (("s-g" . evil-avy-goto-word-1)
-         ([remap goto-line] . evil-avy-goto-line))
+  :general ("s-g" 'evil-avy-goto-word-1
+            [remap goto-line] 'evil-avy-goto-line)
   :init
   (nvmap :prefix "SPC" "xo" 'spacemacs/avy-open-url)
   :config
@@ -487,7 +481,7 @@ friend if it has the same major mode."
   :disabled t
   :defer t
   :diminish flyspell-mode
-  :bind (("C-;" . flyspell-auto-correct-previous-word))
+  :general ("C-;" 'flyspell-auto-correct-previous-word)
   :init
   (add-hook 'text-mode-hook 'flyspell-mode)
   (add-hook 'prog-mode-hook 'flyspell-prog-mode))
@@ -632,7 +626,7 @@ friend if it has the same major mode."
              lispyville-drag-forward
              lispyville-drag-backward)
   ;; esc from an emacs style mark enters normal state, not visual state.
-  :bind (([remap evil-normal-state] . lispyville-normal-state))
+  :general ([remap evil-normal-state] 'lispyville-normal-state)
   :init
   (defun conditionally-enable-lispyville ()
     "Only turn on lispyville outside of REPLs.
@@ -711,7 +705,7 @@ Keep M-n and M-p reserved for history."
              projectile-dired
              projectile-recentf
              counsel-projectile-ag)
-  :bind (("C-c k" . counsel-projectile-ag))
+  :general ("C-c k" 'counsel-projectile-ag)
   :init
   (nmap :prefix "SPC"
         "pd" 'projectile-find-dir
@@ -790,7 +784,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
       "run ag in project"))))
 
 (use-package rainbow-mode
-  :bind (("C-c t r" . rainbow-mode))
+  :general ("C-c t r" 'rainbow-mode)
   :diminish rainbow-mode
   :init
   (nmap :prefix "SPC" "tr" #'rainbow-mode)
@@ -839,7 +833,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :init (semantic-mode -1))
 
 (use-package shell-pop
-  :bind (("s-`" . shell-pop))
+  :general ("s-`" 'shell-pop)
   :init
   (setq shell-pop-window-position 'bottom
         shell-pop-window-height 30
@@ -864,8 +858,8 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package undo-tree
   :diminish undo-tree-mode
-  :bind (("s-Z" . undo-tree-redo)
-         ("s-z" . undo-tree-undo))
+  :general ("s-Z" 'undo-tree-redo
+            "s-z" 'undo-tree-undo)
   :init
   (global-undo-tree-mode)
   :config
@@ -882,13 +876,13 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (which-key-mode 1))
 
 (use-package window-numbering
-  :bind (("s-0" . select-window-0)
-         ("s-1" . select-window-1)
-         ("s-2" . select-window-2)
-         ("s-3" . select-window-3)
-         ("s-4" . select-window-4)
-         ("s-5" . select-window-5)
-         ("s-6" . select-window-6))
+  :general ("s-0" 'select-window-0
+            "s-1" 'select-window-1
+            "s-2" 'select-window-2
+            "s-3" 'select-window-3
+            "s-4" 'select-window-4
+            "s-5" 'select-window-5
+            "s-6" 'select-window-6)
   :config
   (let ((m window-numbering-keymap))
     (define-key m "\M-0" nil)
@@ -997,7 +991,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 ;;** Completion and expansion
 (use-package hippie-exp
   :ensure nil
-  :bind (([remap dabbrev-expand] . hippie-expand)))
+  :general ([remap dabbrev-expand] 'hippie-expand))
 
 (use-package company
   :diminish (company-mode . "co")

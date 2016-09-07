@@ -1,20 +1,20 @@
 (use-package counsel
-  :bind (([remap execute-extended-command] . counsel-M-x)
-         ([remap describe-function] . counsel-describe-function)
-         ([remap describe-variable] . counsel-describe-variable)
-         ([remap describe-bindings] . counsel-descbinds)
-         ([remap find-file] . counsel-find-file)
-         ([remap imenu] . counsel-imenu)
-         ([remap load-library] . counsel-load-library)
-         ([remap yank-pop] . counsel-yank-pop)
-         ([remap info-lookup-symbol] . counsel-info-lookup-symbol)
-         ([remap menu-bar-open] . counsel-tmm)
-         ([remap list-bookmarks] . counsel-bookmark)
-         ("C-c g" . counsel-git)
-         ("C-c j" . counsel-git-grep)
-         ("C-x l" . counsel-locate)
-         ("C-x C-l" . find-library)
-         ("C-c o" . counsel-outline))
+  :general ([remap execute-extended-command] 'counsel-M-x
+            [remap describe-function] 'counsel-describe-function
+            [remap describe-variable] 'counsel-describe-variable
+            [remap describe-bindings] 'counsel-descbinds
+            [remap find-file] 'counsel-find-file
+            [remap imenu] 'counsel-imenu
+            [remap load-library] 'counsel-load-library
+            [remap yank-pop] 'counsel-yank-pop
+            [remap info-lookup-symbol] 'counsel-info-lookup-symbol
+            [remap menu-bar-open] 'counsel-tmm
+            [remap list-bookmarks] 'counsel-bookmark
+            "C-c g" 'counsel-git
+            "C-c j" 'counsel-git-grep
+            "C-x l" 'counsel-locate
+            "C-x C-l" 'find-library
+            "C-c o" 'counsel-outline)
   :init
   (nmap :prefix "SPC"
     "r" 'counsel-recentf
@@ -28,18 +28,18 @@
   (use-package smex :config (csetq smex-history-length 32)))
 
 (use-package swiper
-  :bind (([remap isearch-forward] . counsel-grep-or-swiper)
-         ("s-f" . counsel-grep-or-swiper)
-         ("C-c u" . swiper-all)))
+  :general ([remap isearch-forward] 'counsel-grep-or-swiper
+            "s-f" 'counsel-grep-or-swiper
+            "C-c u" 'swiper-all))
 
 (use-package ivy
   :diminish ivy-mode
   :commands (magit-status epkg-describe-package)
-  :bind (("s-b" . ivy-switch-buffer)
-         ("C-c r" . ivy-resume)
-         ("<f2> j" . counsel-set-variable)
-         ("C-c v" . ivy-push-view)
-         ("C-c V" . ivy-pop-view))
+  :general ("s-b" 'ivy-switch-buffer
+            "C-c r" 'ivy-resume
+            "<f2> j" 'counsel-set-variable
+            "C-c v" 'ivy-push-view
+            "C-c V" 'ivy-pop-view)
   :init
   (nmap :prefix "SPC" "b" 'ivy-switch-buffer)
   :config
