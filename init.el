@@ -319,27 +319,24 @@
   :commands dired-jump
   :general
   (nmap "-" 'dired-jump)
-  (:keymaps 'dired-mode-map
-   "-" 'dired-jump
-   "=" 'vinegar/dired-diff
-   "I" 'vinegar/dotfiles-toggle
-   "~" '(lambda () (interactive) (find-alternate-file "~/"))
-   "RET" 'dired-find-file
-   "f" 'counsel-find-file
-   "J" 'dired-goto-file
-   "C-f" 'find-name-dired
-   "H" 'diredp-dired-recent-dirs
-   "T" 'dired-tree-down
-   "K" 'dired-do-kill-lines
-   "r" 'revert-buffer
-   "C-r" 'dired-do-redisplay)
   (nmap :keymaps 'dired-mode-map
+    "-" 'dired-jump
     "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
-    "gs" 'magit-status
-    "gp" 'magit-dispatch-popup
     "got" 'soo-terminal-pop
     "gof" 'reveal-in-osx-finder
-    "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1)))
+    "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1))
+    "=" 'vinegar/dired-diff
+    "I" 'vinegar/dotfiles-toggle
+    "~" '(lambda () (interactive) (find-alternate-file "~/"))
+    "<return>" 'dired-find-file
+    "f" 'counsel-find-file
+    "J" 'dired-goto-file
+    "C-f" 'find-name-dired
+    "H" 'diredp-dired-recent-dirs
+    "T" 'dired-tree-down
+    "K" 'dired-do-kill-lines
+    "r" 'revert-buffer
+    "C-r" 'dired-do-redisplay)
   :init
   (add-hook 'dired-mode-hook #'soo--dired-setup)
   :config
