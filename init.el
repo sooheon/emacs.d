@@ -48,6 +48,7 @@
 (setq scroll-preserve-screen-position t)
 ;; (setq scroll-margin 3)
 ;; (setq scroll-conservatively 101)
+(setq lisp-indent-function 'Fuco1/lisp-indent-function)
 (csetq vc-follow-symlinks t)
 (csetq find-file-suppress-same-file-warnings t)
 (csetq read-file-name-completion-ignore-case t)
@@ -316,80 +317,38 @@
 (use-package dired
   :ensure nil
   :commands dired-jump
+  :general
+  (nmap "-" 'dired-jump)
+  (:keymaps 'dired-mode-map
+   "-" 'dired-jump
+   "=" 'vinegar/dired-diff
+   "I" 'vinegar/dotfiles-toggle
+   "~" '(lambda () (interactive) (find-alternate-file "~/"))
+   "RET" 'dired-find-file
+   "f" 'counsel-find-file
+   "J" 'dired-goto-file
+   "C-f" 'find-name-dired
+   "H" 'diredp-dired-recent-dirs
+   "T" 'dired-tree-down
+   "K" 'dired-do-kill-lines
+   "r" 'revert-buffer
+   "C-r" 'dired-do-redisplay)
+  (nmap :keymaps 'dired-mode-map
+    "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
+    "gs" 'magit-status
+    "gp" 'magit-dispatch-popup
+    "got" 'soo-terminal-pop
+    "gof" 'reveal-in-osx-finder
+    "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1)))
   :init
-  (define-key evil-normal-state-map "-" 'dired-jump)
   (add-hook 'dired-mode-hook #'soo--dired-setup)
   :config
+  (setq dired-listing-switches "-laGh1v --group-directories-first")
+  (defvar dired-dotfiles-show-p)
   (defun soo--dired-setup ()
     ;; (setq dired-omit-verbose nil)
     (setq dired-hide-details-hide-symlink-targets nil)
-    (dired-hide-details-mode t))
-  (setq dired-listing-switches "-laGh1v --group-directories-first")
-  (defvar dired-dotfiles-show-p)
-  (general-define-key :keymaps 'dired-mode-map
-                      "-" 'dired-jump)
-  (defun vinegar/dotfiles-toggle ()
-    "Show/hide dot-files"
-    (interactive)
-    (when (equal major-mode 'dired-mode)
-      (if (or (not (boundp 'dired-dotfiles-show-p)) dired-dotfiles-show-p) ; if currently showing
-          (progn
-            (set (make-local-variable 'dired-dotfiles-show-p) nil)
-            (message "h")
-            (dired-mark-files-regexp "^\\\.")
-            (dired-do-kill-lines))
-        (progn (revert-buffer)          ; otherwise just revert to re-show
-               (set (make-local-variable 'dired-dotfiles-show-p) t)))))
-  (defun vinegar/dired-diff ()
-    "Ediff marked files in dired or selected files in separate window"
-    (interactive)
-    (let* ((marked-files (dired-get-marked-files nil nil))
-           (other-win (get-window-with-predicate
-                       (lambda (window)
-                         (with-current-buffer (window-buffer window)
-                           (and (not (eq window (selected-window)))
-                                (eq major-mode 'dired-mode))))))
-           (other-marked-files (and other-win
-                                    (with-current-buffer (window-buffer other-win)
-                                      (dired-get-marked-files nil)))))
-      (cond ((= (length marked-files) 2)
-             (ediff-files (nth 0 marked-files)
-                          (nth 1 marked-files)))
-            ((= (length marked-files) 3)
-             (ediff-files3 (nth 0 marked-files)
-                           (nth 1 marked-files)
-                           (nth 2 marked-files)))
-            ((and (= (length marked-files) 1)
-                  (= (length other-marked-files) 1))
-             (ediff-files (nth 0 marked-files)
-                          (nth 0 other-marked-files)))
-            ((= (length marked-files) 1)
-             (call-interactively 'dired-diff))
-            (t (error "Mark exactly 2 files, at least 1 locally")))))
-  ;; (evilified-state-evilify dired-mode dired-mode-map
-  ;;  "j" 'dired-next-line
-  ;;   "k" 'dired-previous-line
-  ;;   "-" 'dired-jump
-  ;;   "0" 'dired-back-to-start-of-files
-  ;;   "=" 'vinegar/dired-diff
-  ;;   "I" 'vinegar/dotfiles-toggle
-  ;;   "~" '(lambda () (interactive) (find-alternate-file "~/"))
-  ;;   "RET" 'dired-find-file
-  ;;   "f" 'counsel-find-file
-  ;;   "J" 'dired-goto-file
-  ;;   "C-f" 'find-name-dired
-  ;;   "H" 'diredp-dired-recent-dirs
-  ;;   "T" 'dired-tree-down
-  ;;   "K" 'dired-do-kill-lines
-  ;;   "r" 'revert-buffer
-  ;;   "C-r" 'dired-do-redisplay
-  ;;   "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
-  ;;   "gs" 'magit-status
-  ;;   "gp" 'magit-dispatch-popup
-  ;;   "got" 'soo-terminal-pop
-  ;;   "gof" 'reveal-in-osx-finder
-  ;;   "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1)))
-  )
+    (dired-hide-details-mode t)))
 
 (use-package ediff
   :defer t
