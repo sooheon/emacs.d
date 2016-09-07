@@ -14,7 +14,7 @@
 (add-to-list 'load-path (expand-file-name "lib/org-mode/contrib/lisp" emacs-d))
 (add-to-list 'load-path (expand-file-name "lib/org-mode/lisp" emacs-d))
 (add-to-list 'load-path (expand-file-name "lisp/modes" emacs-d))
-(add-to-list 'load-path (expand-file-name "lisp/themes/" emacs-d))
+(add-to-list 'load-path (expand-file-name "lisp/themes" emacs-d))
 
 ;;** font
 (add-to-list 'default-frame-alist '(font . "Input Mono Narrow"))
