@@ -28,7 +28,9 @@
   :diminish hindent-mode
   :commands (hindent-reformat-buffer hindent-reformat-decl)
   :config
-  (evil-leader/set-key "=" 'hindent-reformat-buffer)
+  (nmap :prefix gen-leader
+        :keymaps 'hindent-mode-map
+        "=" 'hindent-reformat-buffer)
   (evil-define-key 'visual hindent-mode-map "=" 'hindent-reformat-region)
   (setq hindent-process-path "/Users/sooheon/.local/bin/hindent"))
 

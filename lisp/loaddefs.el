@@ -12,7 +12,7 @@
 ;;;***
 
 ;;;### (autoloads nil "modes/soo-haskell" "modes/soo-haskell.el"
-;;;;;;  (22469 54874 0 0))
+;;;;;;  (22479 39527 0 0))
 ;;; Generated autoloads from modes/soo-haskell.el
 
 (autoload 'soo-haskell-hook "modes/soo-haskell" "\
@@ -33,8 +33,8 @@
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22474
-;;;;;;  30559 0 0))
+;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22479
+;;;;;;  39388 0 0))
 ;;; Generated autoloads from modes/soo-python.el
 
 (autoload 'soo-python-hook "modes/soo-python" "\

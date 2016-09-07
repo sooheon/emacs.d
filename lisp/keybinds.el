@@ -9,7 +9,7 @@
 (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
 (set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
 
-(evil-leader/set-key
+(nmap :prefix gen-leader
   "t\C-o" 'sooheon--toggle-right-option-key
   "tl" 'global-hl-line-mode
   "sc" 'evil-ex-nohighlight

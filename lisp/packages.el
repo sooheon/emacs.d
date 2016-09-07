@@ -33,7 +33,6 @@
     evil-commentary
     evil-cleverparens
     evil-exchange
-    evil-leader
     evil-matchit
     evil-multiedit
     evil-numbers
@@ -47,6 +46,7 @@
     flycheck
     flyspell-correct
     function-args
+    general
     git-modes
     gist
     highlight-escape-sequences

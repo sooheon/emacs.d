@@ -3,7 +3,9 @@
   :init
   (add-hook 'rust-mode-hook #'eldoc-mode)
   :config
-  (evil-leader/set-key-for-mode 'rust-mode "=" 'rust-format-buffer))
+  (nmap :prefix gen-leader
+        :keymaps 'rust-mode-map
+        "=" 'rust-format-buffer))
 
 (use-package racer
   :diminish racer-mode

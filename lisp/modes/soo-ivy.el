@@ -16,7 +16,7 @@
          ("C-x C-l" . find-library)
          ("C-c o" . counsel-outline))
   :init
-  (evil-leader/set-key
+  (nmap :prefix gen-leader
     "r" 'counsel-recentf
     "hv" 'counsel-describe-variable
     "hf" 'counsel-describe-function
@@ -41,8 +41,9 @@
          ("C-c v" . ivy-push-view)
          ("C-c V" . ivy-pop-view))
   :init
-  (evil-leader/set-key "b" 'ivy-switch-buffer)
+  (nmap :prefix gen-leader "b" 'ivy-switch-buffer)
   :config
+  (ivy-mode 1)
   (require 'flx)
   ;; (defun switch-to-existing-buffer (orig-fun &rest args)
   ;;   (if-let ((win (get-buffer-window (car args))))
@@ -64,13 +65,14 @@
                                    (man . "^")
                                    (woman . "^"))
         ivy-action-wrap t
-        ivy-sort-matches-functions-alist '((t . nil)
-                                           (ivy-switch-buffer . ivy-sort-function-buffer)
-                                           (counsel-find-file . ivy-sort-function-buffer)))
-  (ivy-mode 1)
+        ivy-sort-matches-functions-alist
+        '((t . nil)
+          (ivy-switch-buffer . ivy-sort-function-buffer)
+          (counsel-find-file . ivy-sort-function-buffer)))
   (let ((m ivy-minibuffer-map))
     (define-key m [escape] 'minibuffer-keyboard-quit)
-    (define-key m (kbd "<s-backspace>") (lambda () (interactive) (kill-line 0))))
+    (define-key m (kbd "<s-backspace>")
+      (lambda () (interactive) (kill-line 0))))
 
   (require 'ivy-hydra)
   (define-key ivy-minibuffer-map "\C-o"

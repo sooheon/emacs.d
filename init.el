@@ -133,7 +133,11 @@
 (evil-define-key 'normal global-map "U" 'undo-tree-redo)
 (define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word)
 
-(use-package evil-leader :config (global-evil-leader-mode))
+(use-package general
+  :config
+  (general-evil-setup t)
+  (setq gen-leader "SPC"
+        general-vim-definer-default 'states))
 
 (use-package evil-commentary
   :diminish evil-commentary-mode
@@ -160,9 +164,6 @@
   (define-key evil-inner-text-objects-map "c" 'evil-cp-inner-comment)
   (define-key evil-outer-text-objects-map "d" 'evil-cp-a-defun)
   (define-key evil-inner-text-objects-map "d" 'evil-cp-inner-defun))
-
-(require 'evil-evilified-state)
-(define-key evil-evilified-state-map " " evil-leader--default-map)
 
 (use-package evil-exchange
   :diminish evil-exchange
@@ -244,7 +245,7 @@
   :bind (("s-g" . evil-avy-goto-word-1)
          ([remap goto-line] . evil-avy-goto-line))
   :init
-  (evil-leader/set-key "xo" 'spacemacs/avy-open-url)
+  (nvmap :prefix gen-leader "xo" 'spacemacs/avy-open-url)
   :config
   (setq avy-keys sooheon--avy-keys)
   (defun spacemacs/avy-goto-url ()
@@ -278,7 +279,7 @@
 (use-package artbollocks-mode
   :defer t
   :diminish (artbollocks-mode . "ab")
-  :init (evil-leader/set-key "ta" 'artbollocks-mode))
+  :init (nmap :prefix gen-leader "ta" 'artbollocks-mode))
 
 (use-package compile
   :defer t
@@ -332,6 +333,8 @@
     (dired-hide-details-mode t))
   (setq dired-listing-switches "-laGh1v --group-directories-first")
   (defvar dired-dotfiles-show-p)
+  (general-define-key :keymaps 'dired-mode-map
+                      "-" 'dired-jump)
   (defun vinegar/dotfiles-toggle ()
     "Show/hide dot-files"
     (interactive)
@@ -370,29 +373,30 @@
             ((= (length marked-files) 1)
              (call-interactively 'dired-diff))
             (t (error "Mark exactly 2 files, at least 1 locally")))))
-  (evilified-state-evilify dired-mode dired-mode-map
-    "j" 'dired-next-line
-    "k" 'dired-previous-line
-    "-" 'dired-jump
-    "0" 'dired-back-to-start-of-files
-    "=" 'vinegar/dired-diff
-    "I" 'vinegar/dotfiles-toggle
-    (kbd "~") '(lambda () (interactive) (find-alternate-file "~/"))
-    (kbd "RET") 'dired-find-file
-    "f" 'counsel-find-file
-    "J" 'dired-goto-file
-    (kbd "C-f") 'find-name-dired
-    "H" 'diredp-dired-recent-dirs
-    "T" 'dired-tree-down
-    "K" 'dired-do-kill-lines
-    "r" 'revert-buffer
-    (kbd "C-r") 'dired-do-redisplay
-    "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
-    "gs" 'magit-status
-    "gp" 'magit-dispatch-popup
-    "got" 'soo-terminal-pop
-    "gof" 'reveal-in-osx-finder
-    "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1))))
+  ;; (evilified-state-evilify dired-mode dired-mode-map
+  ;;  "j" 'dired-next-line
+  ;;   "k" 'dired-previous-line
+  ;;   "-" 'dired-jump
+  ;;   "0" 'dired-back-to-start-of-files
+  ;;   "=" 'vinegar/dired-diff
+  ;;   "I" 'vinegar/dotfiles-toggle
+  ;;   "~" '(lambda () (interactive) (find-alternate-file "~/"))
+  ;;   "RET" 'dired-find-file
+  ;;   "f" 'counsel-find-file
+  ;;   "J" 'dired-goto-file
+  ;;   "C-f" 'find-name-dired
+  ;;   "H" 'diredp-dired-recent-dirs
+  ;;   "T" 'dired-tree-down
+  ;;   "K" 'dired-do-kill-lines
+  ;;   "r" 'revert-buffer
+  ;;   "C-r" 'dired-do-redisplay
+  ;;   "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
+  ;;   "gs" 'magit-status
+  ;;   "gp" 'magit-dispatch-popup
+  ;;   "got" 'soo-terminal-pop
+  ;;   "gof" 'reveal-in-osx-finder
+  ;;   "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1)))
+  )
 
 (use-package ediff
   :defer t
@@ -426,7 +430,7 @@
                                             ;; "#lesswrong" "##crawl"
                                             )
                                  :nickserv-password "qwefasdf")))
-  (evil-leader/set-key "i" 'sooheon--switch-to-circe)
+  (nmap :prefix gen-leader "i" 'sooheon--switch-to-circe)
   (defun sooheon--switch-to-circe ()
     "Switch to CIRCE buffers using completing-read, or start
 CIRCE if no buffers open."
@@ -529,7 +533,7 @@ friend if it has the same major mode."
 (use-package info
   :ensure nil
   :config
-  (evil-leader/set-key "hi" 'info)
+  (nmap :prefix gen-leader "hi" 'info)
   (evil-set-initial-state 'Info-mode 'insert))
 
 ;;** Parens and lisp
@@ -649,7 +653,9 @@ Keep M-n and M-p reserved for history."
 (use-package magit
   :commands (magit-status magit-dispatch-popup)
   :init
-  (evil-leader/set-key "g" 'magit-status "G" 'magit-dispatch-popup)
+  (nmap :prefix gen-leader
+        "g" 'magit-status
+        "G" 'magit-dispatch-popup)
   :config
   (evil-set-initial-state 'magit-submodule-list-mode 'insert)
   (setq magit-display-buffer-function
@@ -708,21 +714,21 @@ Keep M-n and M-p reserved for history."
              counsel-projectile-ag)
   :bind (("C-c k" . counsel-projectile-ag))
   :init
-  (evil-leader/set-key
-    "pd" 'projectile-find-dir
-    "pD" 'projectile-dired
-    "p!" 'projectile-run-shell-command-in-root
-    "p&" 'projectile-run-async-shell-command-in-root
-    "p%" 'projectile-replace-regexp
-    "pk" 'projectile-kill-buffers
-    "pa" 'projectile-find-other-file
-    "pt" 'projectile-toggle-between-implementation-and-test
-    "po" 'projectile-multi-occur
-    "pR" 'projectile-replace
-    "pT" 'projectile-find-test-file
-    "pP" 'projectile-test-project
-    "pm" 'projectile-commander
-    "/" 'counsel-projectile-ag)
+  (nmap :prefix gen-leader
+        "pd" 'projectile-find-dir
+        "pD" 'projectile-dired
+        "p!" 'projectile-run-shell-command-in-root
+        "p&" 'projectile-run-async-shell-command-in-root
+        "p%" 'projectile-replace-regexp
+        "pk" 'projectile-kill-buffers
+        "pa" 'projectile-find-other-file
+        "pt" 'projectile-toggle-between-implementation-and-test
+        "po" 'projectile-multi-occur
+        "pR" 'projectile-replace
+        "pT" 'projectile-find-test-file
+        "pP" 'projectile-test-project
+        "pm" 'projectile-commander
+        "/" 'counsel-projectile-ag)
   :config
   (projectile-global-mode)
   (defun counsel-projectile-ag (&optional initial-input)
@@ -739,7 +745,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (use-package counsel-projectile
   :after projectile
   :init
-  (evil-leader/set-key
+  (nmap :prefix gen-leader
     "pp" 'counsel-projectile
     "pb" 'counsel-projectile-switch-to-buffer
     "pd" 'counsel-projectile-find-dir
@@ -788,7 +794,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :bind (("C-c t r" . rainbow-mode))
   :diminish rainbow-mode
   :init
-  (evil-leader/set-key "tr" #'rainbow-mode)
+  (nmap :prefix gen-leader "tr" #'rainbow-mode)
   (add-hook 'css-mode-hook #'rainbow-mode))
 
 (use-package recentf
@@ -898,8 +904,8 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package winner
   :init
-  (evil-define-key 'normal global-map (kbd "C-w u") 'winner-undo)
-  (evil-leader/set-key "wu" 'winner-undo)
+  (nmap "C-w u" 'winner-undo)
+  (nmap :prefix gen-leader "wu" 'winner-undo)
   (winner-mode t)
   (setq winner-boring-buffers
         (append winner-boring-buffers '("*Compile-Log*" "*inferior-lisp*"
@@ -909,13 +915,16 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (use-package shackle
   :config
   (defun shackle-smart-align ()
-    (if (< (window-width) 160) 'below 'right))
+    (if (< (window-width) 160)
+        'below
+      'right))
   (setq shackle-rules '((compilation-mode :noselect t)
-                        (help-mode :align shackle-smart-align :size 0.4)
+                        (help-mode :align shackle-smart-align :size 0.42)
                         (undo-tree-visualizer-mode :align t :size 0.3)
                         (woman-mode :popup t)
                         (flycheck-error-list-mode :select t)
-                        (cargo-process-mode :align t :size 0.3))
+                        (cargo-process-mode :align t :size 0.3)
+                        (ivy-occur-mode :select t))
         shackle-select-reused-windows t)
   (shackle-mode 1))
 
@@ -946,7 +955,8 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :commands (soo-er-and-insert er/expand-region)
   :init
   (bind-key (kbd "M-2") 'soo-er-and-insert)
-  (evil-leader/set-key "v" 'er/expand-region)
+  (nmap :prefix gen-leader
+        "v" 'er/expand-region)
   :config
   (defun soo-er-and-insert (arg)
     (interactive "p")

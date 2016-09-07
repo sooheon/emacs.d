@@ -115,4 +115,6 @@ buffer."
 (use-package py-yapf
   :commands py-yapf-buffer
   :init
-  (evil-leader/set-key-for-mode 'python-mode "=" 'py-yapf-buffer))
+  (nmap :prefix gen-leader
+        :keymaps 'python-mode-map
+        "=" 'py-yapf-buffer))
