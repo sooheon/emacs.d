@@ -9,7 +9,7 @@
 (global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
 (set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
 
-(nmap :prefix gen-leader
+(nmap :prefix "SPC"
   "t\C-o" 'sooheon--toggle-right-option-key
   "tl" 'global-hl-line-mode
   "sc" 'evil-ex-nohighlight
@@ -38,7 +38,8 @@
 
 (global-set-key [remap fill-paragraph] 'endless/fill-or-unfill)
 
-(define-key evil-normal-state-map "got" 'soo-terminal-pop)
+(nmap "goT" 'soo-terminal-pop
+      "got" 'soo-terminal-focus)
 
 (setq mac-option-modifier 'meta
       mac-command-modifier 'super)

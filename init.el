@@ -136,8 +136,7 @@
 (use-package general
   :config
   (general-evil-setup t)
-  (setq gen-leader "SPC"
-        general-vim-definer-default 'states))
+  (setq general-vim-definer-default 'states))
 
 (use-package evil-commentary
   :diminish evil-commentary-mode
@@ -245,7 +244,7 @@
   :bind (("s-g" . evil-avy-goto-word-1)
          ([remap goto-line] . evil-avy-goto-line))
   :init
-  (nvmap :prefix gen-leader "xo" 'spacemacs/avy-open-url)
+  (nvmap :prefix "SPC" "xo" 'spacemacs/avy-open-url)
   :config
   (setq avy-keys sooheon--avy-keys)
   (defun spacemacs/avy-goto-url ()
@@ -279,7 +278,7 @@
 (use-package artbollocks-mode
   :defer t
   :diminish (artbollocks-mode . "ab")
-  :init (nmap :prefix gen-leader "ta" 'artbollocks-mode))
+  :init (nmap :prefix "SPC" "ta" 'artbollocks-mode))
 
 (use-package compile
   :defer t
@@ -430,7 +429,7 @@
                                             ;; "#lesswrong" "##crawl"
                                             )
                                  :nickserv-password "qwefasdf")))
-  (nmap :prefix gen-leader "i" 'sooheon--switch-to-circe)
+  (nmap :prefix "SPC" "i" 'sooheon--switch-to-circe)
   (defun sooheon--switch-to-circe ()
     "Switch to CIRCE buffers using completing-read, or start
 CIRCE if no buffers open."
@@ -533,7 +532,7 @@ friend if it has the same major mode."
 (use-package info
   :ensure nil
   :config
-  (nmap :prefix gen-leader "hi" 'info)
+  (nmap :prefix "SPC" "hi" 'info)
   (evil-set-initial-state 'Info-mode 'insert))
 
 ;;** Parens and lisp
@@ -653,7 +652,7 @@ Keep M-n and M-p reserved for history."
 (use-package magit
   :commands (magit-status magit-dispatch-popup)
   :init
-  (nmap :prefix gen-leader
+  (nmap :prefix "SPC"
         "g" 'magit-status
         "G" 'magit-dispatch-popup)
   :config
@@ -714,7 +713,7 @@ Keep M-n and M-p reserved for history."
              counsel-projectile-ag)
   :bind (("C-c k" . counsel-projectile-ag))
   :init
-  (nmap :prefix gen-leader
+  (nmap :prefix "SPC"
         "pd" 'projectile-find-dir
         "pD" 'projectile-dired
         "p!" 'projectile-run-shell-command-in-root
@@ -745,7 +744,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (use-package counsel-projectile
   :after projectile
   :init
-  (nmap :prefix gen-leader
+  (nmap :prefix "SPC"
     "pp" 'counsel-projectile
     "pb" 'counsel-projectile-switch-to-buffer
     "pd" 'counsel-projectile-find-dir
@@ -794,7 +793,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :bind (("C-c t r" . rainbow-mode))
   :diminish rainbow-mode
   :init
-  (nmap :prefix gen-leader "tr" #'rainbow-mode)
+  (nmap :prefix "SPC" "tr" #'rainbow-mode)
   (add-hook 'css-mode-hook #'rainbow-mode))
 
 (use-package recentf
@@ -812,7 +811,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (use-package reveal-in-osx-finder
   :if (eq system-type 'darwin)
   :commands reveal-in-osx-finder
-  :init (define-key evil-normal-state-map "gof" 'reveal-in-osx-finder))
+  :init (nmap "gof" 'reveal-in-osx-finder))
 
 (use-package savehist :ensure nil :config (savehist-mode))
 
@@ -874,6 +873,8 @@ INITIAL-INPUT can be given as the initial minibuffer input."
         ;; undo-tree-visualizer-diff t
         undo-tree-auto-save-history t))
 
+(use-package wgrep :defer t)
+
 (use-package which-key
   :diminish which-key-mode
   :init
@@ -905,7 +906,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (use-package winner
   :init
   (nmap "C-w u" 'winner-undo)
-  (nmap :prefix gen-leader "wu" 'winner-undo)
+  (nmap :prefix "SPC" "wu" 'winner-undo)
   (winner-mode t)
   (setq winner-boring-buffers
         (append winner-boring-buffers '("*Compile-Log*" "*inferior-lisp*"
@@ -955,7 +956,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :commands (soo-er-and-insert er/expand-region)
   :init
   (bind-key (kbd "M-2") 'soo-er-and-insert)
-  (nmap :prefix gen-leader
+  (nmap :prefix "SPC"
         "v" 'er/expand-region)
   :config
   (defun soo-er-and-insert (arg)

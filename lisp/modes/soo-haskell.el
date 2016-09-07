@@ -28,7 +28,7 @@
   :diminish hindent-mode
   :commands (hindent-reformat-buffer hindent-reformat-decl)
   :config
-  (nmap :prefix gen-leader
+  (nmap :prefix "SPC"
         :keymaps 'hindent-mode-map
         "=" 'hindent-reformat-buffer)
   (evil-define-key 'visual hindent-mode-map "=" 'hindent-reformat-region)

@@ -115,6 +115,6 @@ buffer."
 (use-package py-yapf
   :commands py-yapf-buffer
   :init
-  (nmap :prefix gen-leader
+  (nmap :prefix "SPC"
         :keymaps 'python-mode-map
         "=" 'py-yapf-buffer))

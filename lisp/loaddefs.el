@@ -12,7 +12,7 @@
 ;;;***
 
 ;;;### (autoloads nil "modes/soo-haskell" "modes/soo-haskell.el"
-;;;;;;  (22479 39527 0 0))
+;;;;;;  (22479 41727 0 0))
 ;;; Generated autoloads from modes/soo-haskell.el
 
 (autoload 'soo-haskell-hook "modes/soo-haskell" "\
@@ -22,7 +22,7 @@
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22470 65342
+;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22479 37289
 ;;;;;;  0 0))
 ;;; Generated autoloads from modes/soo-org.el
 
@@ -34,7 +34,7 @@
 ;;;***
 
 ;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22479
-;;;;;;  39388 0 0))
+;;;;;;  41725 0 0))
 ;;; Generated autoloads from modes/soo-python.el
 
 (autoload 'soo-python-hook "modes/soo-python" "\
@@ -45,11 +45,11 @@
 ;;;***
 
 ;;;### (autoloads nil nil ("custom.el" "keybinds.el" "modes/soo-ivy.el"
-;;;;;;  "modes/soo-rust.el" "packages.el") (22472 30767 0 0))
+;;;;;;  "modes/soo-rust.el" "packages.el") (22479 42090 0 0))
 
 ;;;***
 
-;;;### (autoloads nil "auto" "auto.el" (22466 53145 0 0))
+;;;### (autoloads nil "auto" "auto.el" (22479 42401 0 0))
 ;;; Generated autoloads from auto.el
 
 (autoload 'smart-move-beginning-of-line "auto" "\
@@ -73,7 +73,17 @@ window. If there is only one window in frame, call
 
 \(fn &optional WINDOW)" t nil)
 
+(autoload 'soo-terminal-focus "auto" "\
+
+
+\(fn)" t nil)
+
 (autoload 'soo-terminal-pop "auto" "\
+
+
+\(fn)" t nil)
+
+(autoload 'soo-terminal-pop-new-tab "auto" "\
 
 
 \(fn)" t nil)

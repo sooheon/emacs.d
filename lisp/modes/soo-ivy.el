@@ -16,7 +16,7 @@
          ("C-x C-l" . find-library)
          ("C-c o" . counsel-outline))
   :init
-  (nmap :prefix gen-leader
+  (nmap :prefix "SPC"
     "r" 'counsel-recentf
     "hv" 'counsel-describe-variable
     "hf" 'counsel-describe-function
@@ -41,7 +41,7 @@
          ("C-c v" . ivy-push-view)
          ("C-c V" . ivy-pop-view))
   :init
-  (nmap :prefix gen-leader "b" 'ivy-switch-buffer)
+  (nmap :prefix "SPC" "b" 'ivy-switch-buffer)
   :config
   (ivy-mode 1)
   (require 'flx)

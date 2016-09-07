@@ -3,7 +3,7 @@
   :init
   (add-hook 'rust-mode-hook #'eldoc-mode)
   :config
-  (nmap :prefix gen-leader
+  (nmap :prefix "SPC"
         :keymaps 'rust-mode-map
         "=" 'rust-format-buffer))
 
