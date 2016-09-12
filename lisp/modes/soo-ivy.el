@@ -45,20 +45,17 @@
   :config
   (ivy-mode 1)
   (require 'flx)
-  ;; (defun switch-to-existing-buffer (orig-fun &rest args)
-  ;;   (if-let ((win (get-buffer-window (car args))))
-  ;;       (select-window win)
-  ;;     (apply orig-fun args)))
-  ;; (advice-add 'ivy--switch-buffer-action :around #'switch-to-existing-buffer)
   (setq ivy-extra-directories '("./")
         ivy-use-virtual-buffers t
         ivy-count-format "%d "
         ivy-height 12
         ivy-re-builders-alist '((counsel-M-x . ivy--regex-fuzzy)
-                                ;; (t . ivy--regex-plus)
-                                (swiper . ivy--regex-plus)
-                                (counsel-recentf . ivy--regex-plus)
-                                (t . ivy--regex-fuzzy))
+                                (t . ivy--regex-plus)
+                                ;; (swiper . ivy--regex-plus)
+                                ;; (counsel-recentf . ivy--regex-plus)
+                                ;; (wspecial-worf-goto . ivy--regex-plus)
+                                ;; (t . ivy--regex-fuzzy)
+                                )
         ivy-initial-inputs-alist '((org-refile . "^")
                                    (org-agenda-refile . "^")
                                    (org-capture-refile . "^")

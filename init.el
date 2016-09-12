@@ -78,10 +78,6 @@
 ;;** shell
 (csetq shell-file-name "/usr/local/bin/fish")
 (csetq explicit-shell-file-name "/usr/local/bin/fish")
-;;** Set PATHs--see: http://tinyurl.com/ctf9h3a
-;; (setenv "PATH" "/Users/sooheon/.cabal/bin:/Users/sooheon/.local/bin:/usr/local/Cellar/pyenv-virtualenv/20160315/shims:/Users/sooheon/.pyenv/shims:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/Library/TeX/texbin")
-;; (setenv "MANPATH" "/usr/local/opt/coreutils/libexec/gnuman:/usr/local/opt/findutils/libexec/gnuman:/usr/local/share/man")
-;; (setq exec-path '("/Users/sooheon/.cabal/bin" "/Users/sooheon/.local/bin" "/usr/local/Cellar/pyenv-virtualenv/20160315/shims" "/Users/sooheon/.pyenv/shims" "/usr/local/opt/coreutils/libexec/gnubin" "/usr/local/opt/findutils/libexec/gnubin" "/usr/local/bin" "/usr/bin" "/bin" "/usr/sbin" "/sbin" "/opt/X11/bin" "/Library/TeX/texbin" "/usr/local/Cellar/emacs/HEAD/libexec/emacs/25.1.50/x86_64-apple-darwin15.5.0"))
 
 ;; Use right command as control
 (setq mac-right-command-modifier 'control)
@@ -145,19 +141,13 @@
                  "gy" 'evil-commentary-yank))
 
 (use-package evil-cleverparens
-  :commands (evil-cp-a-form
-             evil-cp-inner-form
-             evil-cp-a-comment
-             evil-cp-inner-comment
-             evil-cp-a-defun
-             evil-cp-inner-defun)
-  :init
-  (define-key evil-outer-text-objects-map "f" 'evil-cp-a-form)
-  (define-key evil-inner-text-objects-map "f" 'evil-cp-inner-form)
-  (define-key evil-outer-text-objects-map "c" 'evil-cp-a-comment)
-  (define-key evil-inner-text-objects-map "c" 'evil-cp-inner-comment)
-  (define-key evil-outer-text-objects-map "d" 'evil-cp-a-defun)
-  (define-key evil-inner-text-objects-map "d" 'evil-cp-inner-defun))
+  :general
+  (otomap "f" 'evil-cp-a-form
+          "c" 'evil-cp-a-comment
+          "d" 'evil-cp-a-defun)
+  (itomap "f" 'evil-cp-inner-form
+          "c" 'evil-cp-inner-comment
+          "d" 'evil-cp-inner-defun))
 
 (use-package evil-exchange
   :diminish evil-exchange
@@ -171,26 +161,23 @@
   :init (add-hook 'html-mode-hook 'turn-on-evil-matchit-mode))
 
 (use-package evil-textobj-anyblock
-  :commands (evil-textobj-anyblock-inner-block evil-textobj-anyblock-a-block)
-  :init
-  (define-key evil-inner-text-objects-map
-    "b" 'evil-textobj-anyblock-inner-block)
-  (define-key evil-outer-text-objects-map
-    "b" 'evil-textobj-anyblock-a-block))
+  :general
+  (itomap "b" 'evil-textobj-anyblock-inner-block)
+  (otomap "b" 'evil-textobj-anyblock-a-block))
 
 (use-package evil-visualstar
-  :commands (evil-visualstar/begin-search-forward
-             evil-visualstar/begin-search-backward)
-  :init
-  (define-key evil-visual-state-map "*" 'evil-visualstar/begin-search-forward)
-  (define-key evil-visual-state-map "#" 'evil-visualstar/begin-search-backward))
+  :general
+  (vmap "*" 'evil-visualstar/begin-search-forward
+        "#" 'evil-visualstar/begin-search-backward))
 
 (use-package evil-surround
+  :general
+  (vmap :keymaps 'evil-surround-mode-map
+    "s" 'evil-surround-region
+    "gs" 'evil-Surround-region
+    "S" 'evil-substitute)
   :config
   (global-evil-surround-mode 1)
-  (evil-define-key 'visual evil-surround-mode-map "s" 'evil-surround-region)
-  (evil-define-key 'visual evil-surround-mode-map "gs" 'evil-Surround-region)
-  (evil-define-key 'visual evil-surround-mode-map "S" 'evil-substitute)
   (add-hook 'emacs-lisp-mode-hook
             (lambda ()
               (push '(?` . ("`" . "'")) evil-surround-pairs-alist))))
@@ -255,9 +242,9 @@
 
 (use-package ace-link
   :commands (ace-link-info ace-link-woman ace-link-help ace-link-custom)
-  :init
-  (define-key help-mode-map "o" 'ace-link-help)
-  (evil-define-key 'normal global-map (kbd "s-o") 'ace-link-addr)
+  :general
+  (:keymaps 'help-mode-map "o" 'ace-link-help)
+  (nmap "s-o" 'ace-link-addr)
   :config
   (ace-link-setup-default))
 
@@ -271,9 +258,8 @@
         ))
 
 (use-package artbollocks-mode
-  :defer t
   :diminish (artbollocks-mode . "ab")
-  :init (nmap :prefix "SPC" "ta" 'artbollocks-mode))
+  :general (nmap :prefix "SPC" "ta" 'artbollocks-mode))
 
 (use-package compile
   :defer t
@@ -364,22 +350,23 @@
 (use-package elisp-slime-nav
   :diminish elisp-slime-nav-mode
   :commands elisp-slime-nav-describe-elisp-thing-at-point
-  :init
-  (evil-define-key 'normal emacs-lisp-mode-map
+  :general
+  (nmap :keymaps 'emacs-lisp-mode-map
     "K" 'elisp-slime-nav-describe-elisp-thing-at-point)
-  (evil-define-key 'normal lisp-interaction-mode-map
+  (nmap :keymaps 'lisp-interaction-mode-map
     "K" 'elisp-slime-nav-describe-elisp-thing-at-point))
 
 (use-package circe
   :defer t
+  :general
+  (nmap :prefix "SPC" "i" 'sooheon--switch-to-circe)
   :init
   (setq circe-network-options '(("Freenode"
                                  :nick "sooheon"
-                                 :channels ("#emacs" "#clojure" "#haskell"
-                                            ;; "#lesswrong" "##crawl"
+                                 :channels ("#emacs" "#clojure" "#haskell" "##crawl"
+                                            ;; "#lesswrong"
                                             )
                                  :nickserv-password "qwefasdf")))
-  (nmap :prefix "SPC" "i" 'sooheon--switch-to-circe)
   (defun sooheon--switch-to-circe ()
     "Switch to CIRCE buffers using completing-read, or start
 CIRCE if no buffers open."
@@ -445,8 +432,8 @@ friend if it has the same major mode."
 (use-package flyspell-correct
   :disabled t
   :after flyspell
+  :general (:keymaps 'flyspell-mode-map "C-;" 'flyspell-correct-word-generic)
   :config
-  (define-key flyspell-mode-map (kbd "C-;") 'flyspell-correct-word-generic)
   (setq flyspell-correct-interface 'flyspell-correct-ivy))
 
 (use-package speck
@@ -489,6 +476,18 @@ friend if it has the same major mode."
 (use-package smartparens
   :diminish (smartparens-mode . "sp")
   :defer t
+  :general
+  (:keymaps 'smartparens-mode-map
+   "M-a" 'sp-beginning-of-sexp
+   "M-e" 'soo-end-of-sexp-or-next
+   [C-backspace] 'sp-backward-kill-sexp
+   "C-)" 'sp-forward-slurp-sexp
+   "C-(" 'sp-backward-slurp-sexp
+   "C-{" 'sp-backward-barf-sexp
+   "C-}" 'sp-forward-barf-sexp)
+  (nmap :keymaps 'smartparens-mode-map
+    "M-i" 'soo-insert-at-bos
+    "M-a" 'soo-insert-at-eos)
   :init
   (add-hook 'prog-mode-hook 'smartparens-strict-mode)
   (add-hook 'smartparens-strict-mode-hook 'show-smartparens-mode)
@@ -511,22 +510,34 @@ friend if it has the same major mode."
     (progn (sp-beginning-of-sexp) (evil-insert-state)))
   (defun soo-insert-at-eos ()
     (interactive)
-    (progn (sp-end-of-sexp) (evil-insert-state)))
-  (let ((m smartparens-mode-map))
-    (define-key m (kbd "M-a") 'sp-beginning-of-sexp)
-    (define-key m (kbd "M-e") 'soo-end-of-sexp-or-next)
-    (define-key m [C-backspace] 'sp-backward-kill-sexp)
-    (define-key m (kbd "C-)") 'sp-forward-slurp-sexp)
-    (define-key m (kbd "C-(") 'sp-backward-slurp-sexp)
-    (define-key m (kbd "C-{") 'sp-backward-barf-sexp)
-    (define-key m (kbd "C-}") 'sp-forward-barf-sexp))
-  (evil-define-key 'normal smartparens-mode-map
-    "\M-i" 'soo-insert-at-bos
-    "\M-a" 'soo-insert-at-eos))
+    (progn (sp-end-of-sexp) (evil-insert-state))))
 
 (use-package lispy
   :diminish lispy-mode
   :defer t
+  :general
+  (:keymaps 'lispy-mode-map-paredit
+   "C-a" nil
+   "M-j" 'lispy-split
+   "M-k" 'lispy-kill-sentence
+   [M-up] 'sp-splice-sexp-killing-backward
+   [M-down] 'sp-splice-sexp-killing-forward
+   ;; (define-key map (kbd "C-,") 'lispy-kill-at-point)
+   "M-n" nil                            ; lispy left
+   "M-p" nil
+   "\"" 'lispy-doublequote
+   "C-d" 'lispy-delete
+   "M-S" 'sp-splice-sexp-killing-backward
+   "M-)" nil
+   "DEL" 'lispy-delete-backward
+   "C-)" nil
+   "C-(" nil
+   "C-}" nil
+   "C-{" nil)
+  ;; Unbind M-k and M-. in evil normal state and use lispy
+  (:keymaps 'evil-normal-state-map
+   "M-." nil                            ; evil-repeat-pop-next
+   "M-k" nil)
   :init
   (defun conditionally-enable-lispy ()
     "Enable `lispy-mode' in the minibuffer, during `eval-expression'."
@@ -536,8 +547,8 @@ friend if it has the same major mode."
   (defun toggle-lispy-for-lisps (arg)
     (lambda () (when (member major-mode sp-lisp-modes) (lispy-mode arg))))
   (add-hook 'smartparens-enabled-hook (toggle-lispy-for-lisps 1))
-  (add-hook 'smartparens-disabled-hook (toggle-lispy-for-lisps -1))
-  (csetq iedit-toggle-key-default nil)   ; Don't want to use iedit
+  (add-hook 'smartparens-disabled-hook (toggle-lispy-for-lisps -1)) (csetq iedit-toggle-key-default nil)
+                                        ; Don't want to use iedit
   :config
   (lispy-set-key-theme '(special c-digits paredit))
   (setq lispy-compat '(edebug cider)
@@ -551,38 +562,16 @@ friend if it has the same major mode."
         lispy-comment-use-single-semicolon t)
   (add-to-list 'lispy-parens-preceding-syntax-alist
                '(clojurescript-mode . ("[`'~@]+" "\\|" "#" "\\|" "#\\?@?")))
-  (let ((map lispy-mode-map-paredit))
-    (define-key map (kbd "C-a") nil)
-    (define-key map "\M-j" 'lispy-split)
-    (define-key map "\M-k" 'lispy-kill-sentence)
-    (define-key map [M-up] 'sp-splice-sexp-killing-backward)
-    (define-key map [M-down] 'sp-splice-sexp-killing-forward)
-    ;; (define-key map (kbd "C-,") 'lispy-kill-at-point)
-    (define-key map "\M-n" nil)         ; lispy left
-    (define-key map "\M-p" nil)
-    (define-key map "\"" 'lispy-doublequote) ; lispy-doublequote
-    (define-key map "\C-d" 'lispy-delete)
-    (define-key map "\M-S" 'sp-splice-sexp-killing-backward)
-    (define-key map (kbd "M-)") nil)
-    (define-key map (kbd "DEL") 'lispy-delete-backward)
-    (define-key map (kbd "C-)") nil)
-    (define-key map (kbd "C-(") nil)
-    (define-key map (kbd "C-}") nil)
-    (define-key map (kbd "C-{") nil))
   (lispy-define-key lispy-mode-map-special ">" 'lispy-slurp-or-barf-right)
-  (lispy-define-key lispy-mode-map-special "<" 'lispy-slurp-or-barf-left)
-  ;; Unbind M-k and M-. in evil normal state and use lispy
-  (define-key evil-normal-state-map "\M-." nil) ; evil-repeat-pop-next
-  (define-key evil-normal-state-map "\M-k" nil))
+  (lispy-define-key lispy-mode-map-special "<" 'lispy-slurp-or-barf-left))
 
 (use-package lispyville
   :diminish lispyville-mode
-  :commands (lispyville-delete
-             lispyville-delete-char-or-splice
-             lispyville-drag-forward
-             lispyville-drag-backward)
-  ;; esc from an emacs style mark enters normal state, not visual state.
-  :general ([remap evil-normal-state] 'lispyville-normal-state)
+  :general
+  ([remap evil-normal-state] 'lispyville-normal-state)
+  (:keymaps 'lispyville-mode-map
+   "M-n" 'lispyville-drag-forward
+   "M-p" 'lispyville-drag-backward)
   :init
   (defun conditionally-enable-lispyville ()
     "Only turn on lispyville outside of REPLs.
@@ -590,14 +579,11 @@ Keep M-n and M-p reserved for history."
     (unless (or (memq major-mode '(cider-repl-mode))
                 (eq this-command 'eval-expression))
       (lispyville-mode 1)))
-  (add-hook 'lispy-mode-hook 'conditionally-enable-lispyville)
+  (add-hook 'lispy-mode-hook #'conditionally-enable-lispyville)
   (setq lispyville-key-theme '(operators
                                escape
                                slurp/barf-cp)
-        lispyville-barf-stay-with-closing t)
-  :config
-  (define-key lispyville-mode-map "\M-n" 'lispyville-drag-forward)
-  (define-key lispyville-mode-map "\M-p" 'lispyville-drag-backward))
+        lispyville-barf-stay-with-closing t))
 
 (use-package magit
   :commands (magit-status magit-dispatch-popup)
@@ -619,17 +605,15 @@ Keep M-n and M-p reserved for history."
 
 (use-package markdown-mode
   :mode ("\\.m[k]d" . markdown-mode)
-  :defer t
-  :config
-  (add-hook 'markdown-mode-hook (lambda () (auto-fill-mode 1)))
-
-  ;; Header navigation in normal state movements
-  (evil-define-key 'normal markdown-mode-map
+  :general
+  (nmap :keymaps 'markdown-mode-map
     "gj" 'outline-forward-same-level
     "gk" 'outline-backward-same-level
     "gh" 'outline-up-heading
     ;; next visible heading is not exactly what we want but close enough
-    "gl" 'outline-next-visible-heading))
+    "gl" 'outline-next-visible-heading)
+  :config
+  (add-hook 'markdown-mode-hook (lambda () (auto-fill-mode 1))))
 
 (use-package super-save
   :diminish super-save-mode
@@ -661,23 +645,23 @@ Keep M-n and M-p reserved for history."
              projectile-dired
              projectile-recentf
              counsel-projectile-ag)
-  :general ("C-c k" 'counsel-projectile-ag)
-  :init
+  :general
+  ("C-c k" 'counsel-projectile-ag)
   (nmap :prefix "SPC"
-        "pd" 'projectile-find-dir
-        "pD" 'projectile-dired
-        "p!" 'projectile-run-shell-command-in-root
-        "p&" 'projectile-run-async-shell-command-in-root
-        "p%" 'projectile-replace-regexp
-        "pk" 'projectile-kill-buffers
-        "pa" 'projectile-find-other-file
-        "pt" 'projectile-toggle-between-implementation-and-test
-        "po" 'projectile-multi-occur
-        "pR" 'projectile-replace
-        "pT" 'projectile-find-test-file
-        "pP" 'projectile-test-project
-        "pm" 'projectile-commander
-        "/" 'counsel-projectile-ag)
+    "pd" 'projectile-find-dir
+    "pD" 'projectile-dired
+    "p!" 'projectile-run-shell-command-in-root
+    "p&" 'projectile-run-async-shell-command-in-root
+    "p%" 'projectile-replace-regexp
+    "pk" 'projectile-kill-buffers
+    "pa" 'projectile-find-other-file
+    "pt" 'projectile-toggle-between-implementation-and-test
+    "po" 'projectile-multi-occur
+    "pR" 'projectile-replace
+    "pT" 'projectile-find-test-file
+    "pP" 'projectile-test-project
+    "pm" 'projectile-commander
+    "/" 'counsel-projectile-ag)
   :config
   (projectile-global-mode)
   (defun counsel-projectile-ag (&optional initial-input)
@@ -740,10 +724,11 @@ INITIAL-INPUT can be given as the initial minibuffer input."
       "run ag in project"))))
 
 (use-package rainbow-mode
-  :general ("C-c t r" 'rainbow-mode)
+  :general
+  ("C-c t r" 'rainbow-mode)
+  (nmap :prefix "SPC" "tr" #'rainbow-mode)
   :diminish rainbow-mode
   :init
-  (nmap :prefix "SPC" "tr" #'rainbow-mode)
   (add-hook 'css-mode-hook #'rainbow-mode))
 
 (use-package recentf
@@ -760,8 +745,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package reveal-in-osx-finder
   :if (eq system-type 'darwin)
-  :commands reveal-in-osx-finder
-  :init (nmap "gof" 'reveal-in-osx-finder))
+  :general (nmap "gof" 'reveal-in-osx-finder))
 
 (use-package savehist :ensure nil :config (savehist-mode))
 
@@ -772,21 +756,19 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package sentence-navigation
   :defer t
-  :init
-  (define-key evil-normal-state-map ")" 'sentence-nav-evil-forward)
-  (define-key evil-normal-state-map "(" 'sentence-nav-evil-backward)
-  (define-key evil-motion-state-map ")" 'sentence-nav-evil-forward)
-  (define-key evil-motion-state-map "(" 'sentence-nav-evil-backward)
-  (define-key evil-normal-state-map "g)" 'sentence-nav-evil-forward-end)
-  (define-key evil-normal-state-map "g(" 'sentence-nav-evil-backward-end)
-  (define-key evil-outer-text-objects-map "s" 'sentence-nav-evil-outer-sentence)
-  (define-key evil-inner-text-objects-map "s" 'sentence-nav-evil-inner-sentence)
-  (bind-key "M-e" 'sentence-nav-forward)
-  (bind-key "M-a" 'sentence-nav-backward))
+  :general
+  (mmap ")" 'sentence-nav-evil-forward
+        "(" 'sentence-nav-evil-backward)
+  (nmap "g)" 'sentence-nav-evil-forward-end
+        "g(" 'sentence-nav-evil-backward-end)
+  (otomap "s" 'sentence-nav-evil-a-sentence)
+  (itomap "s" 'sentence-nav-evil-inner-sentence))
 
 (use-package semantic
   :defer t
-  :init (semantic-mode -1))
+  :init
+  (add-hook 'emacs-lisp-mode-hook (lambda () (semantic-mode -1)))
+  (add-hook 'lisp-interaction-mode-hook (lambda () (semantic-mode -1))))
 
 (use-package shell-pop
   :general ("s-`" 'shell-pop)
@@ -795,15 +777,16 @@ INITIAL-INPUT can be given as the initial minibuffer input."
         shell-pop-window-height 30
         shell-pop-full-span t
         shell-pop-shell-type '("terminal" "*terminal*"
-                               (lambda () (term explicit-shell-file-name))))
+                               (lambda () (term explicit-shell-file-name)))))
+
+(use-package term
+  :general
+  (:keymaps 'term-raw-map "s-v" 'term-paste)
+  (nmap :keymaps 'term-raw-map "p" 'term-paste)
   :config
-  (use-package term
-    :config
-    (setq term-suppress-hard-newline nil
-          term-scroll-to-bottom-on-output t)
-    (define-key term-raw-map (kbd "s-v") 'term-paste)
-    (evil-define-key 'normal term-raw-map "p" 'term-paste)
-    (add-hook 'term-mode-hook (lambda () (toggle-truncate-lines 1)))))
+  (setq term-suppress-hard-newline nil
+        term-scroll-to-bottom-on-output t)
+  (add-hook 'term-mode-hook (lambda () (toggle-truncate-lines 1))))
 
 (use-package typo
   :disabled t
@@ -832,31 +815,21 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (which-key-mode 1))
 
 (use-package window-numbering
-  :general ("s-0" 'select-window-0
-            "s-1" 'select-window-1
-            "s-2" 'select-window-2
-            "s-3" 'select-window-3
-            "s-4" 'select-window-4
-            "s-5" 'select-window-5
-            "s-6" 'select-window-6)
+  :general
+  (:keymaps 'window-numbering-keymap
+   "M-0" nil "M-1" nil "M-2" nil "M-3" nil "M-4" nil
+   "M-5" nil "M-6" nil "M-7" nil "M-8" nil "M-9" nil)
+  ("s-0" 'select-window-0 "s-1" 'select-window-1 "s-2" 'select-window-2
+   "s-3" 'select-window-3 "s-4" 'select-window-4 "s-5" 'select-window-5
+   "s-6" 'select-window-6)
   :config
-  (let ((m window-numbering-keymap))
-    (define-key m "\M-0" nil)
-    (define-key m "\M-1" nil)
-    (define-key m "\M-2" nil)
-    (define-key m "\M-3" nil)
-    (define-key m "\M-4" nil)
-    (define-key m "\M-5" nil)
-    (define-key m "\M-6" nil)
-    (define-key m "\M-7" nil)
-    (define-key m "\M-8" nil)
-    (define-key m "\M-9" nil))
   (window-numbering-mode 1))
 
 (use-package winner
-  :init
+  :general
   (nmap "C-w u" 'winner-undo)
   (nmap :prefix "SPC" "wu" 'winner-undo)
+  :init
   (winner-mode t)
   (setq winner-boring-buffers
         (append winner-boring-buffers '("*Compile-Log*" "*inferior-lisp*"
@@ -887,10 +860,11 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (use-package simple
   :ensure nil
   :diminish visual-line-mode
-  :init
-  (evil-define-minor-mode-key 'motion 'visual-line-mode
+  :general
+  (mmap :keymaps 'visual-line-mode
     "k" 'evil-previous-visual-line
     "j" 'evil-next-visual-line)
+  :init
   (add-hook 'visual-line-mode-hook 'evil-normalize-keymaps)
   :config
   (evil-set-initial-state 'messages-buffer-mode 'insert)
@@ -903,11 +877,10 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (bind-key [remap just-one-space] #'cycle-spacing)
 
 (use-package expand-region
-  :commands (soo-er-and-insert er/expand-region)
-  :init
-  (bind-key (kbd "M-2") 'soo-er-and-insert)
+  :general
+  ("M-2" 'soo-er-and-insert)
   (nmap :prefix "SPC"
-        "v" 'er/expand-region)
+    "v" 'er/expand-region)
   :config
   (defun soo-er-and-insert (arg)
     (interactive "p")
@@ -951,6 +924,11 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package company
   :diminish (company-mode . "co")
+  :general
+  (:keymaps 'company-active-map
+   "C-n" 'company-select-next
+   "C-p" 'company-select-previous
+   [tab] 'company-complete-common)
   :init
   (add-hook 'prog-mode-hook 'company-mode)
   :config
@@ -972,12 +950,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
                             company-keywords)
                            company-files
                            company-dabbrev))
-  (defun soo-company-esc () (interactive) (company-abort) (evil-normal-state))
-  (let ((map company-active-map))
-    (define-key map [escape] 'soo-company-esc)
-    (define-key map "\C-n" 'company-select-next)
-    (define-key map "\C-p" 'company-select-previous)
-    (define-key map [tab] 'company-complete-common)))
+  (defun soo-company-esc () (interactive) (company-abort) (evil-normal-state)))
 
 (use-package company-statistics
   :after company
