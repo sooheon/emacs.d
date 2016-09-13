@@ -151,10 +151,9 @@
 
 (use-package evil-exchange
   :diminish evil-exchange
-  :commands (evil-exchange evil-exchange/cx)
-  :init
-  (define-key evil-operator-state-map "x" 'evil-exchange/cx)
-  (define-key evil-visual-state-map "X" 'evil-exchange))
+  :general
+  (omap "x" 'evil-exchange/cx)
+  (vmap "X" 'evil-exchange))
 
 (use-package evil-matchit
   :defer t
@@ -252,10 +251,9 @@
   :diminish auto-revert-mode
   :init (global-auto-revert-mode)
   :config
-  (setq auto-revert-verbose nil
-        global-auto-revert-non-file-buffers t ; revert Dired buffers too
+  (setq global-auto-revert-non-file-buffers t ; revert Dired buffers too
         auto-revert-use-notify nil            ; OSX doesn't have file-notify
-        ))
+        nil auto-revert-verbose))
 
 (use-package artbollocks-mode
   :diminish (artbollocks-mode . "ab")
@@ -349,7 +347,6 @@
 
 (use-package elisp-slime-nav
   :diminish elisp-slime-nav-mode
-  :commands elisp-slime-nav-describe-elisp-thing-at-point
   :general
   (nmap :keymaps 'emacs-lisp-mode-map
     "K" 'elisp-slime-nav-describe-elisp-thing-at-point)
@@ -361,12 +358,13 @@
   :general
   (nmap :prefix "SPC" "i" 'sooheon--switch-to-circe)
   :init
-  (setq circe-network-options '(("Freenode"
-                                 :nick "sooheon"
-                                 :channels ("#emacs" "#clojure" "#haskell" "##crawl"
-                                            ;; "#lesswrong"
-                                            )
-                                 :nickserv-password "qwefasdf")))
+  (setq circe-network-options
+        '(("Freenode"
+           :nick "sooheon"
+           :channels ("#emacs" "#clojure" "#haskell" "##crawl"
+                      ;; "#lesswrong"
+                      )
+           :nickserv-password "qwefasdf")))
   (defun sooheon--switch-to-circe ()
     "Switch to CIRCE buffers using completing-read, or start
 CIRCE if no buffers open."
@@ -468,8 +466,9 @@ friend if it has the same major mode."
 
 (use-package info
   :ensure nil
-  :config
+  :general
   (nmap :prefix "SPC" "hi" 'info)
+  :config
   (evil-set-initial-state 'Info-mode 'insert))
 
 ;;** Parens and lisp
@@ -547,8 +546,8 @@ friend if it has the same major mode."
   (defun toggle-lispy-for-lisps (arg)
     (lambda () (when (member major-mode sp-lisp-modes) (lispy-mode arg))))
   (add-hook 'smartparens-enabled-hook (toggle-lispy-for-lisps 1))
-  (add-hook 'smartparens-disabled-hook (toggle-lispy-for-lisps -1)) (csetq iedit-toggle-key-default nil)
-                                        ; Don't want to use iedit
+  (add-hook 'smartparens-disabled-hook (toggle-lispy-for-lisps -1))
+  (csetq iedit-toggle-key-default nil) ; Don't want to use iedit
   :config
   (lispy-set-key-theme '(special c-digits paredit))
   (setq lispy-compat '(edebug cider)
@@ -585,14 +584,21 @@ Keep M-n and M-p reserved for history."
                                slurp/barf-cp)
         lispyville-barf-stay-with-closing t))
 
+;;*** Emacs lisp
+(use-package suggest
+  :commands suggest
+  :config
+  (sp-local-pair 'suggest-mode "'" nil :actions nil))
+
+;;** Git and version control
 (use-package magit
-  :commands (magit-status magit-dispatch-popup)
-  :init
+  :general
   (nmap :prefix "SPC"
         "g" 'magit-status
         "G" 'magit-dispatch-popup)
   :config
   (evil-set-initial-state 'magit-submodule-list-mode 'insert)
+  (evil-set-initial-state 'magit-status-mode 'insert)
   (setq magit-display-buffer-function
         'magit-display-buffer-fullframe-status-v1))
 
@@ -891,8 +897,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :commands (mc/mark-next-like-this mc/mark-all-dwim)
   :init
   (evil-define-key 'visual global-map "m" 'mc/mark-all-like-this-dwim)
-  ;; Malabarba keybinds
-  ;; http://endlessparentheses.com/multiple-cursors-keybinds.html
+  ;; Malabarba keybinds http://endlessparentheses.com/multiple-cursors-keybinds.html
   (define-key ctl-x-map "\C-m" #'mc/mark-all-dwim)
   (define-key ctl-x-map (kbd "<return>") mule-keymap)
   (global-set-key (kbd "M-3") #'mc/mark-next-like-this)
@@ -941,12 +946,9 @@ INITIAL-INPUT can be given as the initial minibuffer input."
         company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
                             company-preview-if-just-one-frontend)
         company-backends '(company-elisp
-                           ;; company-css
-                           ;; company-semantic
                            company-capf
                            (company-dabbrev-code
                             company-gtags
-                            company-etags
                             company-keywords)
                            company-files
                            company-dabbrev))
