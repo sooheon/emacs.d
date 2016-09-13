@@ -598,7 +598,6 @@ Keep M-n and M-p reserved for history."
         "G" 'magit-dispatch-popup)
   :config
   (evil-set-initial-state 'magit-submodule-list-mode 'insert)
-  (evil-set-initial-state 'magit-status-mode 'insert)
   (setq magit-display-buffer-function
         'magit-display-buffer-fullframe-status-v1))
 
