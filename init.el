@@ -253,7 +253,7 @@
   :config
   (setq global-auto-revert-non-file-buffers t ; revert Dired buffers too
         auto-revert-use-notify nil            ; OSX doesn't have file-notify
-        nil auto-revert-verbose))
+        auto-revert-verbose nil))
 
 (use-package artbollocks-mode
   :diminish (artbollocks-mode . "ab")
@@ -852,8 +852,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
                         (undo-tree-visualizer-mode :align t :size 0.3)
                         (woman-mode :popup t)
                         (flycheck-error-list-mode :select t)
-                        (cargo-process-mode :align t :size 0.3)
-                        (ivy-occur-mode :select t))
+                        (cargo-process-mode :align t :size 0.3))
         shackle-select-reused-windows t)
   (shackle-mode 1))
 
