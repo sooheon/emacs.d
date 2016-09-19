@@ -594,12 +594,13 @@ Keep M-n and M-p reserved for history."
 (use-package magit
   :general
   (nmap :prefix "SPC"
-        "g" 'magit-status
-        "G" 'magit-dispatch-popup)
+    "g" 'magit-status
+    "G" 'magit-dispatch-popup)
   :config
   (evil-set-initial-state 'magit-submodule-list-mode 'insert)
   (setq magit-display-buffer-function
-        'magit-display-buffer-fullframe-status-v1))
+        'magit-display-buffer-fullframe-status-v1)
+  (use-package magithub))
 
 (use-package diff-hl
   :after (projectile magit)
@@ -872,6 +873,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (add-hook 'visual-line-mode-hook 'evil-normalize-keymaps)
   :config
   (evil-set-initial-state 'messages-buffer-mode 'insert)
+  (evil-set-initial-state 'special-mode 'insert)
   (column-number-mode 1))
 
 (use-package ws-butler

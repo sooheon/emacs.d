@@ -20,6 +20,7 @@
     "r" 'counsel-recentf
     "hv" 'counsel-describe-variable
     "hf" 'counsel-describe-function
+    "hk" 'describe-key
     "f" 'counsel-find-file
     "th" 'counsel-load-theme
     "ap" 'counsel-list-processes)
