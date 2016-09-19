@@ -7,10 +7,11 @@
 (csetq org-download-method 'attach)
 (require 'worf)
 (diminish 'worf-mode)
-(define-key worf-mode-map "\M-j" nil)
-(define-key worf-mode-map "\C-j" nil)
-(define-key worf-mode-map "\[" nil)
-(define-key worf-mode-map "\]" nil)
+(general-define-key :keymaps 'worf-mode-map
+  "M-j" nil
+  "C-j" nil
+  "[" nil
+  "]" nil)
 (diminish 'org-cdlatex-mode)
 
 ;;;###autoload
@@ -30,13 +31,6 @@
       (insert "$")
       (end-of-line)
       (insert "$"))))
-
-;; (defun org-open-$ ()
-;;   (interactive)
-;;   (insert "$$")
-;;   (backward-char 1)
-;;   (evil-insert 1))
-;; (define-key org-mode-map (kbd "C-$") 'org-open-$)
 
 (setq-default org-export-in-background t
               org-src-fontify-natively t
@@ -81,18 +75,18 @@ forward to downcase-word"
     (call-interactively 'org-indent-item))
    (t (call-interactively 'downcase-word))))
 
-(define-key org-mode-map "\M-n" 'org-metadown)
-(define-key org-mode-map "\M-p" 'org-metaup)
-(define-key org-mode-map "\M-h" 'org-metaleft)
-(define-key org-mode-map "\M-H" 'org-shiftmetaleft)
-(define-key org-mode-map "\M-l" 'org-metaright2)
-(define-key org-mode-map "\M-L" 'org-shiftmetaright)
-(define-key org-mode-map "\M-j" (lambda ()
-                                  (interactive)
-                                  (org-meta-return)
-                                  (evil-insert 1)))
+(general-define-key :keymaps 'org-mode-map
+  "M-n" 'org-metadown
+  "M-p" 'org-metaup
+  "M-h" 'org-metaleft
+  "M-H" 'org-shiftmetaleft
+  "M-l" 'org-metaright2
+  "M-L" 'org-shiftmetaright
+  "M-j" (lambda () (interactive)
+          (org-meta-return)
+          (evil-insert 1)))
 
-(evil-define-key 'normal org-mode-map
+(nmap :keymaps 'org-mode-map
   [C-return] (lambda () (interactive) (org-insert-heading-respect-content) (evil-append 1))
   [M-return] (lambda () (interactive) (org-meta-return) (evil-append 1))
   [return] 'org-open-at-point

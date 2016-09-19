@@ -18,20 +18,21 @@
 
 ;;** font
 (add-to-list 'default-frame-alist '(font . "Input Mono Narrow"))
+(set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
 ;;* customize
 (defmacro csetq (variable value)
   `(funcall (or (get ',variable 'custom-set) 'set-default) ',variable ,value))
 (csetq custom-file (expand-file-name "custom.el" lisp-d))
 (when (file-exists-p custom-file) (load custom-file))
 ;;** decorations
-(setq-default tool-bar-mode nil
-              menu-bar-mode nil
-              scroll-bar-mode nil
-              inhibit-startup-screen t
-              initial-scratch-message ";; You have power over your mind - not outside events. Realize this, and you \n;; will find strength.\n\n"
-              create-lockfiles nil
-              line-spacing 0.1
-              window-combination-resize t)
+(csetq tool-bar-mode nil)
+(csetq menu-bar-mode nil)
+(csetq scroll-bar-mode nil)
+(csetq line-spacing 1)
+(setq inhibit-startup-screen t
+      initial-scratch-message ";; You have power over your mind - not outside events. Realize this, and you \n;; will find strength.\n\n"
+      create-lockfiles nil
+      window-combination-resize t)
 (eval '(setq inhibit-startup-echo-area-message "sooheon"))
 (blink-cursor-mode -1)
 (csetq blink-cursor-blinks 0)
@@ -75,9 +76,11 @@
 (setq sentence-end-double-space nil)
 (csetq search-default-mode 'char-fold-to-regexp)
 (csetq resize-mini-windows t)
+
 ;;** internals
 (setq gc-cons-threshold (* 10 1024 1024)
       ad-redefinition-action 'accept)
+
 ;;** shell
 (setq shell-file-name "/usr/local/bin/fish"
       explicit-shell-file-name "/usr/local/bin/fish")
@@ -109,10 +112,15 @@
   (csetq delete-by-moving-to-trash t)
   (osx-trash-setup))
 
-;;** Themes
+;;** themes
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" lisp-d))
 (require 'soo-themes)
-(load-theme 'eclipse2 t)
+(load-theme 'zenburn t)
+
+;;** keybinds
+(use-package general
+  :config
+  (general-evil-setup t t))
 
 ;;** Evil
 (setq evil-want-C-u-scroll t
@@ -127,13 +135,8 @@
       evil-ex-substitute-global t)
 (require 'evil)
 (evil-mode 1)
-(evil-define-key 'normal global-map "U" 'undo-tree-redo)
-(define-key evil-insert-state-map "\C-w" 'evil-delete-backward-word)
-
-(use-package general
-  :config
-  (general-evil-setup t)
-  (setq general-vim-definer-default 'states))
+(nmap "U" 'undo-tree-redo)
+(imap "C-w" 'evil-delete-backward-word)
 
 (use-package evil-commentary
   :diminish evil-commentary-mode
@@ -176,10 +179,7 @@
     "gs" 'evil-Surround-region
     "S" 'evil-substitute)
   :config
-  (global-evil-surround-mode 1)
-  (add-hook 'emacs-lisp-mode-hook
-            (lambda ()
-              (push '(?` . ("`" . "'")) evil-surround-pairs-alist))))
+  (global-evil-surround-mode 1))
 
 (use-package evil-snipe
   :diminish evil-snipe-local-mode
@@ -590,6 +590,10 @@ Keep M-n and M-p reserved for history."
   :config
   (sp-local-pair 'suggest-mode "'" nil :actions nil))
 
+(add-hook 'emacs-lisp-mode-hook
+          (lambda ()
+            (push '(?` . ("`" . "'")) evil-surround-pairs-alist)))
+
 ;;** Git and version control
 (use-package magit
   :general
@@ -845,16 +849,14 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (use-package shackle
   :config
   (defun shackle-smart-align ()
-    (if (< (window-width) 160)
-        'below
-      'right))
-  (setq shackle-rules '((compilation-mode :noselect t)
-                        (help-mode :align shackle-smart-align :size 0.42)
+    (if (< (window-width) 160) 'below 'right))
+  (setq shackle-select-reused-windows t
+        shackle-rules '((compilation-mode :noselect t)
+                        ;; (help-mode :align shackle-smart-align :size 0.42)
                         (undo-tree-visualizer-mode :align t :size 0.3)
                         (woman-mode :popup t)
                         (flycheck-error-list-mode :select t)
-                        (cargo-process-mode :align t :size 0.3))
-        shackle-select-reused-windows t)
+                        (cargo-process-mode :align t :size 0.3)))
   (shackle-mode 1))
 
 ;;** Basic Editing

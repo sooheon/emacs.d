@@ -1,13 +1,17 @@
-(global-set-key "\C-x\C-b" 'ibuffer)
-(global-set-key (kbd "s-u") 'universal-argument)
-(global-set-key (kbd "s-W") 'delete-frame)
-(global-set-key (kbd "s-k") 'kill-this-buffer)
-;; (global-set-key "s-K" 'kill-this-buffer)
-(define-key evil-normal-state-map "zf" '(lambda () (interactive)
-                                          (reposition-window)
-                                          (reposition-window)))
-(global-set-key (kbd "<C-s-268632070>") 'toggle-frame-fullscreen)
-(set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
+(general-define-key
+ "C-x C-b" 'ibuffer
+ "s-u" 'universal-argument
+ "s-W" 'delete-frame
+ "s-k" 'kill-this-buffer
+ [remap move-beginning-of-line] 'smart-move-beginning-of-line
+ "s-w" 'soo--close-window-dwim
+ [remap fill-paragraph] 'endless/fill-or-unfill)
+
+(nmap "zf" '(lambda () (interactive)
+              (reposition-window)
+              (reposition-window))
+      "goT" 'soo-terminal-pop
+      "got" 'soo-terminal-focus)
 
 (nmap :prefix "SPC"
   "t\C-o" 'sooheon--toggle-right-option-key
@@ -31,15 +35,6 @@
   "wv" 'evil-window-vsplit
   "wr" 'evil-window-rotate-downwards
   "wR" 'evil-window-rotate-upwards)
-
-(global-set-key [remap move-beginning-of-line] 'smart-move-beginning-of-line)
-
-(global-set-key (kbd "s-w") 'soo--close-window-dwim)
-
-(global-set-key [remap fill-paragraph] 'endless/fill-or-unfill)
-
-(nmap "goT" 'soo-terminal-pop
-      "got" 'soo-terminal-focus)
 
 (setq mac-option-modifier 'meta
       mac-command-modifier 'super)
@@ -67,13 +62,12 @@
 (define-key universal-argument-map (kbd "s-u") 'universal-argument)
 
 ;; Evil surround textobjects
-(with-eval-after-load 'evil
-  (define-key evil-inner-text-objects-map "$" 'evil-inner-$)
-  (define-key evil-outer-text-objects-map "$" 'evil-outer-$)
-  (define-key evil-inner-text-objects-map "*" 'evil-inner-*)
-  (define-key evil-outer-text-objects-map "*" 'evil-outer-*)
-  (define-key evil-inner-text-objects-map "/" 'evil-inner-/)
-  (define-key evil-outer-text-objects-map "/" 'evil-outer-/))
+(itomap "$" 'evil-inner-$
+        "*" 'evil-inner-*
+        "/" 'evil-inner-/)
+(otomap "$" 'evil-outer-$
+        "*" 'evil-outer-*
+        "/" 'evil-outer-/)
 
 (with-eval-after-load 'evil-surround
   (push '(42 "*" . "*") evil-surround-pairs-alist)
