@@ -1,4 +1,4 @@
-;;; init.el --- user-init-file                    -*- lexical-binding: t -*-
+;;; init.el --- user-init-file
 
 ;;* Base directory
 (defvar emacs-d (directory-file-name "~/.emacs.d/")
