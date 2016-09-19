@@ -3,7 +3,7 @@ emacs ?= emacs
 BASEDIR := $(shell pwd)
 
 profile:
-	$(emacs) -Q -l lib/profile-dotemacs/profile-dotemacs.el \
+	$(emacs) -debug-init -Q -l lib/profile-dotemacs/profile-dotemacs.el \
 	--eval "(progn (setq profile-dotemacs-file \
 	(setq load-file-name \"$(abspath init.el)\")) \
 	(set-background-color \"#F9F9F9\"))" \

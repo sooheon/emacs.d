@@ -24,31 +24,35 @@
 (csetq custom-file (expand-file-name "custom.el" lisp-d))
 (when (file-exists-p custom-file) (load custom-file))
 ;;** decorations
-(csetq tool-bar-mode nil)
-(csetq menu-bar-mode nil)
-(csetq scroll-bar-mode nil)
-(csetq inhibit-startup-screen t)
-(csetq initial-scratch-message ";; You have power over your mind - not outside events. Realize this, and you \n;; will find strength.\n\n")
-(csetq create-lockfiles nil)
-(global-hl-line-mode 1)
-(csetq line-spacing 0.1)
+(setq-default tool-bar-mode nil
+              menu-bar-mode nil
+              scroll-bar-mode nil
+              inhibit-startup-screen t
+              initial-scratch-message ";; You have power over your mind - not outside events. Realize this, and you \n;; will find strength.\n\n"
+              create-lockfiles nil
+              line-spacing 0.1
+              window-combination-resize t)
+(eval '(setq inhibit-startup-echo-area-message "sooheon"))
 (blink-cursor-mode -1)
 (csetq blink-cursor-blinks 0)
-(eval '(setq inhibit-startup-echo-area-message "sooheon"))
-(csetq frame-title-format '((:eval (if buffer-file-name
+(global-hl-line-mode 1)
+(setq frame-title-format '((:eval (if buffer-file-name
                                        (abbreviate-file-name buffer-file-name)
                                      "%b"))))
-(csetq window-combination-resize t)
 (csetq fringe-indicator-alist '((continuation nil right-curly-arrow) (truncation left-arrow right-arrow) (continuation left-curly-arrow right-curly-arrow) (overlay-arrow . right-triangle) (up . up-arrow) (down . down-arrow) (top top-left-angle top-right-angle) (bottom bottom-left-angle bottom-right-angle top-right-angle top-left-angle) (top-bottom left-bracket right-bracket top-right-angle top-left-angle) (empty-line . empty-line) (unknown . question-mark)))
 ;;** minibuffer interaction
-(csetq enable-recursive-minibuffers t)
-(setq minibuffer-message-timeout 1)
+(setq enable-recursive-minibuffers t
+      minibuffer-message-timeout 1)
 (minibuffer-depth-indicate-mode 1)
 ;;** editor behavior
-(setq scroll-preserve-screen-position t)
-;; (setq scroll-margin 3)
-;; (setq scroll-conservatively 101)
-(setq lisp-indent-function 'Fuco1/lisp-indent-function)
+(setq mac-right-command-modifier 'control ; right cmd is ctrl
+      mac-pass-command-to-system nil ; https://github.com/railwaycat/emacs-mac-port/issues/78
+      )
+(setq scroll-preserve-screen-position t
+      ;; scroll-margin 3
+      ;; scroll-conservatively 101
+      )
+(setq lisp-indent-function 'Fuco1/lisp-indent-function) ; don't indent lists starting with keywords
 (csetq vc-follow-symlinks t)
 (csetq find-file-suppress-same-file-warnings t)
 (csetq read-file-name-completion-ignore-case t)
@@ -65,22 +69,18 @@
 (setq kill-buffer-query-functions nil)
 (csetq load-prefer-newer t)
 (csetq recenter-positions '(top middle bottom))
-(csetq mac-pass-command-to-system nil) ; https://github.com/railwaycat/emacs-mac-port/issues/78
 (add-hook 'server-switch-hook 'raise-frame)
-(csetq eval-expression-print-length nil)
-(csetq eval-expression-print-level nil)
-(csetq sentence-end-double-space nil)
+(setq eval-expression-print-length nil
+      eval-expression-print-level nil)
+(setq sentence-end-double-space nil)
 (csetq search-default-mode 'char-fold-to-regexp)
 (csetq resize-mini-windows t)
 ;;** internals
-(csetq gc-cons-threshold (* 10 1024 1024))
-(csetq ad-redefinition-action 'accept)
+(setq gc-cons-threshold (* 10 1024 1024)
+      ad-redefinition-action 'accept)
 ;;** shell
-(csetq shell-file-name "/usr/local/bin/fish")
-(csetq explicit-shell-file-name "/usr/local/bin/fish")
-
-;; Use right command as control
-(setq mac-right-command-modifier 'control)
+(setq shell-file-name "/usr/local/bin/fish"
+      explicit-shell-file-name "/usr/local/bin/fish")
 
 ;;* Bootstrap
 ;;** Package init
