@@ -5,13 +5,13 @@
 (require 'org-download)
 (org-download-enable)
 (csetq org-download-method 'attach)
-(require 'worf)
-(diminish 'worf-mode)
-(general-define-key :keymaps 'worf-mode-map
-  "M-j" nil
-  "C-j" nil
-  "[" nil
-  "]" nil)
+(use-package worf
+  :diminish worf-mode
+  :general (:keymaps 'worf-mode-map
+            "M-j" nil
+            "C-j" nil
+            "[" nil
+            "]" nil))
 (diminish 'org-cdlatex-mode)
 
 ;;;###autoload

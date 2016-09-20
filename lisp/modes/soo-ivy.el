@@ -45,7 +45,7 @@
   (nmap :prefix "SPC" "b" 'ivy-switch-buffer)
   :config
   (ivy-mode 1)
-  (require 'flx)
+  (use-package flx)
   (setq ivy-extra-directories '("./")
         ivy-use-virtual-buffers t
         ivy-count-format "%d "
@@ -72,7 +72,6 @@
     (define-key m (kbd "<s-backspace>")
       (lambda () (interactive) (kill-line 0))))
 
-  (require 'ivy-hydra)
   (define-key ivy-minibuffer-map "\C-o"
     (defhydra soo-ivy (:hint nil :color pink)
       "
