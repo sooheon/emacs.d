@@ -180,7 +180,10 @@
     "gs" 'evil-Surround-region
     "S" 'evil-substitute)
   :config
-  (global-evil-surround-mode 1))
+  (global-evil-surround-mode 1)
+  (add-hook 'emacs-lisp-mode-hook
+          (lambda ()
+            (push '(?` . ("`" . "'")) evil-surround-pairs-alist))))
 
 (use-package evil-snipe
   :diminish evil-snipe-local-mode
@@ -592,10 +595,6 @@ Keep M-n and M-p reserved for history."
   :config
   (sp-local-pair 'suggest-mode "'" nil :actions nil))
 
-(add-hook 'emacs-lisp-mode-hook
-          (lambda ()
-            (push '(?` . ("`" . "'")) evil-surround-pairs-alist)))
-
 ;;** Git and version control
 (use-package magit
   :general
@@ -606,7 +605,7 @@ Keep M-n and M-p reserved for history."
   (evil-set-initial-state 'magit-submodule-list-mode 'insert)
   (setq magit-display-buffer-function
         'magit-display-buffer-fullframe-status-v1)
-  (use-package magithub))
+  (use-package magithub :disabled t))
 
 (use-package diff-hl
   :after (projectile magit)

@@ -22,7 +22,7 @@
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22479 37289
+;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22496 17317
 ;;;;;;  0 0))
 ;;; Generated autoloads from modes/soo-org.el
 
@@ -45,11 +45,11 @@
 ;;;***
 
 ;;;### (autoloads nil nil ("custom.el" "keybinds.el" "modes/soo-ivy.el"
-;;;;;;  "modes/soo-rust.el" "packages.el") (22479 60858 0 0))
+;;;;;;  "modes/soo-rust.el" "packages.el") (22496 46692 0 0))
 
 ;;;***
 
-;;;### (autoloads nil "auto" "auto.el" (22479 61519 0 0))
+;;;### (autoloads nil "auto" "auto.el" (22480 4652 0 0))
 ;;; Generated autoloads from auto.el
 
 (autoload 'smart-move-beginning-of-line "auto" "\
