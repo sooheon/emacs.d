@@ -12,7 +12,8 @@
             "C-j" nil
             "[" nil
             "]" nil))
-(diminish 'org-cdlatex-mode)
+(use-package auctex :defer t)
+(use-package cdlatex)
 
 ;;;###autoload
 (defun soo-org-hook ()

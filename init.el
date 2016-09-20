@@ -28,7 +28,7 @@
 (csetq tool-bar-mode nil)
 (csetq menu-bar-mode nil)
 (csetq scroll-bar-mode nil)
-(csetq line-spacing 1)
+(csetq line-spacing 0.1)
 (setq inhibit-startup-screen t
       initial-scratch-message ";; You have power over your mind - not outside events. Realize this, and you \n;; will find strength.\n\n"
       create-lockfiles nil
@@ -559,7 +559,7 @@ friend if it has the same major mode."
         lispy-avy-keys sooheon--avy-keys
         lispy-avy-style-paren 'at-full
         lispy-avy-style-symbol 'at-full
-        lispy-delete-backward-recenter nil
+        lispy-delete-backward-recenter 10
         lispy-safe-paste t
         lispy-safe-copy t
         lispy-safe-delete t

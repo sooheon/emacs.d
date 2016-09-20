@@ -22,7 +22,7 @@
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22496 17317
+;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22496 48718
 ;;;;;;  0 0))
 ;;; Generated autoloads from modes/soo-org.el
 
@@ -45,7 +45,7 @@
 ;;;***
 
 ;;;### (autoloads nil nil ("custom.el" "keybinds.el" "modes/soo-ivy.el"
-;;;;;;  "modes/soo-rust.el" "packages.el") (22496 46692 0 0))
+;;;;;;  "modes/soo-rust.el" "packages.el") (22496 48713 0 0))
 
 ;;;***
 
