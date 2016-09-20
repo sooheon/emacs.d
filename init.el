@@ -110,6 +110,7 @@
   :if (eq system-type 'darwin)
   :init
   (csetq delete-by-moving-to-trash t)
+  :config
   (osx-trash-setup))
 
 ;;** themes
@@ -189,6 +190,7 @@
         evil-snipe-repeat-scope 'buffer
         evil-snipe-smart-case t
         evil-snipe-repeat-keys nil)
+  :config
   (evil-snipe-override-mode 1))
 
 (use-package evil-numbers
@@ -822,6 +824,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :diminish which-key-mode
   :init
   (setq which-key-idle-delay 0.5)
+  :config
   (which-key-mode 1))
 
 (use-package window-numbering
@@ -880,7 +883,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package ws-butler
   :diminish ws-butler-mode
-  :init (ws-butler-global-mode))
+  :config (ws-butler-global-mode))
 
 (bind-key [remap just-one-space] #'cycle-spacing)
 
