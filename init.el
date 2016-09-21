@@ -671,12 +671,6 @@ Keep M-n and M-p reserved for history."
 
 (use-package projectile
   :diminish projectile-mode
-  :commands (projectile-switch-project
-             projectile-find-file
-             projectile-find-dir
-             projectile-dired
-             projectile-recentf
-             counsel-projectile-ag)
   :general
   ("C-c k" 'counsel-projectile-ag)
   (nmap :prefix "SPC"
@@ -692,16 +686,9 @@ Keep M-n and M-p reserved for history."
     "pR" 'projectile-replace
     "pT" 'projectile-find-test-file
     "pP" 'projectile-test-project
-    "pm" 'projectile-commander
-    "/" 'counsel-projectile-ag)
+    "pm" 'projectile-commander)
   :config
   (projectile-global-mode)
-  (defun counsel-projectile-ag (&optional initial-input)
-    "Grep for a string in the current directory or project using ag.
-INITIAL-INPUT can be given as the initial minibuffer input."
-    (interactive)
-    (counsel-ag initial-input (or (ignore-errors (projectile-project-root))
-                                  default-directory)))
   (setq projectile-enable-caching t
         projectile-sort-order 'recentf
         projectile-create-missing-test-files t
@@ -716,9 +703,16 @@ INITIAL-INPUT can be given as the initial minibuffer input."
     "pd" 'counsel-projectile-find-dir
     "pf" 'counsel-projectile-find-file
     "pr" 'projectile-recentf
-    "ps" 'counsel-projectile)
+    "ps" 'counsel-projectile
+    "/" 'counsel-projectile-ag)
   :config
   (setq projectile-switch-project-action 'counsel-projectile-find-file)
+  (defun counsel-projectile-ag (&optional initial-input)
+    "Grep for a string in the current directory or project using ag.
+INITIAL-INPUT can be given as the initial minibuffer input."
+    (interactive)
+    (counsel-ag initial-input (or (ignore-errors (projectile-project-root))
+                                  default-directory)))
   (ivy-set-actions
    'counsel-projectile
    '(("d" (lambda (dir)
