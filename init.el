@@ -175,15 +175,24 @@
 
 (use-package evil-surround
   :general
-  (vmap :keymaps 'evil-surround-mode-map
-    "s" 'evil-surround-region
-    "gs" 'evil-Surround-region
-    "S" 'evil-substitute)
+  (vmap "s" 'evil-surround-region
+        "gs" 'evil-Surround-region
+        "S" 'evil-substitute)
   :config
   (global-evil-surround-mode 1)
   (add-hook 'emacs-lisp-mode-hook
-          (lambda ()
-            (push '(?` . ("`" . "'")) evil-surround-pairs-alist))))
+            (lambda ()
+              (push '(?` . ("`" . "'")) evil-surround-pairs-alist)))
+  ;; Define new text objects
+  (itomap "$" 'evil-inner-$
+          "*" 'evil-inner-*
+          "/" 'evil-inner-/)
+  (otomap "$" 'evil-outer-$
+          "*" 'evil-outer-*
+          "/" 'evil-outer-/)
+  (push '(42 "*" . "*") evil-surround-pairs-alist)
+  (push '(36 "$" . "$") evil-surround-pairs-alist)
+  (push '(47 "/" . "/") evil-surround-pairs-alist))
 
 (use-package evil-snipe
   :diminish evil-snipe-local-mode

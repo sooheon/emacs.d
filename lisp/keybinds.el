@@ -45,32 +45,18 @@
 (add-hook 'LaTeX-mode-hook (lambda () (define-key LaTeX-mode-map "\C-xn" nil)))
 
 ;; Other emacs-mac/OSX keybindings
-(global-set-key (kbd "s-s") 'save-buffer)
-(global-set-key (kbd "s-q") 'save-buffers-kill-terminal)
-(global-set-key (kbd "s-v") 'yank)
-(global-set-key (kbd "s-c") 'kill-ring-save)
-(global-set-key (kbd "s-a") 'mark-whole-buffer)
-(global-set-key (kbd "s-x") 'kill-region)
-(global-set-key (kbd "s-n") 'make-frame)
-(global-set-key (kbd "s-l") 'evil-avy-goto-line)
-(global-set-key (kbd "C-s-f") 'toggle-frame-fullscreen)
-(evil-define-key 'insert global-map
-  "\C-o" 'evil-execute-in-normal-state
-  (kbd "<s-backspace>") 'sooheon--delete-to-bol)
-(global-set-key (kbd "s--") 'dec-face-height)
-(global-set-key (kbd "s-=") 'inc-face-height)
+(general-define-key
+ "s-s" 'save-buffer
+ "s-q" 'save-buffers-kill-terminal
+ "s-v" 'yank
+ "s-c" 'kill-ring-save
+ "s-a" 'mark-whole-buffer
+ "s-x" 'kill-region
+ "s-n" 'make-frame
+ "s-l" 'evil-avy-goto-line
+ "C-s-f" 'toggle-frame-fullscreen
+ "s--" 'dec-face-height
+ "s-=" 'inc-face-height)
+(imap "C-o" 'evil-execute-in-normal-state
+      "<s-backspace>" 'sooheon--delete-to-bol)
 (define-key universal-argument-map (kbd "s-u") 'universal-argument)
-
-;; Evil surround textobjects
-(itomap "$" 'evil-inner-$
-        "*" 'evil-inner-*
-        "/" 'evil-inner-/)
-(otomap "$" 'evil-outer-$
-        "*" 'evil-outer-*
-        "/" 'evil-outer-/)
-
-(with-eval-after-load 'evil-surround
-  (push '(42 "*" . "*") evil-surround-pairs-alist)
-  (push '(36 "$" . "$") evil-surround-pairs-alist)
-  (push '(47 "/" . "/") evil-surround-pairs-alist))
-
