@@ -214,7 +214,10 @@
         evil-snipe-smart-case t
         evil-snipe-repeat-keys nil)
   :config
-  (evil-snipe-override-mode 1))
+  (evil-snipe-override-mode 1)
+  (omap :keymaps 'evil-snipe-mode-map
+    "s" nil
+    "S" nil))
 
 (use-package evil-numbers
   :general
