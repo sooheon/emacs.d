@@ -40,7 +40,16 @@
 (setq frame-title-format '((:eval (if buffer-file-name
                                        (abbreviate-file-name buffer-file-name)
                                      "%b"))))
-(csetq fringe-indicator-alist '((continuation nil right-curly-arrow) (truncation left-arrow right-arrow) (continuation left-curly-arrow right-curly-arrow) (overlay-arrow . right-triangle) (up . up-arrow) (down . down-arrow) (top top-left-angle top-right-angle) (bottom bottom-left-angle bottom-right-angle top-right-angle top-left-angle) (top-bottom left-bracket right-bracket top-right-angle top-left-angle) (empty-line . empty-line) (unknown . question-mark)))
+(csetq fringe-indicator-alist
+       '((continuation nil right-curly-arrow)
+         (truncation left-arrow right-arrow)
+         (continuation left-curly-arrow right-curly-arrow)
+         (overlay-arrow . right-triangle)
+         (up . up-arrow)
+         (down . down-arrow)
+         (top top-left-angle top-right-angle)
+         (empty-line . empty-line)
+         (unknown . question-mark)))
 ;;** minibuffer interaction
 (setq enable-recursive-minibuffers t
       minibuffer-message-timeout 1)
@@ -54,10 +63,11 @@
       ;; scroll-conservatively 101
       )
 (setq lisp-indent-function 'Fuco1/lisp-indent-function) ; don't indent lists starting with keywords
-(csetq vc-follow-symlinks t)
-(csetq find-file-suppress-same-file-warnings t)
-(csetq read-file-name-completion-ignore-case t)
-(csetq read-buffer-completion-ignore-case t)
+(setq load-prefer-newer t
+      vc-follow-symlinks t
+      find-file-suppress-same-file-warnings t
+      read-file-name-completion-ignore-case t
+      read-buffer-completion-ignore-case t)
 (prefer-coding-system 'utf-8)
 (electric-indent-mode -1)
 (csetq truncate-lines nil)
@@ -68,14 +78,13 @@
 (csetq backup-inhibited t)
 (defalias 'yes-or-no-p 'y-or-n-p)
 (setq kill-buffer-query-functions nil)
-(csetq load-prefer-newer t)
 (csetq recenter-positions '(top middle bottom))
-(add-hook 'server-switch-hook 'raise-frame)
 (setq eval-expression-print-length nil
-      eval-expression-print-level nil)
+      eval-expression-print-level nil
+      resize-mini-windows t)
 (setq sentence-end-double-space nil)
-(csetq search-default-mode 'char-fold-to-regexp)
-(csetq resize-mini-windows t)
+(setq search-default-mode 'char-fold-to-regexp)
+(add-hook 'server-switch-hook 'raise-frame)
 
 ;;** internals
 (setq gc-cons-threshold (* 10 1024 1024)
@@ -94,8 +103,7 @@
 (package-initialize)
 (with-eval-after-load 'evil
   (evil-set-initial-state 'package-menu-mode 'insert))
-(eval-and-compile
-  (require 'use-package))
+(eval-when-compile (require 'use-package))
 (setq use-package-always-ensure t)
 
 ;;** Set up environment
@@ -109,7 +117,7 @@
 (use-package osx-trash
   :if (eq system-type 'darwin)
   :init
-  (csetq delete-by-moving-to-trash t)
+  (setq delete-by-moving-to-trash t)
   :config
   (osx-trash-setup))
 
@@ -121,23 +129,26 @@
 ;;** keybinds
 (use-package general
   :config
-  (general-evil-setup t t))
+  (general-evil-setup t t)
+  (load (expand-file-name "keybinds.el" lisp-d) nil t))
 
 ;;** Evil
-(setq evil-want-C-u-scroll t
-      evil-cross-lines t
-      evil-symbol-word-search t
-      evil-move-cursor-back nil
-      evil-want-C-i-jump t
-      evil-disable-insert-state-bindings t
-      evil-search-module 'evil-search
-      evil-ex-search-persistent-highlight nil
-      evil-want-Y-yank-to-eol t
-      evil-ex-substitute-global t)
-(require 'evil)
-(evil-mode 1)
-(nmap "U" 'undo-tree-redo)
-(imap "C-w" 'evil-delete-backward-word)
+(use-package evil
+  :init
+  (setq evil-want-C-u-scroll t
+        evil-cross-lines t
+        evil-symbol-word-search t
+        evil-move-cursor-back nil
+        evil-want-C-i-jump t
+        evil-disable-insert-state-bindings t
+        evil-search-module 'evil-search
+        evil-ex-search-persistent-highlight nil
+        evil-want-Y-yank-to-eol t
+        evil-ex-substitute-global t)
+  :config
+  (evil-mode)
+  (nmap "U" 'undo-tree-redo)
+  (imap "C-w" 'evil-delete-backward-word))
 
 (use-package evil-commentary
   :diminish evil-commentary-mode
@@ -211,13 +222,13 @@
         "C-S-x" 'evil-numbers/dec-at-pt))
 
 ;;** mode hooks
-(add-hook 'python-mode-hook 'soo-python-hook)
-(add-hook 'clojure-mode-hook 'soo-clojure-hook)
-(add-hook 'org-mode-hook 'soo-org-hook)
-(run-with-idle-timer 5 nil (lambda () (require 'soo-org)))
-(add-hook 'haskell-mode-hook 'soo-haskell-hook)
 (require 'soo-ivy)
 (require 'soo-rust)
+(add-hook 'clojure-mode-hook 'soo-clojure-hook)
+(add-hook 'python-mode-hook 'soo-python-hook)
+(add-hook 'haskell-mode-hook 'soo-haskell-hook)
+(add-hook 'org-mode-hook 'soo-org-hook)
+(run-with-idle-timer 5 nil (lambda () (require 'soo-org)))
 
 ;;** general modes config
 (use-package auto-compile
@@ -535,7 +546,7 @@ friend if it has the same major mode."
    "M-k" 'lispy-kill-sentence
    [M-up] 'sp-splice-sexp-killing-backward
    [M-down] 'sp-splice-sexp-killing-forward
-   ;; (define-key map (kbd "C-,") 'lispy-kill-at-point)
+   ;; "C-," 'lispy-kill-at-point
    "M-n" nil                            ; lispy left
    "M-p" nil
    "\"" 'lispy-doublequote
@@ -848,7 +859,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package winner
   :general
-  (nmap "C-w u" 'winner-undo)
+  ("C-w u" 'winner-undo)
   (nmap :prefix "SPC" "wu" 'winner-undo)
   :init
   (winner-mode t)
@@ -978,9 +989,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 ;;** autoloads
 (load (expand-file-name "auto.el" lisp-d) nil t)
 (load (expand-file-name "loaddefs.el" lisp-d) nil t)
-
-;;** keybinds
-(load (expand-file-name "keybinds.el" lisp-d) nil t)
 
 (require 'server)
 (or (server-running-p) (server-start))
