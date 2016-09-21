@@ -7,11 +7,12 @@
 (csetq org-download-method 'attach)
 (use-package worf
   :diminish worf-mode
-  :general (:keymaps 'worf-mode-map
-            "M-j" nil
-            "C-j" nil
-            "[" nil
-            "]" nil))
+  :config
+  (general-define-key :keymaps 'worf-mode-map
+    "M-j" nil
+    "C-j" nil
+    "[" nil
+    "]" nil))
 (use-package auctex :defer t)
 (use-package cdlatex)
 
