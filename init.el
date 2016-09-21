@@ -376,9 +376,7 @@
 (use-package elisp-slime-nav
   :diminish elisp-slime-nav-mode
   :general
-  (nmap :keymaps 'emacs-lisp-mode-map
-    "K" 'elisp-slime-nav-describe-elisp-thing-at-point)
-  (nmap :keymaps 'lisp-interaction-mode-map
+  (nmap :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
     "K" 'elisp-slime-nav-describe-elisp-thing-at-point))
 
 (use-package circe
