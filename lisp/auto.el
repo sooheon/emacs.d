@@ -287,6 +287,12 @@ Lisp function does not specify a special indentation."
              (set (make-local-variable 'dired-dotfiles-show-p) t)))))
 
 ;;;###autoload
+(defun soo-run-prog-mode-hook ()
+  "Runs `prog-mode-hook'. Useful for modes that don't derive from
+`prog-mode' but should."
+  (run-hooks 'prog-mode-hook))
+
+;;;###autoload
 (evil-define-text-object evil-inner-$ (count &optional beg end type)
   (evil-select-paren "\\$" "\\$" beg end type count nil))
 ;;;###autoload

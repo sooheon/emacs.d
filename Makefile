@@ -10,7 +10,7 @@ profile:
 	-f profile-dotemacs
 
 install: upgrade
-	cd lib/org && make compile && make autoloads
+	cd lib/org-mode && make compile && make autoloads
 	cd $(BASEDIR) make run
 
 pull:

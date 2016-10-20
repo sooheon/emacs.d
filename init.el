@@ -18,6 +18,7 @@
 
 ;;** font
 (add-to-list 'default-frame-alist '(font . "Input Mono Narrow"))
+(set-face-attribute 'default nil :height 140)
 (set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
 ;;* customize
 (defmacro csetq (variable value)
@@ -37,7 +38,7 @@
 (blink-cursor-mode -1)
 (csetq blink-cursor-blinks 0)
 (global-hl-line-mode 1)
-(setq frame-title-format '((:eval (if buffer-file-name
+(setq-default frame-title-format '((:eval (if buffer-file-name
                                        (abbreviate-file-name buffer-file-name)
                                      "%b"))))
 (csetq fringe-indicator-alist
@@ -55,11 +56,12 @@
       minibuffer-message-timeout 1)
 (minibuffer-depth-indicate-mode 1)
 ;;** editor behavior
-(setq mac-right-command-modifier 'control ; right cmd is ctrl
-      mac-pass-command-to-system nil ; https://github.com/railwaycat/emacs-mac-port/issues/78
-      )
+(setq mac-pass-command-to-system nil ; https://github.com/railwaycat/emacs-mac-port/issues/78
+      mac-right-command-modifier 'control ; right cmd is ctrl
+      mac-command-modifier 'super
+      mac-option-modifier 'meta)
 (setq scroll-preserve-screen-position t
-      ;; scroll-margin 3
+      scroll-margin 1
       ;; scroll-conservatively 101
       )
 (setq lisp-indent-function 'Fuco1/lisp-indent-function) ; don't indent lists starting with keywords
@@ -93,6 +95,7 @@
 ;;** shell
 (setq shell-file-name "/usr/local/bin/fish"
       explicit-shell-file-name "/usr/local/bin/fish")
+(setenv "LANG" "en_US.UTF-8")
 
 ;;* Bootstrap
 ;;** Package init
@@ -124,7 +127,7 @@
 ;;** themes
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" lisp-d))
 (require 'soo-themes)
-(load-theme 'zenburn t)
+;; (load-theme 'eclipse2 t)
 
 ;;** keybinds
 (use-package general
@@ -184,12 +187,20 @@
   (vmap "*" 'evil-visualstar/begin-search-forward
         "#" 'evil-visualstar/begin-search-backward))
 
-(use-package evil-surround
-  :general
-  (vmap "s" 'evil-surround-region
-        "gs" 'evil-Surround-region
-        "S" 'evil-substitute)
+(use-package evil-snipe
+  :diminish evil-snipe-local-mode
+  :init
+  (setq evil-snipe-use-vim-sneak-bindings t
+        evil-snipe-scope 'buffer
+        evil-snipe-repeat-scope 'buffer
+        evil-snipe-smart-case t
+        evil-snipe-repeat-keys nil
+        evil-snipe-char-fold t)
   :config
+  (evil-snipe-override-mode 1))
+
+(use-package evil-surround
+  :init
   (global-evil-surround-mode 1)
   (add-hook 'emacs-lisp-mode-hook
             (lambda ()
@@ -205,20 +216,6 @@
   (push '(36 "$" . "$") evil-surround-pairs-alist)
   (push '(47 "/" . "/") evil-surround-pairs-alist))
 
-(use-package evil-snipe
-  :diminish evil-snipe-local-mode
-  :init
-  (setq evil-snipe-use-vim-sneak-bindings t
-        evil-snipe-scope 'buffer
-        evil-snipe-repeat-scope 'buffer
-        evil-snipe-smart-case t
-        evil-snipe-repeat-keys nil)
-  :config
-  (evil-snipe-override-mode 1)
-  (omap :keymaps 'evil-snipe-mode-map
-    "s" nil
-    "S" nil))
-
 (use-package evil-numbers
   :general
   (nmap "C-S-a" 'evil-numbers/inc-at-pt
@@ -227,7 +224,8 @@
 ;;** mode hooks
 (require 'soo-ivy)
 (require 'soo-rust)
-(add-hook 'clojure-mode-hook 'soo-clojure-hook)
+(require 'soo-clojure)
+(require 'soo-ess)
 (add-hook 'python-mode-hook 'soo-python-hook)
 (add-hook 'haskell-mode-hook 'soo-haskell-hook)
 (add-hook 'org-mode-hook 'soo-org-hook)
@@ -275,9 +273,13 @@
   :config
   (ace-link-setup-default))
 
+(use-package ace-window
+  :general
+  ("C-x o" 'ace-window))
+
 (use-package autorevert
+  :defer t
   :diminish auto-revert-mode
-  :init (global-auto-revert-mode)
   :config
   (setq global-auto-revert-non-file-buffers t ; revert Dired buffers too
         auto-revert-use-notify nil            ; OSX doesn't have file-notify
@@ -352,7 +354,7 @@
   :init
   (add-hook 'dired-mode-hook #'soo--dired-setup)
   :config
-  (setq dired-listing-switches "-laGh1v --group-directories-first")
+  ;; (setq dired-listing-switches "-laGh1v --group-directories-first")
   (defvar dired-dotfiles-show-p)
   (defun soo--dired-setup ()
     ;; (setq dired-omit-verbose nil)
@@ -382,14 +384,12 @@
 (use-package circe
   :defer t
   :general
-  (nmap :prefix "SPC" "i" 'sooheon--switch-to-circe)
+  (nmap :prefix "SPC" "ai" 'sooheon--switch-to-circe)
   :init
   (setq circe-network-options
         '(("Freenode"
            :nick "sooheon"
-           :channels ("#emacs" "#clojure" "#haskell" "##crawl"
-                      ;; "#lesswrong"
-                      )
+           :channels ("#clojure" "#haskell" "##crawl" "#lesswrong")
            :nickserv-password "qwefasdf")))
   (defun sooheon--switch-to-circe ()
     "Switch to CIRCE buffers using completing-read, or start
@@ -547,7 +547,6 @@ friend if it has the same major mode."
    "M-k" 'lispy-kill-sentence
    [M-up] 'sp-splice-sexp-killing-backward
    [M-down] 'sp-splice-sexp-killing-forward
-   ;; "C-," 'lispy-kill-at-point
    "M-n" nil                            ; lispy left
    "M-p" nil
    "\"" 'lispy-doublequote
@@ -573,7 +572,7 @@ friend if it has the same major mode."
     (lambda () (when (member major-mode sp-lisp-modes) (lispy-mode arg))))
   (add-hook 'smartparens-enabled-hook (toggle-lispy-for-lisps 1))
   (add-hook 'smartparens-disabled-hook (toggle-lispy-for-lisps -1))
-  (csetq iedit-toggle-key-default nil) ; Don't want to use iedit
+  (csetq iedit-toggle-key-default nil)  ; Don't want to use iedit
   :config
   (lispy-set-key-theme '(special c-digits paredit))
   (setq lispy-compat '(edebug cider)
@@ -624,8 +623,8 @@ Keep M-n and M-p reserved for history."
     "G" 'magit-dispatch-popup)
   :config
   (evil-set-initial-state 'magit-submodule-list-mode 'insert)
-  (setq magit-display-buffer-function
-        'magit-display-buffer-fullframe-status-v1)
+  (setq magit-display-buffer-function 'magit-display-buffer-fullcolumn-most-v1
+        magit-popup-show-common-commands nil)
   (use-package magithub :disabled t))
 
 (use-package diff-hl
@@ -794,7 +793,11 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :defer t
   :init
   (add-hook 'emacs-lisp-mode-hook (lambda () (semantic-mode -1)))
-  (add-hook 'lisp-interaction-mode-hook (lambda () (semantic-mode -1))))
+  (add-hook 'lisp-interaction-mode-hook (lambda () (semantic-mode -1)))
+  :config
+  (cl-delete-if (lambda (x)
+                  (string-match-p "^semantic-" (symbol-name x)))
+                completion-at-point-functions))
 
 (use-package shell-pop
   :general ("s-`" 'shell-pop)
@@ -854,7 +857,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package winner
   :general
-  ("C-w u" 'winner-undo)
   (nmap :prefix "SPC" "wu" 'winner-undo)
   :init
   (winner-mode t)
@@ -895,6 +897,9 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (evil-set-initial-state 'special-mode 'insert)
   (column-number-mode 1))
 
+(global-subword-mode 1)
+(diminish 'subword-mode nil)
+
 (use-package ws-butler
   :diminish ws-butler-mode
   :config (ws-butler-global-mode))
@@ -913,6 +918,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
            (er/expand-region arg))))
 
 (use-package multiple-cursors
+  :ensure nil
   :preface
   (define-prefix-command 'endless/mc-map)
   :general
@@ -965,8 +971,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (add-hook 'prog-mode-hook 'company-mode)
   :config
   (setq company-tooltip-align-annotations t
-        company-tooltip-flip-when-above t
-        company-idle-delay 0.2
+        company-idle-delay 0.3
         company-minimum-prefix-length 2
         company-require-match nil
         company-elisp-detect-function-context nil

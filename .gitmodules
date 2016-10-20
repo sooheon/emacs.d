@@ -28,3 +28,6 @@
 [submodule "lib/structured-haskell-mode"]
 	path = lib/structured-haskell-mode
 	url = https://github.com/chrisdone/structured-haskell-mode.git
+[submodule "lib/pamparam"]
+	path = lib/pamparam
+	url = git@github.com:abo-abo/pamparam.git

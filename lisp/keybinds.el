@@ -36,9 +36,6 @@
   "wr" 'evil-window-rotate-downwards
   "wR" 'evil-window-rotate-upwards)
 
-(setq mac-option-modifier 'meta
-      mac-command-modifier 'super)
-
 ;; This line actually replaces Emacs' entire narrowing keymap, that's how
 ;; much I like this command. Only copy it if that's what you want.
 (define-key ctl-x-map "n" #'narrow-or-widen-dwim)
@@ -56,7 +53,8 @@
  "s-l" 'evil-avy-goto-line
  "C-s-f" 'toggle-frame-fullscreen
  "s--" 'dec-face-height
- "s-=" 'inc-face-height)
+ "s-=" 'inc-face-height
+ "M-DEL" 'evil-delete-backward-word)
 (imap "C-o" 'evil-execute-in-normal-state
       "<s-backspace>" 'sooheon--delete-to-bol)
 (define-key universal-argument-map (kbd "s-u") 'universal-argument)

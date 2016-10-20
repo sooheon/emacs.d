@@ -1,4 +1,5 @@
 (use-package clojure-mode
+  :defer t
   :mode ("\\.boot\\'" . clojure-mode)
   :init
   (add-to-list 'magic-mode-alist '("#!.*boot\\s-*$" . clojure-mode))
@@ -8,16 +9,20 @@
   (load-library "clojure"))
 
 (use-package clj-refactor
+  :defer t
+  :init
+  (add-hook 'clojure-mode-hook 'clj-refactor-mode)
   :config
-  (setq cljr-favor-prefix-notation nil))
+  (setq cljr-favor-prefix-notation nil)
+  (cljr-add-keybindings-with-prefix "C-c C-r"))
 
 ;;;###autoload
 (defun soo-clojure-hook ()
   (lispy-mode 1)
-  (company-mode 1)
-  (clj-refactor-mode 1))
+  (company-mode 1))
 
 (use-package cider
+  :defer t
   :config
   (setq cider-prompt-for-symbol nil
         nrepl-hide-special-buffers t
@@ -40,6 +45,13 @@
   (add-hook 'cider-repl-mode-hook 'company-mode))
 
 (use-package inf-clojure
+  :defer t
   :config
   (setq inf-clojure-program "planck")
-  (add-hook 'inf-clojure-mode-hook #'smartparens-mode))
+  (add-hook 'inf-clojure-mode-hook #'smartparens-mode)
+  (general-define-key :keymaps 'clojurescript-mode-map
+    "C-c C-k" 'inf-clojure-eval-buffer
+    "C-c C-e" 'inf-clojure-eval-last-sexp
+    "C-M-x" 'inf-clojure-eval-defun))
+
+(provide 'soo-clojure)

@@ -1,4 +1,28 @@
 (require 'org)
+(use-package org
+  :ensure nil
+  :general
+  (:keymaps 'org-mode-map
+    "M-n" 'org-metadown
+    "M-p" 'org-metaup
+    "M-h" 'org-metaleft
+    "M-H" 'org-shiftmetaleft
+    "M-l" 'org-metaright2
+    "M-L" 'org-shiftmetaright
+    "M-j" (lambda () (interactive)
+            (org-meta-return)
+            (evil-insert 1)))
+  (nmap :keymaps 'org-mode-map
+    [C-return] (lambda () (interactive) (org-insert-heading-respect-content) (evil-append 1))
+    [M-return] (lambda () (interactive) (org-meta-return) (evil-append 1))
+    [return] 'org-open-at-point
+    "t" 'org-todo
+    "$" 'org-end-of-line
+    "^" 'org-beginning-of-line
+    ;; "-" 'org-ctrl-c-minus
+    "<" 'org-metaleft
+    ">" 'org-metaright))
+
 (require 'ox)
 ;; FIXME: https://bitbucket.org/mituharu/emacs-mac/commits/6e8c84bd419ab425c3359b4ca17e2da9e23136ad
 (define-key org-mode-map (kbd "C-c l") 'org-store-link)
@@ -16,12 +40,23 @@
 (use-package auctex :defer t)
 (use-package cdlatex)
 
+(use-package pamparam
+  :ensure nil
+  :general
+  (:keymaps 'org-mode-map
+   "C-c y" 'pam-drill))
+
+(use-package org-pomodoro
+  :disabled t
+  :general
+  ("C-s-r" 'org-pomodoro))
+
 ;;;###autoload
 (defun soo-org-hook ()
   (worf-mode)
   (turn-on-org-cdlatex)
   (auto-fill-mode 1)
-  (smartparens-mode)
+  (smartparens-mode 1)
   (toggle-truncate-lines -1))
 
 (defun latexify-line ()
@@ -34,7 +69,7 @@
       (end-of-line)
       (insert "$"))))
 
-(setq-default org-export-in-background t
+(setq-default org-export-in-background nil
               org-src-fontify-natively t
               org-M-RET-may-split-line nil
               org-catch-invisible-edits 'show
@@ -76,28 +111,6 @@ forward to downcase-word"
     (when (org-check-for-hidden 'items) (org-hidden-tree-error))
     (call-interactively 'org-indent-item))
    (t (call-interactively 'downcase-word))))
-
-(general-define-key :keymaps 'org-mode-map
-  "M-n" 'org-metadown
-  "M-p" 'org-metaup
-  "M-h" 'org-metaleft
-  "M-H" 'org-shiftmetaleft
-  "M-l" 'org-metaright2
-  "M-L" 'org-shiftmetaright
-  "M-j" (lambda () (interactive)
-          (org-meta-return)
-          (evil-insert 1)))
-
-(nmap :keymaps 'org-mode-map
-  [C-return] (lambda () (interactive) (org-insert-heading-respect-content) (evil-append 1))
-  [M-return] (lambda () (interactive) (org-meta-return) (evil-append 1))
-  [return] 'org-open-at-point
-  "t" 'org-todo
-  "$" 'org-end-of-line
-  "^" 'org-beginning-of-line
-  ;; "-" 'org-ctrl-c-minus
-  "<" 'org-metaleft
-  ">" 'org-metaright)
 
 ;; Org Babel
 (setq org-edit-src-content-indentation 0

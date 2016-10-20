@@ -1,19 +1,39 @@
 (require 'python)
-(csetq python-shell-completion-native-enable nil)
-(add-hook 'inferior-python-mode-hook 'company-mode)
-(add-hook 'inferior-python-mode-hook 'smartparens-mode)
-(setq python-shell-interpreter "ipython"
-      python-shell-interpreter-args "-i" ; http://tinyurl.com/j44y64d
-      )
-(defun py-yapf-and-send-buffer ()
-  (interactive)
-  (py-yapf-buffer)
-  (python-shell-send-buffer))
-(bind-key "C-c C-c" 'py-yapf-and-send-buffer python-mode-map)
+(use-package python
+  :ensure nil
+  :general
+  (:keymaps 'python-mode-map
+   "C-j" 'newline-and-indent
+   "C-m" 'newline)
+  :config
+  (csetq python-shell-completion-native-enable nil)
+  (add-hook 'inferior-python-mode-hook 'company-mode)
+  (add-hook 'inferior-python-mode-hook 'smartparens-mode)
+  (nmap :keymaps 'inferior-python-mode-map "C-d" 'evil-scroll-down)
+  ;; (setq python-shell-interpreter "ipython"
+  ;;       python-shell-interpreter-args "-i" ; http://tinyurl.com/j44y64d
+  ;;       )
+  )
+
+(use-package py-yapf
+  :commands py-yapf-buffer
+  :general
+  (:keymaps 'python-mode-map
+   "C-c C-c" 'py-yapf-and-send-buffer)
+  :init
+  (nmap :prefix "SPC"
+        :keymaps 'python-mode-map
+        "=" 'py-yapf-buffer)
+  :config
+  (defun py-yapf-and-send-buffer ()
+    (interactive)
+    (py-yapf-buffer)
+    (python-shell-send-buffer)))
 
 (defvar no-pip
   (string-match "Command not found\\|no pip in"
                 (shell-command-to-string "which pip")))
+
 (unless no-pip
   (use-package jedi
     :config
@@ -27,36 +47,39 @@
     ;; (define-key jedi-mode-map (kbd "K") 'jedi:show-doc)
     ))
 
-(require 'lpy)
-(diminish 'lpy-mode "lpy")
-(define-key lpy-mode-map (kbd "C-h") nil)
-(define-key lpy-mode-map (kbd "[") nil)
-(define-key lpy-mode-map (kbd "(") nil)
-(define-key lpy-mode-map (kbd "=") nil)
-(define-key lpy-mode-map (kbd ">") nil)
-(define-key lpy-mode-map (kbd "<") nil)
-(define-key lpy-mode-map (kbd ",") nil)
-(define-key python-mode-map (kbd "C-j") 'newline-and-indent)
-(define-key python-mode-map (kbd "C-m") 'newline)
-;; (define-key python-mode-map (kbd "C-c C-z") 'ora-python-switch-to-shell)
-;; (define-key python-mode-map (kbd "C-c C-l") 'ora-python-send)
+(use-package lpy
+  :ensure nil
+  :diminish (lpy-mode . "lpy")
+  :init
+  (use-package function-args :defer t)
+  :config
+  (general-define-key :keymaps 'lpy-mode-map
+    "C-h" nil
+    "[" nil
+    "(" nil
+    "+" nil
+    "-" nil
+    "=" nil
+    ">" nil
+    "<" nil
+    "," nil
+    "\"" nil))
 
 (require 'le-python)
 
 (use-package anaconda-mode
+  :defer t
   :diminish anaconda-mode
   :config
   (evil-define-key 'normal anaconda-mode-map "K" 'anaconda-mode-show-doc)
   (evil-set-initial-state 'anaconda-mode-view-mode 'insert)
   (defadvice anaconda-mode-goto (before python/anaconda-mode-goto activate)
     (evil--jumps-push))
-  (require 'company-anaconda)
+  (use-package company-anaconda)
   (add-to-list 'company-backends 'company-anaconda))
 
 ;;;###autoload
 (defun soo-python-hook ()
-  ;; (unless no-pip (jedi:setup))
-  ;; (remove-hook 'post-command-hook 'jedi:handle-post-command t)
   (setq lispy-no-space t)
   (setq forward-sexp-function 'ora-c-forward-sexp-function)
   (lpy-mode 1)
@@ -111,10 +134,3 @@ buffer."
 ;;   :init
 ;;   (add-hook 'python-mode-hook
 ;;             '(lambda () (add-to-list 'company-backends 'company-jedi))))
-
-(use-package py-yapf
-  :commands py-yapf-buffer
-  :init
-  (nmap :prefix "SPC"
-        :keymaps 'python-mode-map
-        "=" 'py-yapf-buffer))
