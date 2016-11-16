@@ -41,6 +41,7 @@
             "<f2> j" 'counsel-set-variable
             "C-c v" 'ivy-push-view
             "C-c V" 'ivy-pop-view)
+  (:keymaps 'ivy-minibuffer-map "s-f" 'ivy-next-line-or-history)
   :init
   (nmap :prefix "SPC" "b" 'ivy-switch-buffer)
   :config
@@ -50,23 +51,20 @@
         ivy-use-virtual-buffers t
         ivy-count-format "%d "
         ivy-height 12
-        ivy-re-builders-alist '((counsel-M-x . ivy--regex-fuzzy)
-                                (t . ivy--regex-plus)
-                                ;; (swiper . ivy--regex-plus)
-                                ;; (counsel-recentf . ivy--regex-plus)
-                                ;; (wspecial-worf-goto . ivy--regex-plus)
-                                ;; (t . ivy--regex-fuzzy)
-                                )
+        ;; ivy-re-builders-alist '((counsel-M-x . ivy--regex-fuzzy)
+        ;;                         ;; (t . ivy--regex-plus)
+        ;;                         (t . ivy--regex-fuzzy))
         ivy-initial-inputs-alist '((org-refile . "^")
                                    (org-agenda-refile . "^")
                                    (org-capture-refile . "^")
                                    (man . "^")
                                    (woman . "^"))
         ivy-action-wrap t
-        ivy-sort-matches-functions-alist
-        '((t . nil)
-          (ivy-switch-buffer . ivy-sort-function-buffer)
-          (counsel-find-file . ivy-sort-function-buffer)))
+        ;; ivy-sort-matches-functions-alist
+        ;; '((t . nil)
+        ;;   (ivy-switch-buffer . ivy-sort-function-buffer)
+        ;;   (counsel-find-file . ivy-sort-function-buffer))
+        )
 
   (general-define-key :keymaps 'ivy-minibuffer-map
     [escape] 'minibuffer-keyboard-quit

@@ -26,7 +26,7 @@
 (require 'ox)
 ;; FIXME: https://bitbucket.org/mituharu/emacs-mac/commits/6e8c84bd419ab425c3359b4ca17e2da9e23136ad
 (define-key org-mode-map (kbd "C-c l") 'org-store-link)
-(require 'org-download)
+(use-package org-download)
 (org-download-enable)
 (csetq org-download-method 'attach)
 (use-package worf

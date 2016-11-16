@@ -18,7 +18,6 @@
 
 ;;** font
 (add-to-list 'default-frame-alist '(font . "Input Mono Narrow"))
-(set-face-attribute 'default nil :height 140)
 (set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
 ;;* customize
 (defmacro csetq (variable value)
@@ -37,7 +36,7 @@
 (eval '(setq inhibit-startup-echo-area-message "sooheon"))
 (blink-cursor-mode -1)
 (csetq blink-cursor-blinks 0)
-(global-hl-line-mode 1)
+;; (global-hl-line-mode 1)
 (setq-default frame-title-format '((:eval (if buffer-file-name
                                        (abbreviate-file-name buffer-file-name)
                                      "%b"))))
@@ -61,9 +60,8 @@
       mac-command-modifier 'super
       mac-option-modifier 'meta)
 (setq scroll-preserve-screen-position t
-      scroll-margin 1
-      ;; scroll-conservatively 101
-      )
+      scroll-margin 2
+      scroll-conservatively 101)
 (setq lisp-indent-function 'Fuco1/lisp-indent-function) ; don't indent lists starting with keywords
 (setq load-prefer-newer t
       vc-follow-symlinks t
@@ -244,7 +242,7 @@
   (add-hook 'auto-compile-inhibit-compile-hook
             'auto-compile-inhibit-compile-detached-git-head))
 
-(defvar sooheon--avy-keys '(?w ?e ?r ?s ?d ?x ?c ?u ?i ?o ?v ?n ?m ?l ?k ?j ?f))
+(defvar sooheon-avy-keys '(?w ?e ?r ?s ?d ?x ?c ?u ?i ?o ?v ?n ?m ?l ?k ?j ?f))
 
 (use-package avy
   :commands spacemacs/avy-open-url
@@ -253,7 +251,7 @@
    [remap goto-line] 'evil-avy-goto-line)
   (nmap :prefix "SPC" "xo" 'spacemacs/avy-open-url)
   :config
-  (setq avy-keys sooheon--avy-keys)
+  (setq avy-keys sooheon-avy-keys)
   (defun spacemacs/avy-goto-url ()
     "Use avy to go to an URL in the buffer."
     (interactive)
@@ -275,7 +273,9 @@
 
 (use-package ace-window
   :general
-  ("C-x o" 'ace-window))
+  ("C-x o" 'ace-window)
+  :config
+  (setq aw-keys sooheon-avy-keys))
 
 (use-package autorevert
   :defer t
@@ -333,6 +333,15 @@
   :commands dired-jump
   :general
   (nmap "-" 'dired-jump)
+  :init
+  (add-hook 'dired-mode-hook #'soo--dired-setup)
+  :config
+  (setq dired-listing-switches "-alGh1v --group-directories-first")
+  (defvar dired-dotfiles-show-p)
+  (defun soo--dired-setup ()
+    ;; (setq dired-omit-verbose nil)
+    (setq dired-hide-details-hide-symlink-targets nil)
+    (dired-hide-details-mode t))
   (nmap :keymaps 'dired-mode-map
     "-" 'dired-jump
     "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
@@ -350,16 +359,7 @@
     "T" 'dired-tree-down
     "K" 'dired-do-kill-lines
     "r" 'revert-buffer
-    "C-r" 'dired-do-redisplay)
-  :init
-  (add-hook 'dired-mode-hook #'soo--dired-setup)
-  :config
-  ;; (setq dired-listing-switches "-laGh1v --group-directories-first")
-  (defvar dired-dotfiles-show-p)
-  (defun soo--dired-setup ()
-    ;; (setq dired-omit-verbose nil)
-    (setq dired-hide-details-hide-symlink-targets nil)
-    (dired-hide-details-mode t)))
+    "C-r" 'dired-do-redisplay))
 
 (use-package ediff
   :defer t
@@ -369,11 +369,6 @@
                 ediff-split-window-function 'split-window-horizontally
                 ediff-merge-split-window-function 'split-window-horizontally)
   (add-hook 'ediff-quit-hook #'winner-undo))
-
-(use-package eldoc
-  :diminish eldoc-mode
-  :config
-  (global-eldoc-mode -1))
 
 (use-package elisp-slime-nav
   :diminish elisp-slime-nav-mode
@@ -385,6 +380,7 @@
   :defer t
   :general
   (nmap :prefix "SPC" "ai" 'sooheon--switch-to-circe)
+  (:prefix "C-c" "ai" 'sooheon--switch-to-circe)
   :init
   (setq circe-network-options
         '(("Freenode"
@@ -398,7 +394,7 @@ CIRCE if no buffers open."
     (let ((candidates (list)))
       (dolist (buf (buffer-list) candidates)
         (if (memq (with-current-buffer buf major-mode)
-                  '(circe-channel-mode circe-server-mode))
+                  '(circe-channel-mode circe-server-mode circe-query-mode))
             (setq candidates (append (list (buffer-name buf)) candidates))))
       (if candidates
           (switch-to-buffer (completing-read "IRC buffer: " candidates))
@@ -407,6 +403,7 @@ CIRCE if no buffers open."
   (setq circe-reduce-lurker-spam t
         tracking-position 'end)
   (enable-circe-color-nicks)
+  (enable-lui-track-bar)
   (require 'lui-autopaste)
   (add-hook 'circe-channel-mode-hook 'enable-lui-autopaste))
 
@@ -505,6 +502,7 @@ friend if it has the same major mode."
   (:keymaps 'smartparens-mode-map
    "M-a" 'sp-beginning-of-sexp
    "M-e" 'soo-end-of-sexp-or-next
+   "M-S" 'sp-splice-sexp-killing-backward
    [C-backspace] 'sp-backward-kill-sexp
    "C-)" 'sp-forward-slurp-sexp
    "C-(" 'sp-backward-slurp-sexp
@@ -551,14 +549,18 @@ friend if it has the same major mode."
    "M-p" nil
    "\"" 'lispy-doublequote
    "C-d" 'lispy-delete
-   "M-S" 'sp-splice-sexp-killing-backward
+   "M-d" nil
+   ;; "M-d" 'sp-kill-word
+   "M-S" nil
    "M-)" nil
+   "M-{" 'lispy-wrap-braces
+   "M-[" 'lispy-wrap-brackets
    "DEL" 'lispy-delete-backward
    "C-)" nil
    "C-(" nil
    "C-}" nil
    "C-{" nil)
-  ;; Unbind M-k and M-. in evil normal state and use lispy
+  ;; Unbind M-k and M-. in normal state, pass through to lispy
   (:keymaps 'evil-normal-state-map
    "M-." nil                            ; evil-repeat-pop-next
    "M-k" nil)
@@ -576,10 +578,10 @@ friend if it has the same major mode."
   :config
   (lispy-set-key-theme '(special c-digits paredit))
   (setq lispy-compat '(edebug cider)
-        lispy-avy-keys sooheon--avy-keys
+        lispy-avy-keys sooheon-avy-keys
         lispy-avy-style-paren 'at-full
         lispy-avy-style-symbol 'at-full
-        lispy-delete-backward-recenter 10
+        lispy-delete-backward-recenter nil
         lispy-safe-paste t
         lispy-safe-copy t
         lispy-safe-delete t
@@ -697,12 +699,11 @@ Keep M-n and M-p reserved for history."
   :after projectile
   :init
   (nmap :prefix "SPC"
-    "pp" 'counsel-projectile
     "pb" 'counsel-projectile-switch-to-buffer
     "pd" 'counsel-projectile-find-dir
     "pf" 'counsel-projectile-find-file
     "pr" 'projectile-recentf
-    "ps" 'counsel-projectile
+    "ps" 'counsel-projectile-switch-project
     "/" 'counsel-projectile-ag)
   :config
   (setq projectile-switch-project-action 'counsel-projectile-find-file)
@@ -780,6 +781,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :config (save-place-mode))
 
 (use-package sentence-navigation
+  :disabled t
   :defer t
   :general
   (mmap ")" 'sentence-nav-evil-forward
@@ -795,9 +797,11 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (add-hook 'emacs-lisp-mode-hook (lambda () (semantic-mode -1)))
   (add-hook 'lisp-interaction-mode-hook (lambda () (semantic-mode -1)))
   :config
-  (cl-delete-if (lambda (x)
-                  (string-match-p "^semantic-" (symbol-name x)))
-                completion-at-point-functions))
+  (add-hook 'semantic-mode-hook
+            (lambda ()
+              (cl-delete-if (lambda (x)
+                              (string-prefix-p "semantic-" (symbol-name x)))
+                            completion-at-point-functions))))
 
 (use-package shell-pop
   :general ("s-`" 'shell-pop)
@@ -904,8 +908,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :diminish ws-butler-mode
   :config (ws-butler-global-mode))
 
-(bind-key [remap just-one-space] #'cycle-spacing)
-
 (use-package expand-region
   :general
   ("M-2" 'soo-er-and-insert)
@@ -971,6 +973,8 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (add-hook 'prog-mode-hook 'company-mode)
   :config
   (setq company-tooltip-align-annotations t
+        company-dabbrev-ignore-case nil
+        company-dabbrev-downcase nil
         company-idle-delay 0.3
         company-minimum-prefix-length 2
         company-require-match nil

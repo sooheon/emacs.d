@@ -14,7 +14,7 @@
   (add-hook 'clojure-mode-hook 'clj-refactor-mode)
   :config
   (setq cljr-favor-prefix-notation nil)
-  (cljr-add-keybindings-with-prefix "C-c C-r"))
+  (cljr-add-keybindings-with-prefix "s-,"))
 
 ;;;###autoload
 (defun soo-clojure-hook ()
@@ -33,16 +33,24 @@
         cider-mode-line '(:eval (format " %s" (cider--modeline-info)))
         cider-default-repl-command "boot"
         cider-pprint-fn 'puget)
+  (defun cider-figwheel-repl ()
+    (interactive)
+    (setq-local cider-cljs-lein-repl "(do (require 'figwheel-sidecar.repl-api)
+                                          (figwheel-sidecar.repl-api/start-figwheel!)
+                                          (figwheel-sidecar.repl-api/cljs-repl))")
+    (cider-jack-in-clojurescript))
+  (general-define-key :keymaps 'cider-mode-map
+    "C-c C-M-j" 'cider-figwheel-repl)
   ;; (defadvice cider-jump-to-var (before add-evil-jump activate)
   ;;   (evil-set-jump))
+  (add-hook 'cider-repl-mode-hook 'smartparens-mode)
+  (add-hook 'cider-repl-mode-hook 'company-mode)
   (evil-define-key 'normal cider-mode-map "K" 'cider-doc)
   (evil-set-initial-state 'cider-docview-mode 'insert)
   (evil-set-initial-state 'cider-stacktrace-mode 'insert)
   (evil-set-initial-state 'cider-macroexpansion-mode 'insert)
   (evil-set-initial-state 'cider-browse-ns-mode 'insert)
-  (evil-set-initial-state 'cider-test-report-mode 'insert)
-  (add-hook 'cider-repl-mode-hook 'smartparens-mode)
-  (add-hook 'cider-repl-mode-hook 'company-mode))
+  (evil-set-initial-state 'cider-test-report-mode 'insert))
 
 (use-package inf-clojure
   :defer t

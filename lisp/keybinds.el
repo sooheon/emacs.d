@@ -5,7 +5,12 @@
  "s-k" 'kill-this-buffer
  [remap move-beginning-of-line] 'smart-move-beginning-of-line
  "s-w" 'soo--close-window-dwim
- [remap fill-paragraph] 'endless/fill-or-unfill)
+ [remap fill-paragraph] 'endless/fill-or-unfill
+ [remap just-one-space] 'oscillate-spacing)
+
+(defun oscillate-spacing (&optional n)
+  (interactive "*p")
+  (cycle-spacing 1 nil 'fast))
 
 (nmap "zf" '(lambda () (interactive)
               (reposition-window)
@@ -54,7 +59,8 @@
  "C-s-f" 'toggle-frame-fullscreen
  "s--" 'dec-face-height
  "s-=" 'inc-face-height
- "M-DEL" 'evil-delete-backward-word)
+ "M-DEL" 'evil-delete-backward-word
+ "C-w" 'evil-delete-backward-word)
 (imap "C-o" 'evil-execute-in-normal-state
       "<s-backspace>" 'sooheon--delete-to-bol)
 (define-key universal-argument-map (kbd "s-u") 'universal-argument)
