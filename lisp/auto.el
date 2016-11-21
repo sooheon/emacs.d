@@ -22,17 +22,23 @@ point reaches the beginning or end of the buffer, stop there."
 (defun soo--close-window-dwim (&optional window)
   "DWIM window closing function.
 If window is a *Help* window, call `quit-window' so that the
-buffer will not be selected again with `other-buffer'. When there
-are multiple windows in frame, call `delete-window' on current
-window. If there is only one window in frame, call
-`bury-buffer'."
+buffer will not be selected again with `other-buffer'. Do the
+same for *terminal* buffers, also deleting window if term is run
+in split. Otherwise, when there are split windows in frame,
+call `delete-window' on current window. If there is only one
+window in frame, call `bury-buffer'."
   (interactive)
   (let ((window (window-normalize-window window)))
-    (if (eq major-mode 'help-mode)
-        (call-interactively 'quit-window)
-      (if (window-parent window)
-          (call-interactively 'delete-window)
-        (call-interactively 'bury-buffer)))))
+    (cond
+     ((eq major-mode 'help-mode)
+      (call-interactively 'quit-window))
+     ((eq major-mode 'term-mode)
+      (call-interactively 'quit-window)
+      (when (window-parent window)
+        (call-interactively 'delete-window)))
+     (t (if (window-parent window)
+            (call-interactively 'delete-window)
+          (call-interactively 'bury-buffer))))))
 
 ;;;###autoload
 (defun soo-terminal-focus ()
