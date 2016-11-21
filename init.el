@@ -16,14 +16,18 @@
 (add-to-list 'load-path (expand-file-name "lisp/modes" emacs-d))
 (add-to-list 'load-path (expand-file-name "lisp/themes" emacs-d))
 
-;;** font
-(add-to-list 'default-frame-alist '(font . "Input Mono Narrow"))
-(set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
+;;** autoloads
+(load (expand-file-name "loaddefs.el" lisp-d) nil t)
+(load (expand-file-name "auto.el" lisp-d) t t)
+
 ;;* customize
 (defmacro csetq (variable value)
   `(funcall (or (get ',variable 'custom-set) 'set-default) ',variable ,value))
 (csetq custom-file (expand-file-name "custom.el" lisp-d))
-(when (file-exists-p custom-file) (load custom-file))
+(load custom-file 'noerror)
+;;** font
+(add-to-list 'default-frame-alist '(font . "Input Mono Narrow"))
+(set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
 ;;** decorations
 (csetq tool-bar-mode nil)
 (csetq menu-bar-mode nil)
@@ -997,10 +1001,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (use-package yasnippet
   :diminish yas-minor-mode
   :commands (yas-global-mode yas-minor-mode))
-
-;;** autoloads
-(load (expand-file-name "auto.el" lisp-d) nil t)
-(load (expand-file-name "loaddefs.el" lisp-d) nil t)
 
 (require 'server)
 (or (server-running-p) (server-start))
