@@ -93,9 +93,11 @@
 (setq sentence-end-double-space nil)
 (setq search-default-mode 'char-fold-to-regexp)
 (add-hook 'server-switch-hook 'raise-frame)
+(put 'narrow-to-region 'disabled nil)
+
 
 ;;** internals
-(setq gc-cons-threshold (* 10 1024 1024)
+(setq gc-cons-threshold (* 12 1024 1024)
       ad-redefinition-action 'accept)
 
 ;;** shell
@@ -112,6 +114,9 @@
 (package-initialize)
 (with-eval-after-load 'evil
   (evil-set-initial-state 'package-menu-mode 'insert))
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
 (eval-when-compile (require 'use-package))
 (setq use-package-always-ensure t)
 
@@ -133,7 +138,6 @@
 ;;** themes
 (add-to-list 'custom-theme-load-path (expand-file-name "themes" lisp-d))
 (require 'soo-themes)
-;; (load-theme 'eclipse2 t)
 
 ;;** keybinds
 (use-package general
@@ -153,11 +157,11 @@
         evil-search-module 'evil-search
         evil-ex-search-persistent-highlight nil
         evil-want-Y-yank-to-eol t
-        evil-ex-substitute-global t)
+        evil-ex-substitute-global t
+        evil-want-C-w-delete t)
   :config
   (evil-mode)
-  (nmap "U" 'undo-tree-redo)
-  (imap "C-w" 'evil-delete-backward-word))
+  (setq evil-ex-search-highlight-all t))
 
 (use-package evil-commentary
   :diminish evil-commentary-mode
@@ -197,7 +201,7 @@
   :diminish evil-snipe-local-mode
   :init
   (setq evil-snipe-use-vim-sneak-bindings t
-        evil-snipe-scope 'buffer
+        evil-snipe-scope 'visible
         evil-snipe-repeat-scope 'buffer
         evil-snipe-smart-case t
         evil-snipe-repeat-keys nil
@@ -206,21 +210,36 @@
   (evil-snipe-override-mode 1))
 
 (use-package evil-surround
-  :init
-  (global-evil-surround-mode 1)
-  (add-hook 'emacs-lisp-mode-hook
-            (lambda ()
-              (push '(?` . ("`" . "'")) evil-surround-pairs-alist)))
-  ;; Define new text objects
+  :general
   (itomap "$" 'evil-inner-$
           "*" 'evil-inner-*
           "/" 'evil-inner-/)
   (otomap "$" 'evil-outer-$
           "*" 'evil-outer-*
           "/" 'evil-outer-/)
+  :init
+  (global-evil-surround-mode 1)
+  (add-hook 'emacs-lisp-mode-hook
+            (lambda ()
+              (push '(?` . ("`" . "'")) evil-surround-pairs-alist)))
+  ;; Define new text objects
   (push '(42 "*" . "*") evil-surround-pairs-alist)
   (push '(36 "$" . "$") evil-surround-pairs-alist)
-  (push '(47 "/" . "/") evil-surround-pairs-alist))
+  (push '(47 "/" . "/") evil-surround-pairs-alist)
+  :config
+;  (evil-define-text-object evil-inner-$ (count &optional beg end type)
+;    (evil-select-paren "\\$" "\\$" beg end type count nil))
+;  (evil-define-text-object evil-outer-$ (count &optional beg end type)
+;    (evil-select-paren "\\$" "\\$" beg end type count t))
+;  (evil-define-text-object evil-inner-* (count &optional beg end type)
+;    (evil-select-paren "\\*" "\\*" beg end type count nil))
+;  (evil-define-text-object evil-outer-* (count &optional beg end type)
+;    (evil-select-paren "\\*" "\\*" beg end type count t))
+;  (evil-define-text-object evil-inner-/ (count &optional beg end type)
+;    (evil-select-paren "\\/" "\\/" beg end type count nil))
+;  (evil-define-text-object evil-outer-/ (count &optional beg end type)
+;    (evil-select-paren "\\/" "\\/" beg end type count t))
+ )
 
 (use-package evil-numbers
   :general
@@ -354,6 +373,7 @@
     "-" 'dired-jump
     "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
     "got" 'soo-terminal-pop
+    "goT" 'soo-terminal-pop-project-root
     "gof" 'reveal-in-osx-finder
     "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1))
     "=" 'vinegar/dired-diff
@@ -492,7 +512,7 @@ friend if it has the same major mode."
   (add-hook 'help-mode-hook (lambda () (toggle-truncate-lines -1))))
 
 (use-package highlight-escape-sequences
-  :defer
+  :defer t
   :init (add-hook 'prog-mode-hook 'hes-mode))
 
 (use-package info
@@ -558,7 +578,6 @@ friend if it has the same major mode."
    "\"" 'lispy-doublequote
    "C-d" 'lispy-delete
    "M-d" nil
-   ;; "M-d" 'sp-kill-word
    "M-S" nil
    "M-)" nil
    "M-{" 'lispy-wrap-braces
@@ -568,6 +587,12 @@ friend if it has the same major mode."
    "C-(" nil
    "C-}" nil
    "C-{" nil)
+  (:keymaps 'lispy-mode-map-c-digits
+   "C-8" 'lispy-out-forward-newline
+   "C-9" 'lispy-parens-down)
+  (:keymaps 'lispy-mode-map-special
+   "+" nil                              ; special-lispy-join
+   )
   ;; Unbind M-k and M-. in normal state, pass through to lispy
   (:keymaps 'evil-normal-state-map
    "M-." nil                            ; evil-repeat-pop-next
@@ -585,7 +610,7 @@ friend if it has the same major mode."
   (csetq iedit-toggle-key-default nil)  ; Don't want to use iedit
   :config
   (lispy-set-key-theme '(special c-digits paredit))
-  (setq lispy-compat '(edebug cider)
+  (setq lispy-compat '(cider)
         lispy-avy-keys sooheon-avy-keys
         lispy-avy-style-paren 'at-full
         lispy-avy-style-symbol 'at-full
@@ -633,12 +658,11 @@ Keep M-n and M-p reserved for history."
     "G" 'magit-dispatch-popup)
   :config
   (evil-set-initial-state 'magit-submodule-list-mode 'insert)
-  (setq magit-display-buffer-function 'magit-display-buffer-fullcolumn-most-v1
+  (setq magit-display-buffer-function 'magit-display-buffer-traditional
         magit-popup-show-common-commands nil)
   (use-package magithub :disabled t))
 
 (use-package diff-hl
-  :after (projectile magit)
   :config
   (setq diff-hl-draw-borders nil)
   (global-diff-hl-mode)
@@ -711,7 +735,7 @@ Keep M-n and M-p reserved for history."
     "pd" 'counsel-projectile-find-dir
     "pf" 'counsel-projectile-find-file
     "pr" 'projectile-recentf
-    "ps" 'counsel-projectile-switch-project
+    "pp" 'counsel-projectile-switch-project
     "/" 'counsel-projectile-ag)
   :config
   (setq projectile-switch-project-action 'counsel-projectile-find-file)
@@ -771,11 +795,10 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (recentf-mode 1)
   (setq recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG" "github.*txt$"
                           ".*png$" ".*cache$" "^/\\(?:ssh\\|su\\|sudo\\)?:"
-                          ".*el.gz$" "/\\.get/.*\\'" "/elpa/.*\\"))
+                          ".*el.gz$" "/\\.get/.*\\'" "/elpa/\\.*"
+                          ".emacs.d/var/\\.*"))
   (setq recentf-max-saved-items 200
         recentf-auto-cleanup 300))
-
-(use-package restclient :defer t)
 
 (use-package reveal-in-osx-finder
   :if (eq system-type 'darwin)
@@ -812,22 +835,37 @@ INITIAL-INPUT can be given as the initial minibuffer input."
                             completion-at-point-functions))))
 
 (use-package shell-pop
-  :general ("s-`" 'shell-pop)
+  :general
+  ("s-`" 'shell-pop
+   "M-s-`" 'shell-pop-and-cd)
   :init
   (setq shell-pop-window-position 'bottom
-        shell-pop-window-height 30
-        shell-pop-full-span t
-        shell-pop-shell-type '("terminal" "*terminal*"
-                               (lambda () (term explicit-shell-file-name)))))
+        shell-pop-window-height 35
+        shell-pop-autocd-to-working-dir nil
+        shell-pop-restore-window-configuration nil)
+  :config
+  ;; For some reason, returning to a term buffer with some text causes cursor to
+  ;; be misplaced. This hook places cursor back at the prompt.
+  (add-hook 'shell-pop-in-after-hook
+            (lambda () (end-of-buffer) (backward-char 1)))
+  (defun shell-pop-and-cd (arg)
+    (interactive "P")
+    (let ((shell-pop-autocd-to-working-dir t))
+      (shell-pop arg))))
 
 (use-package term
   :general
-  (:keymaps 'term-raw-map "s-v" 'term-paste)
-  (nmap :keymaps 'term-raw-map "p" 'term-paste)
+  (:keymaps 'term-raw-map
+   "s-v" 'term-paste
+   "M-x" 'counsel-M-x)
   :config
   (setq term-suppress-hard-newline nil
-        term-scroll-to-bottom-on-output t)
-  (add-hook 'term-mode-hook (lambda () (toggle-truncate-lines 1))))
+        term-scroll-to-bottom-on-output t
+        term-scroll-show-maximum-output t)
+  (add-hook 'term-mode-hook (lambda () (toggle-truncate-lines 1)))
+  (add-hook 'term-mode-hook (lambda ()
+                              (set (make-local-variable 'scroll-margin) 0)))
+  (evil-set-initial-state 'term-mode 'emacs))
 
 (use-package typo
   :disabled t
@@ -838,14 +876,15 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package undo-tree
   :diminish undo-tree-mode
-  :general ("s-Z" 'undo-tree-redo
-            "s-z" 'undo-tree-undo)
+  :general
+  ("s-Z" 'undo-tree-redo
+   "s-z" 'undo-tree-undo)
+  (nmap "U" 'undo-tree-redo)
   :init
   (global-undo-tree-mode)
   :config
   (setq undo-tree-visualizer-timestamps t
-        ;; undo-tree-visualizer-diff t
-        undo-tree-auto-save-history t))
+        undo-tree-auto-save-history nil))
 
 (use-package wgrep :defer t)
 
@@ -883,7 +922,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
     (if (< (window-width) 160) 'below 'right))
   (setq shackle-select-reused-windows t
         shackle-rules '((compilation-mode :noselect t)
-                        ;; (help-mode :align shackle-smart-align :size 0.42)
+                        (help-mode :align shackle-smart-align :size 0.4)
                         (undo-tree-visualizer-mode :align t :size 0.3)
                         (woman-mode :popup t)
                         (flycheck-error-list-mode :select t)
@@ -894,6 +933,10 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (csetq fill-column 80)
 (add-hook 'text-mode-hook #'auto-fill-mode)
 (diminish 'auto-fill-function)          ; auto-fill-mode is called this
+
+(use-package eldoc
+  :config
+  (global-eldoc-mode -1))
 
 (use-package simple
   :ensure nil
@@ -928,7 +971,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
            (er/expand-region arg))))
 
 (use-package multiple-cursors
-  :ensure nil
   :preface
   (define-prefix-command 'endless/mc-map)
   :general
@@ -937,7 +979,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (:keymaps 'ctl-x-map
    "m" 'endless/mc-map                  ; C-x m is usually `compose-mail'.
    "C-m" #'mc/mark-all-dwim
-   "RET" mule-keymap)
+   "<return>" mule-keymap)
   ("M-3" #'mc/mark-next-like-this
    "M-4" #'mc/mark-previous-like-this
    "M-#" #'mc/unmark-next-like-this

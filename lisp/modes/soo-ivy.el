@@ -46,7 +46,6 @@
   (nmap :prefix "SPC" "b" 'ivy-switch-buffer)
   :config
   (ivy-mode 1)
-  (use-package flx)
   (setq ivy-extra-directories '("./")
         ivy-use-virtual-buffers t
         ivy-count-format "%d "
@@ -71,7 +70,7 @@
     "<s-backspace>" (lambda () (interactive) (kill-line 0)))
 
   (use-package ivy-hydra
-    :defer t
+    :after ivy
     :config
     (define-key ivy-minibuffer-map "\C-o"
       (defhydra soo-ivy (:hint nil :color pink)
@@ -114,5 +113,7 @@
         ("t" (setq truncate-lines (not truncate-lines)))
         ("C" ivy-toggle-case-fold)
         ("o" ivy-occur :exit t)))))
+
+(use-package flx)
 
 (provide 'soo-ivy)

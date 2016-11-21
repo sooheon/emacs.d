@@ -2,7 +2,8 @@
  "C-x C-b" 'ibuffer
  "s-u" 'universal-argument
  "s-W" 'delete-frame
- "s-k" 'kill-this-buffer
+ "s-k" 'bury-buffer
+ "s-K" 'kill-this-buffer
  [remap move-beginning-of-line] 'smart-move-beginning-of-line
  "s-w" 'soo--close-window-dwim
  [remap fill-paragraph] 'endless/fill-or-unfill
@@ -15,10 +16,11 @@
 (nmap "zf" '(lambda () (interactive)
               (reposition-window)
               (reposition-window))
-      "goT" 'soo-terminal-pop
-      "got" 'soo-terminal-focus)
+      "goT" 'soo-terminal-pop-project-root
+      "got" 'soo-terminal-pop)
 
 (nmap :prefix "SPC"
+  "SPC" 'counsel-M-x
   "t\C-o" 'sooheon--toggle-right-option-key
   "tl" 'global-hl-line-mode
   "sc" 'evil-ex-nohighlight
@@ -59,8 +61,7 @@
  "C-s-f" 'toggle-frame-fullscreen
  "s--" 'dec-face-height
  "s-=" 'inc-face-height
- "M-DEL" 'evil-delete-backward-word
- "C-w" 'evil-delete-backward-word)
+ "M-DEL" 'evil-delete-backward-word)
 (imap "C-o" 'evil-execute-in-normal-state
       "<s-backspace>" 'sooheon--delete-to-bol)
 (define-key universal-argument-map (kbd "s-u") 'universal-argument)
