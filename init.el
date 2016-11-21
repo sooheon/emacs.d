@@ -40,10 +40,11 @@
 (eval '(setq inhibit-startup-echo-area-message "sooheon"))
 (blink-cursor-mode -1)
 (csetq blink-cursor-blinks 0)
-;; (global-hl-line-mode 1)
-(setq-default frame-title-format '((:eval (if buffer-file-name
-                                       (abbreviate-file-name buffer-file-name)
-                                     "%b"))))
+(csetq frame-title-format '("%b"
+                            (:eval
+                             (when (bound-and-true-p projectile-mode)
+                               (when-let ((project (projectile-project-name)))
+                                 (list " [" project "]"))))))
 (csetq fringe-indicator-alist
        '((continuation nil right-curly-arrow)
          (truncation left-arrow right-arrow)
