@@ -67,6 +67,9 @@
 (setq scroll-preserve-screen-position t
       scroll-margin 2
       scroll-conservatively 101)
+(progn ;; Deal with large files
+  (setq jit-lock-defer-time 0)
+  (add-hook 'find-file-hook #'my-find-huge-file-literally-hook))
 (setq lisp-indent-function 'Fuco1/lisp-indent-function) ; don't indent lists starting with keywords
 (setq load-prefer-newer t
       vc-follow-symlinks t

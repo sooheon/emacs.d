@@ -287,6 +287,14 @@ Lisp function does not specify a special indentation."
              (set (make-local-variable 'dired-dotfiles-show-p) t)))))
 
 ;;;###autoload
+(defun my-find-huge-file-literally-hook ()
+  "If a file is over a given size, make the buffer fundamental."
+  (when (> (buffer-size) (* 1024 1024))
+    ;; (setq buffer-read-only t)
+    (buffer-disable-undo)
+    (fundamental-mode)))
+
+;;;###autoload
 (defun soo-run-prog-mode-hook ()
   "Runs `prog-mode-hook'. Useful for modes that don't derive from
 `prog-mode' but should."
