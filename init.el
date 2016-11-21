@@ -825,14 +825,8 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (use-package semantic
   :defer t
   :init
-  (add-hook 'emacs-lisp-mode-hook (lambda () (semantic-mode -1)))
-  (add-hook 'lisp-interaction-mode-hook (lambda () (semantic-mode -1)))
-  :config
-  (add-hook 'semantic-mode-hook
-            (lambda ()
-              (cl-delete-if (lambda (x)
-                              (string-prefix-p "semantic-" (symbol-name x)))
-                            completion-at-point-functions))))
+  ;; Set semantic to parse only file, local, and project scope.
+  (csetq semanticdb-find-default-throttle '(file local project)))
 
 (use-package shell-pop
   :general
