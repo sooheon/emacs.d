@@ -59,6 +59,18 @@ end tell
            (or default-directory "~"))))
 
 ;;;###autoload
+(defun soo-terminal-pop-project-root ()
+  (interactive)
+  (do-applescript
+   (format "
+tell application \"Terminal\"
+  activate
+  do script \"cd %s\" in window 1
+end tell
+"
+           (or projectile-project-root default-directory "~"))))
+
+;;;###autoload
 (defun soo-terminal-pop-new-tab ()
   (interactive)
   (do-applescript
@@ -152,7 +164,7 @@ already narrowed."
 ;;;###autoload
 (defun update-all-autoloads ()
   (interactive)
-  (cd (expand-file-name "lisp" emacs-d))
+  (cd lisp-d)
   (let ((generated-autoload-file
          (expand-file-name "loaddefs.el")))
     (when (not (file-exists-p generated-autoload-file))
@@ -305,22 +317,3 @@ Lisp function does not specify a special indentation."
   "Runs `prog-mode-hook'. Useful for modes that don't derive from
 `prog-mode' but should."
   (run-hooks 'prog-mode-hook))
-
-;;;###autoload
-(evil-define-text-object evil-inner-$ (count &optional beg end type)
-  (evil-select-paren "\\$" "\\$" beg end type count nil))
-;;;###autoload
-(evil-define-text-object evil-outer-$ (count &optional beg end type)
-  (evil-select-paren "\\$" "\\$" beg end type count t))
-;;;###autoload
-(evil-define-text-object evil-inner-* (count &optional beg end type)
-  (evil-select-paren "\\*" "\\*" beg end type count nil))
-;;;###autoload
-(evil-define-text-object evil-outer-* (count &optional beg end type)
-  (evil-select-paren "\\*" "\\*" beg end type count t))
-;;;###autoload
-(evil-define-text-object evil-inner-/ (count &optional beg end type)
-  (evil-select-paren "\\/" "\\/" beg end type count nil))
-;;;###autoload
-(evil-define-text-object evil-outer-/ (count &optional beg end type)
-  (evil-select-paren "\\/" "\\/" beg end type count t))
