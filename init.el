@@ -510,7 +510,8 @@ friend if it has the same major mode."
     (set (make-local-variable 'speck-face-inhibit-list)
          '(org-tag org-latex-and-related))
     (speck-mode))
-  (add-hook 'org-mode-hook 'soo--speck-org-hook))
+  (add-hook 'org-mode-hook 'soo--speck-org-hook)
+  (add-hook 'text-mode-hook 'speck-mode))
 
 (use-package help
   :ensure nil
