@@ -843,7 +843,8 @@ INITIAL-INPUT can be given as the initial minibuffer input."
    "M-s-`" 'shell-pop-and-cd)
   :init
   (setq shell-pop-window-position 'bottom
-        shell-pop-window-height 35
+        shell-pop-window-height 30
+        shell-pop-full-span t
         shell-pop-autocd-to-working-dir nil
         shell-pop-restore-window-configuration nil)
   :config
