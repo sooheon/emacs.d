@@ -95,7 +95,6 @@
 (add-hook 'server-switch-hook 'raise-frame)
 (put 'narrow-to-region 'disabled nil)
 
-
 ;;** internals
 (setq gc-cons-threshold (* 12 1024 1024)
       ad-redefinition-action 'accept)
@@ -227,19 +226,18 @@
   (push '(36 "$" . "$") evil-surround-pairs-alist)
   (push '(47 "/" . "/") evil-surround-pairs-alist)
   :config
-;  (evil-define-text-object evil-inner-$ (count &optional beg end type)
-;    (evil-select-paren "\\$" "\\$" beg end type count nil))
-;  (evil-define-text-object evil-outer-$ (count &optional beg end type)
-;    (evil-select-paren "\\$" "\\$" beg end type count t))
-;  (evil-define-text-object evil-inner-* (count &optional beg end type)
-;    (evil-select-paren "\\*" "\\*" beg end type count nil))
-;  (evil-define-text-object evil-outer-* (count &optional beg end type)
-;    (evil-select-paren "\\*" "\\*" beg end type count t))
-;  (evil-define-text-object evil-inner-/ (count &optional beg end type)
-;    (evil-select-paren "\\/" "\\/" beg end type count nil))
-;  (evil-define-text-object evil-outer-/ (count &optional beg end type)
-;    (evil-select-paren "\\/" "\\/" beg end type count t))
- )
+  (evil-define-text-object evil-inner-$ (count &optional beg end type)
+    (evil-select-paren "\\$" "\\$" beg end type count nil))
+  (evil-define-text-object evil-outer-$ (count &optional beg end type)
+    (evil-select-paren "\\$" "\\$" beg end type count t))
+  (evil-define-text-object evil-inner-* (count &optional beg end type)
+    (evil-select-paren "\\*" "\\*" beg end type count nil))
+  (evil-define-text-object evil-outer-* (count &optional beg end type)
+    (evil-select-paren "\\*" "\\*" beg end type count t))
+  (evil-define-text-object evil-inner-/ (count &optional beg end type)
+    (evil-select-paren "\\/" "\\/" beg end type count nil))
+  (evil-define-text-object evil-outer-/ (count &optional beg end type)
+    (evil-select-paren "\\/" "\\/" beg end type count t)))
 
 (use-package evil-numbers
   :general
