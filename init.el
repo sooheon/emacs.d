@@ -323,6 +323,10 @@
         compilation-scroll-output 'next-error
         compilation-skip-threshold 2))
 
+(use-package conf-mode
+  :ensure nil
+  :mode ("/\\.[^/]*rc" . conf-mode))
+
 (use-package cc-mode
   :ensure nil
   :defer t
