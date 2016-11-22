@@ -897,7 +897,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :diminish which-key-mode
   :init
   (setq which-key-idle-delay 0.5)
-  :config
   (which-key-mode 1))
 
 (use-package window-numbering
