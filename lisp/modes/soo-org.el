@@ -13,7 +13,8 @@
             (org-meta-return)
             (evil-insert 1)))
   (nmap :keymaps 'org-mode-map
-    [C-return] (lambda () (interactive) (org-insert-heading-respect-content) (evil-append 1))
+    [C-return] (lambda () (interactive)
+                 (org-insert-heading-respect-content) (evil-append 1))
     [M-return] (lambda () (interactive) (org-meta-return) (evil-append 1))
     [return] 'org-open-at-point
     "t" 'org-todo
@@ -26,9 +27,11 @@
 (require 'ox)
 ;; FIXME: https://bitbucket.org/mituharu/emacs-mac/commits/6e8c84bd419ab425c3359b4ca17e2da9e23136ad
 (define-key org-mode-map (kbd "C-c l") 'org-store-link)
-(use-package org-download)
-(org-download-enable)
-(csetq org-download-method 'attach)
+(use-package org-download
+  :defer t
+  :config
+  (org-download-enable)
+  (csetq org-download-method 'attach))
 (use-package worf
   :diminish worf-mode
   :config
@@ -38,7 +41,7 @@
     "[" nil
     "]" nil))
 (use-package auctex :defer t)
-(use-package cdlatex)
+(use-package cdlatex :defer t)
 
 (use-package pamparam
   :ensure nil
