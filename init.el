@@ -998,7 +998,9 @@ INITIAL-INPUT can be given as the initial minibuffer input."
    "s" #'mc/sort-regions
    "l" #'mc/edit-lines
    "C-a" #'mc/edit-beginnings-of-lines
-   "C-e" #'mc/edit-ends-of-lines))
+   "C-e" #'mc/edit-ends-of-lines)
+  :config
+  (defun mc/cursor-is-bar () ()))
 
 (use-package hungry-delete :defer t)
 
