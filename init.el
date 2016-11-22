@@ -488,22 +488,29 @@ friend if it has the same major mode."
   (setq flyspell-correct-interface 'flyspell-correct-ivy))
 
 (use-package speck
-  :disabled t
   :commands speck-mode
+  :general (nmap :prefix "SPC" "ts" 'speck-mode)
   :init
-  (setq speck-hunspell-coding-system 'utf-8
-        speck-hunspell-dictionary-alist '(("en" . "en_US"))
-        speck-hunspell-default-dictionary-name "en"
-        speck-hunspell-library-directory "/Library/Spelling/"
-        speck-hunspell-minimum-word-length 3
-        speck-auto-correct-case 'two)
-  ;; (defun soo--speck-prog-hook ()
-  ;;   (set (make-local-variable 'speck-syntactic) t)
-  ;;   (set (make-local-variable 'speck-face-inhibit-list)
-  ;;        '(font-lock-constant-face))
-  ;;   (speck-mode))
-  ;; (add-hook 'prog-mode-hook 'soo--speck-prog-hook)
-  (add-hook 'text-mode-hook 'speck-mode))
+  (setq
+   speck-hunspell-minimum-word-length 3
+   speck-auto-correct-case 'two
+   speck-hunspell-coding-system "utf-8"
+   speck-hunspell-library-directory (expand-file-name "~/Library/Spelling/")
+   speck-hunspell-dictionary-alist '(("en" . "en_US"))
+   speck-hunspell-default-dictionary-name "en"
+   speck-hunspell-extra-arguments
+   (list "-p" (concat speck-hunspell-library-directory "LocalDictionary")))
+  (defun soo--speck-prog-hook ()
+    (set (make-local-variable 'speck-syntactic) t)
+    (set (make-local-variable 'speck-face-inhibit-list)
+         '(font-lock-constant-face))
+    (speck-mode))
+  (add-hook 'prog-mode-hook 'soo--speck-prog-hook)
+  (defun soo--speck-org-hook ()
+    (set (make-local-variable 'speck-face-inhibit-list)
+         '(org-tag org-latex-and-related))
+    (speck-mode))
+  (add-hook 'org-mode-hook 'soo--speck-org-hook))
 
 (use-package help
   :ensure nil
