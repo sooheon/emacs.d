@@ -334,6 +334,11 @@
   :config
   (c-toggle-auto-hungry-state 1))
 
+(use-package function-args
+  :defer t
+  :config
+  (fa-config-default))
+
 (use-package irony
   :defer t
   :init

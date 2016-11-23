@@ -51,7 +51,6 @@
   :ensure nil
   :diminish (lpy-mode . "lpy")
   :init
-  (use-package function-args :defer t)
   :config
   (general-define-key :keymaps 'lpy-mode-map
     "C-h" nil
