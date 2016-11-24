@@ -3,6 +3,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(ansi-color-names-vector
+   ["#eee8d5" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#839496"])
  '(auto-image-file-mode t)
  '(cljr-favor-prefix-notation nil)
  '(compilation-message-face (quote default))
@@ -13,7 +15,6 @@
  '(custom-safe-themes
    (quote
     ("cdbd0a803de328a4986659d799659939d13ec01da1f482d838b68038c1bb35e8" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
- '(debug-on-error nil)
  '(eldoc-idle-delay 0)
  '(evil-disable-insert-state-bindings t)
  '(evil-want-C-u-scroll t)
@@ -61,7 +62,7 @@
  '(org-preview-latex-default-process (quote dvisvgm))
  '(package-selected-packages
    (quote
-    (doom-themes ace-window rainbow-mode org-download htmlize rust-mode haskell-mode org-pomodoro ess-smart-equals ess ess-site pamparam lpy tex cdlatex texmathp magithub suggest wgrep general hungry-delete hungry-delete-mode toml-mode soap atom-one-dark-theme ggtags cpputils-cmake irony clang-format company-statistics osx-trash ox help evil-cleverparens-text-objects dired racer cargo golden-ratio jade yasnippet evil-evilified-state artbollocks-mode company-quickhelp evil-exchange clj-refactor lispy with-editor undo-tree swiper smartparens queue pyenv-mode projectile magit ivy hydra flycheck finalize evil diminish dash counsel company closql clojure-mode avy anaconda-mode ace-link lispyville auctex exec-path-from-shell org-bullets evil-mc git-modes function-args zenburn-theme ws-butler worf window-numbering which-key use-package typo term-manager super-save speck spacemacs-theme solarized-theme smex shm shell-pop shackle sentence-navigation reveal-in-osx-finder rainbow-delimiters pyenv-mode-auto py-yapf pdf-tools pandoc-mode osx-dictionary multiple-cursors markdown-mode jedi ivy-hydra intero inf-clojure hindent highlight-escape-sequences gist flyspell-correct flx expand-region evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-multiedit evil-matchit evil-magit evil-commentary evil-cleverparens epkg elisp-slime-nav diff-hl counsel-projectile company-anaconda circe cider bind-map auto-compile)))
+    (ace-window rainbow-mode org-download htmlize rust-mode haskell-mode org-pomodoro ess-smart-equals ess ess-site pamparam lpy tex cdlatex texmathp magithub suggest wgrep general hungry-delete hungry-delete-mode toml-mode soap atom-one-dark-theme ggtags cpputils-cmake irony clang-format company-statistics osx-trash ox help evil-cleverparens-text-objects dired racer cargo golden-ratio jade yasnippet evil-evilified-state artbollocks-mode company-quickhelp evil-exchange clj-refactor lispy with-editor undo-tree swiper smartparens queue pyenv-mode projectile magit ivy hydra flycheck finalize evil diminish dash counsel company closql clojure-mode avy anaconda-mode ace-link lispyville auctex exec-path-from-shell org-bullets evil-mc git-modes function-args zenburn-theme ws-butler worf window-numbering which-key use-package typo term-manager super-save speck spacemacs-theme solarized-theme smex shm shell-pop shackle sentence-navigation reveal-in-osx-finder rainbow-delimiters pyenv-mode-auto py-yapf pdf-tools pandoc-mode osx-dictionary multiple-cursors markdown-mode jedi ivy-hydra intero inf-clojure hindent highlight-escape-sequences gist flyspell-correct flx expand-region evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-multiedit evil-matchit evil-magit evil-commentary evil-cleverparens epkg elisp-slime-nav diff-hl counsel-projectile company-anaconda circe cider bind-map auto-compile)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(pos-tip-background-color "#eee8d5")
  '(pos-tip-foreground-color "#586e75")
@@ -85,46 +86,8 @@
  '(solarized-high-contrast-mode-line t)
  '(solarized-use-more-italic t)
  '(solarized-use-variable-pitch nil)
- '(speck-delay 0.5)
- '(speck-hunspell-minimum-word-length 3 t)
- '(speck-mode-keys
-   (quote
-    ([ignore]
-     [ignore]
-     [67108923]
-     [201326651]
-     [67108907]
-     [201326635]
-     [67108897]
-     [201326625]
-     [67108927]
-     [201326655])))
- '(speck-replace-keys
-   (quote
-    ((help .
-           [67108927])
-     (help . "")
-     (help .
-           [f1])
-     (help .
-           [help])
-     (accept .
-             [67108897])
-     (accept-and-quit .
-                      [67108910])
-     (reject-and-quit .
-                      [67108909])
-     (reject-and-quit . "")
-     (reject-and-quit . "")
-     (reject-and-quit .
-                      [escape])
-     (forward .
-              [67108923])
-     (backward .
-               [201326651]))))
  '(tab-always-indent (quote complete))
  '(vc-annotate-background "#2B2B2B")
- '(vc-annotate-background-mode nil)
  '(vc-annotate-color-map
    (quote
     ((20 . "#BC8383")
