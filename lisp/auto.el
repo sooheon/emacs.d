@@ -53,7 +53,7 @@ window in frame, call `bury-buffer'."
    (format "
 tell application \"Terminal\"
   activate
-  do script \"cd %s\" in window 1
+  do script \"cd \'%s'\" in window 1
 end tell
 "
            (or default-directory "~"))))
@@ -65,7 +65,7 @@ end tell
    (format "
 tell application \"Terminal\"
   activate
-  do script \"cd %s\" in window 1
+  do script \"cd \'%s\'\" in window 1
 end tell
 "
            (or projectile-project-root default-directory "~"))))
