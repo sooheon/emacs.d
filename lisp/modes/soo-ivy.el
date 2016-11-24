@@ -41,7 +41,10 @@
             "<f2> j" 'counsel-set-variable
             "C-c v" 'ivy-push-view
             "C-c V" 'ivy-pop-view)
-  (:keymaps 'ivy-minibuffer-map "s-f" 'ivy-next-line-or-history)
+  (:keymaps 'ivy-minibuffer-map
+   "s-f" 'ivy-next-line-or-history
+   [escape] 'minibuffer-keyboard-quit
+   "<s-backspace>" (lambda () (interactive) (kill-line 0)))
   :init
   (nmap :prefix "SPC" "b" 'ivy-switch-buffer)
   :config
@@ -58,17 +61,7 @@
                                    (org-capture-refile . "^")
                                    (man . "^")
                                    (woman . "^"))
-        ivy-action-wrap t
-        ;; ivy-sort-matches-functions-alist
-        ;; '((t . nil)
-        ;;   (ivy-switch-buffer . ivy-sort-function-buffer)
-        ;;   (counsel-find-file . ivy-sort-function-buffer))
-        )
-
-  (general-define-key :keymaps 'ivy-minibuffer-map
-    [escape] 'minibuffer-keyboard-quit
-    "<s-backspace>" (lambda () (interactive) (kill-line 0)))
-
+        ivy-action-wrap t)
   (use-package ivy-hydra
     :after ivy
     :config

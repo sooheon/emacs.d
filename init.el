@@ -695,7 +695,6 @@ Keep M-n and M-p reserved for history."
            :color blue)))
 
 (use-package diff-hl
-  :disabled t
   :config
   (setq diff-hl-draw-borders nil)
   (global-diff-hl-mode)
