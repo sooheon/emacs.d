@@ -4,6 +4,8 @@
   :init
   (add-to-list 'magic-mode-alist '("#!.*boot\\s-*$" . clojure-mode))
   (add-to-list 'magic-mode-alist '("#!.*planck\\s-*$" . clojurescript-mode))
+  (with-eval-after-load 'smartparens
+    (add-to-list 'sp-lisp-modes 'cider-clojure-interaction-mode))
   :config
   ;; This is for clojure-semantic, the library file is clojure.el
   (load-library "clojure"))
