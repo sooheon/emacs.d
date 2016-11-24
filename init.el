@@ -501,7 +501,7 @@ friend if it has the same major mode."
    speck-auto-correct-case 'two
    speck-hunspell-coding-system "utf-8"
    speck-hunspell-library-directory (expand-file-name "~/Library/Spelling/")
-   speck-hunspell-dictionary-alist '(("en" . "en_US"))
+   speck-hunspell-dictionary-alist '(("en" . "en_US-large"))
    speck-hunspell-default-dictionary-name "en"
    speck-hunspell-extra-arguments
    (list "-p" (concat speck-hunspell-library-directory "LocalDictionary")))
