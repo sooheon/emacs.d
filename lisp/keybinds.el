@@ -2,12 +2,12 @@
  "C-x C-b" 'ibuffer
  "s-u" 'universal-argument
  "s-W" 'delete-frame
- "s-k" 'bury-buffer
- "s-K" 'kill-this-buffer
+ "s-k" 'kill-this-buffer
  [remap move-beginning-of-line] 'smart-move-beginning-of-line
  "s-w" 'soo--close-window-dwim
  [remap fill-paragraph] 'endless/fill-or-unfill
- [remap just-one-space] 'oscillate-spacing)
+ [remap just-one-space] 'oscillate-spacing
+ [remap apropos-command] 'apropos)
 
 (defun oscillate-spacing (&optional n)
   (interactive "*p")

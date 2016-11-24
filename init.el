@@ -719,81 +719,21 @@ Keep M-n and M-p reserved for history."
 (use-package projectile
   :diminish projectile-mode
   :general
-  ("C-c k" 'counsel-projectile-ag)
-  (nmap :prefix "SPC"
-    "pd" 'projectile-find-dir
-    "pD" 'projectile-dired
-    "p!" 'projectile-run-shell-command-in-root
-    "p&" 'projectile-run-async-shell-command-in-root
-    "p%" 'projectile-replace-regexp
-    "pk" 'projectile-kill-buffers
-    "pa" 'projectile-find-other-file
-    "pt" 'projectile-toggle-between-implementation-and-test
-    "po" 'projectile-multi-occur
-    "pR" 'projectile-replace
-    "pT" 'projectile-find-test-file
-    "pP" 'projectile-test-project
-    "pm" 'projectile-commander)
-  :config
+  ("C-c k" 'soo--projectile-ag)
+  (nmap :prefix "SPC" "p" #'projectile-command-map)
+  :init
   (projectile-global-mode)
+  :config
   (setq projectile-enable-caching t
         projectile-sort-order 'recentf
         projectile-create-missing-test-files t
-        projectile-completion-system 'ivy))
-
-(use-package counsel-projectile
-  :after projectile
-  :init
-  (nmap :prefix "SPC"
-    "pb" 'counsel-projectile-switch-to-buffer
-    "pd" 'counsel-projectile-find-dir
-    "pf" 'counsel-projectile-find-file
-    "pr" 'projectile-recentf
-    "pp" 'counsel-projectile-switch-project
-    "/" 'counsel-projectile-ag)
-  :config
-  (setq projectile-switch-project-action 'counsel-projectile-find-file)
-  (defun counsel-projectile-ag (&optional initial-input)
+        projectile-completion-system 'ivy)
+  (defun soo--projectile-ag (&optional initial-input)
     "Grep for a string in the current directory or project using ag.
 INITIAL-INPUT can be given as the initial minibuffer input."
     (interactive)
     (counsel-ag initial-input (or (ignore-errors (projectile-project-root))
-                                  default-directory)))
-  (ivy-set-actions
-   'counsel-projectile
-   '(("d" (lambda (dir)
-            (let ((projectile-switch-project-action 'projectile-dired))
-              (projectile-switch-project-by-name dir arg)))
-      "find directory")
-     ("b" (lambda (dir)
-            (let ((projectile-switch-project-action 'counsel-projectile-switch-to-buffer))
-              (projectile-switch-project-by-name dir arg)))
-      "switch to buffer")
-     ("s" (lambda (dir)
-            (let ((projectile-switch-project-action 'projectile-save-project-buffers))
-              (projectile-switch-project-by-name dir arg)))
-      "save all buffers")
-     ("k" (lambda (dir)
-            (let ((projectile-switch-project-action 'projectile-kill-buffers))
-              (projectile-switch-project-by-name dir arg)))
-      "kill all buffers")
-     ("r" (lambda (dir)
-            (let ((projectile-switch-project-action
-                   'projectile-remove-current-project-from-known-projects))
-              (projectile-switch-project-by-name dir arg)))
-      "remove from known projects")
-     ("g" (lambda (dir)
-            (let ((projectile-switch-project-action 'projectile-vc))
-              (projectile-switch-project-by-name dir arg)))
-      "open in magit")
-     ("t" (lambda (dir)
-            (let ((projectile-switch-project-action (lambda () (projectile-run-term "/usr/local/bin/fish"))))
-              (projectile-switch-project-by-name dir arg)))
-      "start term for project")
-     ("a" (lambda (dir)
-            (let ((projectile-switch-project-action (lambda () (counsel-projectile-ag))))
-              (projectile-switch-project-by-name dir arg)))
-      "run ag in project"))))
+                                  default-directory))))
 
 (use-package rainbow-mode
   :general
