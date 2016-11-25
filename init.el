@@ -107,6 +107,10 @@
 
 ;;* Bootstrap
 ;;** Package init
+(setq no-littering-etc-directory
+      (expand-file-name ".etc/" user-emacs-directory))
+(setq no-littering-var-directory
+      (expand-file-name ".var/" user-emacs-directory))
 (require 'no-littering)
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")
