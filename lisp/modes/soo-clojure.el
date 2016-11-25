@@ -11,6 +11,7 @@
   (load-library "clojure"))
 
 (use-package clj-refactor
+  :diminish clj-refactor-mode
   :defer t
   :init
   (add-hook 'clojure-mode-hook 'clj-refactor-mode)
