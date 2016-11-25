@@ -450,15 +450,15 @@ friend if it has the same major mode."
   (:keymaps 'smartparens-mode-map
    "M-a" 'sp-beginning-of-sexp
    "M-e" 'soo-end-of-sexp-or-next
+   "M-r" 'sp-raise-sexp
    "M-S" 'sp-splice-sexp-killing-backward
    [C-backspace] 'sp-backward-kill-sexp
    "C-)" 'sp-forward-slurp-sexp
    "C-(" 'sp-backward-slurp-sexp
    "C-{" 'sp-backward-barf-sexp
-   "C-}" 'sp-forward-barf-sexp)
-  (nmap :keymaps 'smartparens-mode-map
-    "M-i" 'soo-insert-at-bos
-    "M-a" 'soo-insert-at-eos)
+   "C-}" 'sp-forward-barf-sexp
+   [M-up] 'sp-splice-sexp-killing-backward
+   [M-down] 'sp-splice-sexp-killing-forward)
   :init
   (add-hook 'prog-mode-hook 'smartparens-strict-mode)
   (add-hook 'smartparens-strict-mode-hook 'show-smartparens-mode)
@@ -475,38 +475,22 @@ friend if it has the same major mode."
     (interactive)
     (if (or (looking-at "[])}]") (eolp))
         (sp-end-of-next-sexp)
-      (sp-end-of-sexp)))
-  (defun soo-insert-at-bos ()
-    (interactive)
-    (progn (sp-beginning-of-sexp) (evil-insert-state)))
-  (defun soo-insert-at-eos ()
-    (interactive)
-    (progn (sp-end-of-sexp) (evil-insert-state))))
+      (sp-end-of-sexp))))
 
 (use-package lispy
   :diminish lispy-mode
   :defer t
   :general
-  (:keymaps 'lispy-mode-map-paredit
+  (:keymaps 'lispy-mode-map-lispy
+   "C-M-b" 'lispy-backward
+   "C-M-f" 'lispy-forward
+   "[" nil
+   "]" nil
    "C-a" nil
-   "M-j" 'lispy-split
-   "M-k" 'lispy-kill-sentence
-   [M-up] 'sp-splice-sexp-killing-backward
-   [M-down] 'sp-splice-sexp-killing-forward
-   "M-n" nil                            ; lispy left
-   "M-p" nil
-   "\"" 'lispy-doublequote
-   "C-d" 'lispy-delete
+   "\"" nil
    "M-d" nil
-   "M-S" nil
-   "M-)" nil
-   "M-{" 'lispy-wrap-braces
    "M-[" 'lispy-wrap-brackets
-   "DEL" 'lispy-delete-backward
-   "C-)" nil
-   "C-(" nil
-   "C-}" nil
-   "C-{" nil)
+   "M-{" 'lispy-wrap-braces)
   (:keymaps 'lispy-mode-map-c-digits
    "C-8" 'lispy-out-forward-newline
    "C-9" 'lispy-parens-down)
@@ -529,8 +513,8 @@ friend if it has the same major mode."
   (add-hook 'smartparens-disabled-hook (toggle-lispy-for-lisps -1))
   (csetq iedit-toggle-key-default nil)  ; Don't want to use iedit
   :config
-  (lispy-set-key-theme '(special c-digits paredit))
-  (setq lispy-compat '(cider)
+  (lispy-set-key-theme '(special c-digits lispy))
+  (setq lispy-compat '(edebug cider)
         lispy-avy-keys sooheon-avy-keys
         lispy-avy-style-paren 'at-full
         lispy-avy-style-symbol 'at-full
@@ -541,6 +525,8 @@ friend if it has the same major mode."
         lispy-comment-use-single-semicolon t)
   (add-to-list 'lispy-parens-preceding-syntax-alist
                '(clojurescript-mode . ("[`'~@]+" "\\|" "#" "\\|" "#\\?@?")))
+  (add-to-list 'lispy-brackets-preceding-syntax-alist
+               '(cider-clojure-interaction-mode . ("[`']" "#[A-z.]*")))
   (lispy-define-key lispy-mode-map-special ">" 'lispy-slurp-or-barf-right)
   (lispy-define-key lispy-mode-map-special "<" 'lispy-slurp-or-barf-left))
 
