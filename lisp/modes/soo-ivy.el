@@ -44,7 +44,9 @@
   (:keymaps 'ivy-minibuffer-map
    "s-f" 'ivy-next-line-or-history
    [escape] 'minibuffer-keyboard-quit
-   "<s-backspace>" (lambda () (interactive) (kill-line 0)))
+   "<s-backspace>" (lambda () (interactive) (kill-line 0))
+   "<M-backspace>" 'ivy-backward-kill-word
+   "C-w" 'ivy-backward-kill-word)
   :init
   (nmap :prefix "SPC" "b" 'ivy-switch-buffer)
   :config
