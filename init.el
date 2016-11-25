@@ -685,17 +685,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :if (version< "25" emacs-version)
   :config (save-place-mode))
 
-(use-package sentence-navigation
-  :disabled t
-  :defer t
-  :general
-  (mmap ")" 'sentence-nav-evil-forward
-        "(" 'sentence-nav-evil-backward)
-  (nmap "g)" 'sentence-nav-evil-forward-end
-        "g(" 'sentence-nav-evil-backward-end)
-  (otomap "s" 'sentence-nav-evil-a-sentence)
-  (itomap "s" 'sentence-nav-evil-inner-sentence))
-
 (use-package semantic
   :defer t
   :init

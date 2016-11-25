@@ -101,4 +101,15 @@
   (nmap "C-S-a" 'evil-numbers/inc-at-pt
         "C-S-x" 'evil-numbers/dec-at-pt))
 
+(use-package sentence-navigation
+  :disabled t
+  :defer t
+  :general
+  (mmap ")" 'sentence-nav-evil-forward
+        "(" 'sentence-nav-evil-backward)
+  (nmap "g)" 'sentence-nav-evil-forward-end
+        "g(" 'sentence-nav-evil-backward-end)
+  (otomap "s" 'sentence-nav-evil-a-sentence)
+  (itomap "s" 'sentence-nav-evil-inner-sentence))
+
 (provide 'soo-evil)
