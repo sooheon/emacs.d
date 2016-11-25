@@ -1,5 +1,5 @@
-/etc
-/var
+/.etc
+/.var
 *.cache
 /places
 /recentf

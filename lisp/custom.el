@@ -86,7 +86,8 @@
  '(solarized-use-more-italic t)
  '(solarized-use-variable-pitch nil)
  '(speck-delay 0.5)
- '(speck-hunspell-minimum-word-length 3 t)
+ '(speck-hunspell-dictionary-alist (quote (("en" . "en_US"))))
+ '(speck-hunspell-minimum-word-length 3)
  '(speck-mode-keys
    (quote
     ([ignore]
