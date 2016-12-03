@@ -65,11 +65,12 @@
       mac-right-command-modifier 'control ; right cmd is ctrl
       mac-command-modifier 'super
       mac-option-modifier 'meta)
-(setq scroll-preserve-screen-position t
-      scroll-margin 2
-      scroll-conservatively 101)
+(setq scroll-margin 0
+      scroll-preserve-screen-position t
+      scroll-conservatively 0)
 (progn ;; Deal with large files
   (setq jit-lock-defer-time 0)
+  (setq bidi-display-reordering nil)      ; http://tinyurl.com/jc9corx
   (add-hook 'find-file-hook #'my-find-huge-file-literally-hook))
 (setq lisp-indent-function 'Fuco1/lisp-indent-function) ; don't indent lists starting with keywords
 (setq load-prefer-newer t
@@ -158,7 +159,7 @@
 (add-hook 'python-mode-hook 'soo-python-hook)
 (add-hook 'haskell-mode-hook 'soo-haskell-hook)
 (add-hook 'org-mode-hook 'soo-org-hook)
-(run-with-idle-timer 5 nil (lambda () (require 'soo-org)))
+(run-with-idle-timer 10 nil (lambda () (require 'soo-org)))
 
 ;;** general modes config
 (use-package auto-compile
@@ -295,7 +296,7 @@
     "<return>" 'dired-find-file
     "f" 'counsel-find-file
     "J" 'dired-goto-file
-    "C-f" 'find-name-dired
+    "C-f" nil                           ; 'find-name-dired
     "H" 'diredp-dired-recent-dirs
     "T" 'dired-tree-down
     "K" 'dired-do-kill-lines
@@ -376,52 +377,11 @@ friend if it has the same major mode."
 
 (use-package gist :defer t)
 
-(use-package ispell
-  :disabled t
-  :init
-  (setenv "DICTIONARY" "en_US")
-  (setq ispell-program-name (executable-find "hunspell")))
-
-(use-package flyspell
-  :disabled t
-  :defer t
-  :diminish flyspell-mode
-  :general ("C-;" 'flyspell-auto-correct-previous-word)
-  :init
-  (add-hook 'text-mode-hook 'flyspell-mode)
-  (add-hook 'prog-mode-hook 'flyspell-prog-mode))
-
-(use-package flyspell-correct
-  :disabled t
-  :after flyspell
-  :general (:keymaps 'flyspell-mode-map "C-;" 'flyspell-correct-word-generic)
-  :config
-  (setq flyspell-correct-interface 'flyspell-correct-ivy))
-
-(use-package speck
-  :commands speck-mode
-  :general (nmap :prefix "SPC" "ts" 'speck-mode)
-  :init
-  (setq
-   speck-hunspell-minimum-word-length 3
-   speck-auto-correct-case 'two
-   speck-hunspell-coding-system "utf-8"
-   speck-hunspell-library-directory (expand-file-name "~/Library/Spelling/")
-   speck-hunspell-dictionary-alist '(("en" . "en_US"))
-   speck-hunspell-default-dictionary-name "en"
-   speck-hunspell-extra-arguments
-   (list "-p" (concat speck-hunspell-library-directory "LocalDictionary")))
-  (defun soo--speck-prog-hook ()
-    (set (make-local-variable 'speck-syntactic) t)
-    (set (make-local-variable 'speck-face-inhibit-list)
-         '(font-lock-constant-face)))
-  (add-hook 'prog-mode-hook 'soo--speck-prog-hook)
-  (defun soo--speck-org-hook ()
-    (set (make-local-variable 'speck-face-inhibit-list)
-         '(org-tag org-latex-and-related org-meta-line org-table))
-    (speck-mode))
-  (add-hook 'org-mode-hook 'soo--speck-org-hook)
-  (add-hook 'text-mode-hook 'speck-mode))
+(use-package hydra
+  :general
+  (:keymaps 'hydra-base-map
+    "C-u" nil
+    "0" nil))
 
 (use-package help
   :ensure nil
@@ -430,6 +390,10 @@ friend if it has the same major mode."
   :config
   (evil-set-initial-state 'help-mode 'insert)
   (add-hook 'help-mode-hook (lambda () (toggle-truncate-lines -1))))
+
+(use-package hl-todo
+  :defer t
+  :init (add-hook 'prog-mode-hook 'hl-todo-mode))
 
 (use-package highlight-escape-sequences
   :defer t
@@ -448,8 +412,8 @@ friend if it has the same major mode."
   :defer t
   :general
   (:keymaps 'smartparens-mode-map
-   "M-a" 'sp-beginning-of-sexp
-   "M-e" 'soo-end-of-sexp-or-next
+   ;; "M-a" 'sp-beginning-of-sexp
+   ;; "M-e" 'soo-end-of-sexp-or-next
    "M-r" 'sp-raise-sexp
    "M-S" 'sp-splice-sexp-killing-backward
    [C-backspace] 'sp-backward-kill-sexp
@@ -484,11 +448,12 @@ friend if it has the same major mode."
   (:keymaps 'lispy-mode-map-lispy
    "C-M-b" 'lispy-backward
    "C-M-f" 'lispy-forward
-   "[" nil
+   "[" 'lispy-brackets
    "]" nil
    "C-a" nil
    "\"" nil
    "M-d" nil
+   "M-(" 'lispy-wrap-round
    "M-[" 'lispy-wrap-brackets
    "M-{" 'lispy-wrap-braces)
   (:keymaps 'lispy-mode-map-c-digits
@@ -500,7 +465,8 @@ friend if it has the same major mode."
   ;; Unbind M-k and M-. in normal state, pass through to lispy
   (:keymaps 'evil-normal-state-map
    "M-." nil                            ; evil-repeat-pop-next
-   "M-k" nil)
+   "M-k" nil
+   "gd" 'lispy-goto-symbol)
   :init
   (defun conditionally-enable-lispy ()
     "Enable `lispy-mode' in the minibuffer, during `eval-expression'."
@@ -524,9 +490,13 @@ friend if it has the same major mode."
         lispy-safe-delete t
         lispy-comment-use-single-semicolon t)
   (add-to-list 'lispy-parens-preceding-syntax-alist
-               '(clojurescript-mode . ("[`'~@]+" "\\|" "#" "\\|" "#\\?@?")))
+               '(cider-repl-mode . ("[`'~@]+" "#" "#\\?@?"))
+               '(clojurescript-mode . ("[`'~@]+" "#" "#\\?@?")))
   (add-to-list 'lispy-brackets-preceding-syntax-alist
+               '(cider-repl-mode . ("[`']" "#[A-z.]*"))
                '(cider-clojure-interaction-mode . ("[`']" "#[A-z.]*")))
+  (add-to-list 'lispy-braces-preceding-syntax-alist
+               '(cider-repl-mode . ("[`'^]" "#[A-z.]*")))
   (lispy-define-key lispy-mode-map-special ">" 'lispy-slurp-or-barf-right)
   (lispy-define-key lispy-mode-map-special "<" 'lispy-slurp-or-barf-left))
 
@@ -570,7 +540,7 @@ Keep M-n and M-p reserved for history."
   (evil-set-initial-state 'magit-submodule-list-mode 'insert)
   (setq magit-display-buffer-function 'magit-display-buffer-traditional
         magit-popup-show-common-commands nil)
-  (use-package magithub :disabled t)
+  (defvar hmb--count)
   (defhydra hydra-magit-blame
     (:color pink
      :body-pre (progn (setq hmb--count 1) ; var to track recursive blames
@@ -584,13 +554,15 @@ Keep M-n and M-p reserved for history."
                   (setq hydra-deactivate t))) "forwards")
     ("q" (dotimes (i hmb--count)
            (call-interactively 'magit-blame-quit)) "quit"
-           :color blue)))
+           :color blue))
+  (use-package magithub :disabled t))
 
 (use-package diff-hl
-  :config
+  :disabled t
+  :init
   (setq diff-hl-draw-borders nil)
   (global-diff-hl-mode)
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh t))
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
 
 (use-package markdown-mode
   :mode ("\\.m[k]d" . markdown-mode)
@@ -601,14 +573,13 @@ Keep M-n and M-p reserved for history."
     "gh" 'outline-up-heading
     ;; next visible heading is not exactly what we want but close enough
     "gl" 'outline-next-visible-heading)
-  :config
+  :init
   (add-hook 'markdown-mode-hook (lambda () (auto-fill-mode 1))))
 
 (use-package super-save
   :diminish super-save-mode
   :init
   (csetq auto-save-default nil)
-  :config
   (super-save-mode 1))
 
 (use-package pdf-tools
@@ -630,9 +601,12 @@ Keep M-n and M-p reserved for history."
   :diminish projectile-mode
   :general
   ("C-c k" 'soo--projectile-ag)
-  (nmap :prefix "SPC" "p" #'projectile-command-map)
+  (nmap :prefix "SPC" "p" 'projectile-command-map)
+  (:keymaps 'projectile-command-map
+   "e" 'projectile-replace
+   "r" 'projectile-recentf)
   :init
-  (projectile-global-mode)
+  (projectile-mode)
   :config
   (setq projectile-enable-caching t
         projectile-sort-order 'recentf
@@ -660,7 +634,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (setq recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG" "github.*txt$"
                           ".*png$" ".*cache$" "^/\\(?:ssh\\|su\\|sudo\\)?:"
                           ".*el.gz$" "/\\.get/.*\\'" "/elpa/\\.*"
-                          ".emacs.d/var/\\.*"))
+                          ".emacs.d/.var/\\.*"))
   (setq recentf-max-saved-items 200
         recentf-auto-cleanup 300))
 
@@ -679,27 +653,40 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :defer t
   :init
   ;; Set semantic to parse only file, local, and project scope.
-  (csetq semanticdb-find-default-throttle '(file local project)))
+  (setq semanticdb-find-default-throttle '(file local project))
+  (add-hook 'semantic-mode-hook
+            (lambda ()
+              (dolist (x (default-value 'completion-at-point-functions))
+                (when (string-prefix-p "semantic-" (symbol-name x))
+                  (remove-hook 'completion-at-point-functions x))))))
 
 (use-package shell-pop
+  :defer t
   :general
-  ("s-`" 'shell-pop
-   "M-s-`" 'shell-pop-and-cd)
+  ("s-`" 'shell-pop)
   :init
   (setq shell-pop-window-position 'bottom
         shell-pop-window-height 30
         shell-pop-full-span t
         shell-pop-autocd-to-working-dir nil
         shell-pop-restore-window-configuration nil)
-  :config
   ;; For some reason, returning to a term buffer with some text causes cursor to
   ;; be misplaced. This hook places cursor back at the prompt.
   (add-hook 'shell-pop-in-after-hook
-            (lambda () (end-of-buffer) (backward-char 1)))
-  (defun shell-pop-and-cd (arg)
-    (interactive "P")
-    (let ((shell-pop-autocd-to-working-dir t))
-      (shell-pop arg))))
+            (lambda () (goto-char (point-max)) (backward-char 1)))
+  ;; Redefine shell-pop: With arg, auto-cd to working directory, otherwise just
+  ;; pop the shell. Don't make multiple shells.
+  (defalias 'shell-pop
+    (lambda (arg)
+      (interactive "P")
+      (if (string= (buffer-name) shell-pop-last-shell-buffer-name)
+          (if (null arg)
+              (shell-pop-out)
+            (shell-pop--switch-to-shell-buffer (prefix-numeric-value arg)))
+        (progn (if (null arg)
+                   (setq shell-pop-autocd-to-working-dir nil)
+                 (setq shell-pop-autocd-to-working-dir t))
+               (shell-pop-up shell-pop-last-shell-buffer-index))))))
 
 (use-package term
   :general
@@ -764,7 +751,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
                                         "*Ibuffer*"))))
 
 (use-package shackle
-  :config
+  :init
   (defun shackle-smart-align ()
     (if (< (window-width) 160) 'below 'right))
   (setq shackle-select-reused-windows t
@@ -773,17 +760,24 @@ INITIAL-INPUT can be given as the initial minibuffer input."
                         (undo-tree-visualizer-mode :align t :size 0.3)
                         (woman-mode :popup t)
                         (flycheck-error-list-mode :select t)
-                        (cargo-process-mode :align t :size 0.3)))
+                        (cargo-process-mode :align t :size 0.3)
+                        ("*cider-result*" :align t :size 0.4)
+                        (cider-repl-mode :align t :size 0.4)))
   (shackle-mode 1))
+
+(use-package vlf
+  :defer t
+  :config (require 'vlf-setup))
+
+(use-package eldoc
+  :defer t
+  :config
+  (global-eldoc-mode -1))
 
 ;;** Basic Editing
 (csetq fill-column 80)
 (add-hook 'text-mode-hook #'auto-fill-mode)
 (diminish 'auto-fill-function)          ; auto-fill-mode is called this
-
-(use-package eldoc
-  :config
-  (global-eldoc-mode -1))
 
 (use-package simple
   :ensure nil
@@ -799,12 +793,34 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (evil-set-initial-state 'special-mode 'insert)
   (column-number-mode 1))
 
-(global-subword-mode 1)
-(diminish 'subword-mode nil)
+(use-package speck
+  :commands speck-mode
+  :general (nmap :prefix "SPC" "ts" 'speck-mode)
+  :init
+  (setq
+   speck-hunspell-minimum-word-length 3
+   speck-auto-correct-case 'two
+   speck-hunspell-coding-system "utf-8"
+   speck-hunspell-library-directory (expand-file-name "~/Library/Spelling/")
+   speck-hunspell-dictionary-alist '(("en" . "en_US"))
+   speck-hunspell-default-dictionary-name "en"
+   speck-hunspell-extra-arguments
+   (list "-p" (concat speck-hunspell-library-directory "LocalDictionary")))
+  (defun soo--speck-prog-hook ()
+    (set (make-local-variable 'speck-syntactic) t)
+    (set (make-local-variable 'speck-face-inhibit-list)
+         '(font-lock-constant-face)))
+  (add-hook 'prog-mode-hook 'soo--speck-prog-hook)
+  (defun soo--speck-org-hook ()
+    (set (make-local-variable 'speck-face-inhibit-list)
+         '(org-tag org-latex-and-related org-meta-line org-table))
+    (speck-mode))
+  (add-hook 'org-mode-hook 'soo--speck-org-hook))
 
 (use-package ws-butler
   :diminish ws-butler-mode
-  :config (ws-butler-global-mode))
+  :init
+  (add-hook 'prog-mode-hook 'ws-butler-mode))
 
 (use-package expand-region
   :general
@@ -815,7 +831,8 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (defun soo-er-and-insert (arg)
     (interactive "p")
     (progn (evil-insert 1)
-           (er/expand-region arg))))
+           (er/expand-region arg)))
+  (setq expand-region-contract-fast-key "1"))
 
 (use-package multiple-cursors
   :preface
@@ -865,16 +882,18 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :diminish (company-mode . "co")
   :general
   (:keymaps 'company-active-map
-   "C-n" 'company-select-next
-   "C-p" 'company-select-previous
-   [tab] 'company-complete-common)
+   ;; "C-n" 'company-select-next
+   ;; "C-p" 'company-select-previous
+   "C-w" nil
+   [tab] 'company-complete-common
+   "<escape>" 'soo-company-esc)
   :init
   (add-hook 'prog-mode-hook 'company-mode)
   :config
   (setq company-tooltip-align-annotations t
         company-dabbrev-ignore-case nil
         company-dabbrev-downcase nil
-        company-idle-delay 0.3
+        company-idle-delay 0.4
         company-minimum-prefix-length 2
         company-require-match nil
         company-elisp-detect-function-context nil

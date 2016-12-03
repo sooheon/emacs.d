@@ -3,15 +3,16 @@
   :ensure nil
   :general
   (:keymaps 'org-mode-map
-    "M-n" 'org-metadown
-    "M-p" 'org-metaup
-    "M-h" 'org-metaleft
-    "M-H" 'org-shiftmetaleft
-    "M-l" 'org-metaright2
-    "M-L" 'org-shiftmetaright
-    "M-j" (lambda () (interactive)
-            (org-meta-return)
-            (evil-insert 1)))
+   "M-n" 'org-metadown
+   "M-p" 'org-metaup
+   "M-h" 'org-metaleft
+   "M-H" 'org-shiftmetaleft
+   "M-l" 'org-metaright2
+   "M-L" 'org-shiftmetaright
+   "M-j" (lambda () (interactive)
+           (org-meta-return)
+           (evil-insert 1))
+   "C-j" 'org-return)
   (nmap :keymaps 'org-mode-map
     [C-return] (lambda () (interactive)
                  (org-insert-heading-respect-content) (evil-append 1))
@@ -22,7 +23,9 @@
     "^" 'org-beginning-of-line
     ;; "-" 'org-ctrl-c-minus
     "<" 'org-metaleft
-    ">" 'org-metaright))
+    ">" 'org-metaright)
+  :config
+  (setq org-hide-emphasis-markers t))
 
 (require 'ox)
 ;; FIXME: https://bitbucket.org/mituharu/emacs-mac/commits/6e8c84bd419ab425c3359b4ca17e2da9e23136ad
@@ -41,7 +44,13 @@
     "[" nil
     "]" nil))
 (use-package auctex :defer t)
-(use-package cdlatex :defer t)
+(use-package cdlatex :defer t
+  :config
+  (setq cdlatex-command-alist
+        '(("angl" "Insert annuity symbol" "_{\\angln i}"
+           cdlatex-position-cursor nil nil t)
+          ("dd" "Insert ddot" "\\ddot{?}"
+           cdlatex-position-cursor nil nil t))))
 
 (use-package pamparam
   :ensure nil
@@ -71,6 +80,16 @@
       (insert "$")
       (end-of-line)
       (insert "$"))))
+
+(defun open-$ ()
+  (interactive)
+  (if (region-active-p)
+      (print "to be impl.")
+    (progn
+      (insert "$")
+      (insert "$")
+      (backward-char))))
+(imap :keymaps 'org-mode-map "M-$" 'open-$)
 
 (setq-default org-export-in-background nil
               org-src-fontify-natively t
@@ -182,7 +201,6 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
       org-html-html5-fancy t
       org-html-postamble nil)
 
-(sp-local-pair 'org-mode "$" "$")
 (sp-local-pair 'org-mode "\\left(" " \\right)")
 (sp-local-pair 'org-mode "\\left[" " \\right]")
 (sp-local-pair 'org-mode "\\left{" " \\right}")

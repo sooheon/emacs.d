@@ -18,6 +18,10 @@
   (add-hook 'clj-refactor-mode-hook 'yas-minor-mode-on)
   :config
   (cljr-add-keybindings-with-prefix "s-,")
+  (nmap :keymaps 'clj-refactor-map
+    "c" (general-key-dispatch 'lispyville-change
+          "r" (general-simulate-keys "s-,")
+          "c" 'evil-change-whole-line))
   (setq cljr-favor-prefix-notation nil
         cljr-warn-on-eval nil)
   (setq cljr-magic-require-namespaces
@@ -45,7 +49,7 @@
         cider-mode-line '(:eval (format " %s" (cider--modeline-info)))
         cider-default-repl-command "boot"
         cider-pprint-fn 'fipp
-        lispy-eval-display-style 'overlay)
+        cider-repl-use-pretty-printing t)
 
   (defun cider-figwheel-repl ()
     (interactive)
@@ -59,11 +63,10 @@
 
   ;; (defadvice cider-jump-to-var (before add-evil-jump activate)
   ;;   (evil-set-jump))
-  (add-hook 'cider-repl-mode-hook 'smartparens-strict-mode)
-  (add-hook 'cider-clojure-interaction-mode 'smartparens-strict-mode)
+  (add-hook 'cider-repl-mode-hook (lambda () (toggle-truncate-lines 1)))
   (add-hook 'cider-repl-mode-hook 'company-mode)
   (evil-define-key 'normal cider-mode-map "K" 'cider-doc)
-
+  (evil-set-initial-state 'cider-repl-mode 'emacs)
   (evil-set-initial-state 'cider-docview-mode 'insert)
   (evil-set-initial-state 'cider-stacktrace-mode 'insert)
   (evil-set-initial-state 'cider-macroexpansion-mode 'insert)

@@ -1,7 +1,7 @@
 ;;
 
 ;;;### (autoloads nil "modes/soo-clojure" "modes/soo-clojure.el"
-;;;;;;  (22583 55525 0 0))
+;;;;;;  (22592 44570 0 0))
 ;;; Generated autoloads from modes/soo-clojure.el
 
 (autoload 'soo-clojure-hook "modes/soo-clojure" "\
@@ -22,7 +22,7 @@
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22581 23518
+;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22587 10357
 ;;;;;;  0 0))
 ;;; Generated autoloads from modes/soo-org.el
 
@@ -46,11 +46,11 @@
 
 ;;;### (autoloads nil nil ("custom.el" "keybinds.el" "modes/soo-ess.el"
 ;;;;;;  "modes/soo-evil.el" "modes/soo-ivy.el" "modes/soo-rust.el"
-;;;;;;  "packages.el") (22584 10805 0 0))
+;;;;;;  "packages.el") (22585 48782 0 0))
 
 ;;;***
 
-;;;### (autoloads nil "auto" "auto.el" (22581 32808 0 0))
+;;;### (autoloads nil "auto" "auto.el" (22585 61488 0 0))
 ;;; Generated autoloads from auto.el
 
 (autoload 'smart-move-beginning-of-line "auto" "\

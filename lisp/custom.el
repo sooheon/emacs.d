@@ -13,7 +13,7 @@
  '(custom-safe-themes
    (quote
     ("cdbd0a803de328a4986659d799659939d13ec01da1f482d838b68038c1bb35e8" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
- '(debug-on-error nil)
+ '(debug-on-error t)
  '(eldoc-idle-delay 0)
  '(evil-disable-insert-state-bindings t)
  '(evil-want-C-u-scroll t)
@@ -47,6 +47,7 @@
     ("#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3" "#fdf6e3")))
  '(indent-tabs-mode nil)
  '(indicate-empty-lines t)
+ '(lispy-eval-display-style (quote message))
  '(mac-right-option-modifier nil)
  '(magit-branch-arguments nil)
  '(magit-diff-use-overlays nil)
@@ -61,7 +62,7 @@
  '(org-preview-latex-default-process (quote dvisvgm))
  '(package-selected-packages
    (quote
-    (doom-themes ace-window rainbow-mode org-download htmlize rust-mode haskell-mode org-pomodoro ess-smart-equals ess ess-site pamparam lpy tex cdlatex texmathp magithub suggest wgrep general hungry-delete hungry-delete-mode toml-mode soap atom-one-dark-theme ggtags cpputils-cmake irony clang-format company-statistics osx-trash ox help evil-cleverparens-text-objects dired racer cargo golden-ratio jade yasnippet evil-evilified-state artbollocks-mode company-quickhelp evil-exchange clj-refactor lispy with-editor undo-tree swiper smartparens queue pyenv-mode projectile magit ivy hydra flycheck finalize evil diminish dash counsel company closql clojure-mode avy anaconda-mode ace-link lispyville auctex exec-path-from-shell org-bullets evil-mc git-modes function-args zenburn-theme ws-butler worf window-numbering which-key use-package typo term-manager super-save speck spacemacs-theme solarized-theme smex shm shell-pop shackle sentence-navigation reveal-in-osx-finder rainbow-delimiters pyenv-mode-auto py-yapf pdf-tools pandoc-mode osx-dictionary multiple-cursors markdown-mode jedi ivy-hydra intero inf-clojure hindent highlight-escape-sequences gist flyspell-correct flx expand-region evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-multiedit evil-matchit evil-magit evil-commentary evil-cleverparens epkg elisp-slime-nav diff-hl counsel-projectile company-anaconda circe cider bind-map auto-compile)))
+    (vlf hl-todo hl-todos doom-themes ace-window rainbow-mode org-download htmlize rust-mode haskell-mode org-pomodoro ess-smart-equals ess ess-site pamparam lpy tex cdlatex texmathp magithub suggest wgrep general hungry-delete hungry-delete-mode toml-mode soap atom-one-dark-theme ggtags cpputils-cmake irony clang-format company-statistics osx-trash ox help evil-cleverparens-text-objects dired racer cargo golden-ratio jade yasnippet evil-evilified-state artbollocks-mode company-quickhelp evil-exchange clj-refactor lispy with-editor undo-tree swiper smartparens queue pyenv-mode projectile magit ivy hydra flycheck finalize evil diminish dash counsel company closql clojure-mode avy anaconda-mode ace-link lispyville auctex exec-path-from-shell org-bullets evil-mc git-modes function-args zenburn-theme ws-butler worf window-numbering which-key use-package typo term-manager super-save speck spacemacs-theme solarized-theme smex shm shell-pop shackle sentence-navigation reveal-in-osx-finder rainbow-delimiters pyenv-mode-auto py-yapf pdf-tools pandoc-mode osx-dictionary multiple-cursors markdown-mode jedi ivy-hydra intero inf-clojure hindent highlight-escape-sequences gist flyspell-correct flx expand-region evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-multiedit evil-matchit evil-magit evil-commentary evil-cleverparens epkg elisp-slime-nav diff-hl counsel-projectile company-anaconda circe cider bind-map auto-compile)))
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
  '(pos-tip-background-color "#eee8d5")
  '(pos-tip-foreground-color "#586e75")
@@ -123,6 +124,7 @@
               [67108923])
      (backward .
                [201326651]))))
+ '(speck-replace-preserve-point (quote after))
  '(tab-always-indent (quote complete))
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-background-mode nil)

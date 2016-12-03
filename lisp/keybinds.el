@@ -20,7 +20,6 @@
       "got" 'soo-terminal-pop)
 
 (nmap :prefix "SPC"
-  "SPC" 'counsel-M-x
   "t\C-o" 'sooheon--toggle-right-option-key
   "tl" 'global-hl-line-mode
   "sc" 'evil-ex-nohighlight

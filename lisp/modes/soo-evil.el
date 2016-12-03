@@ -2,17 +2,17 @@
   :general
   (imap "C-w" 'evil-delete-backward-word)
   :init
-  (setq evil-want-C-u-scroll t
-        evil-cross-lines t
-        evil-symbol-word-search t
-        evil-move-cursor-back nil
-        evil-want-C-i-jump t
-        evil-disable-insert-state-bindings t
-        evil-search-module 'evil-search
-        evil-ex-search-persistent-highlight nil
-        evil-want-Y-yank-to-eol t
-        evil-ex-substitute-global t
-        evil-want-C-w-delete t)
+  (setq-default evil-want-C-u-scroll t
+                evil-cross-lines t
+                evil-symbol-word-search t
+                evil-move-cursor-back t
+                evil-want-C-i-jump t
+                evil-disable-insert-state-bindings t
+                evil-search-module 'evil-search
+                evil-ex-search-persistent-highlight nil
+                evil-want-Y-yank-to-eol t
+                evil-ex-substitute-global t
+                evil-want-C-w-delete t)
   :config
   (evil-mode)
   (setq evil-ex-search-highlight-all t))

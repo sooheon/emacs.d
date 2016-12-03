@@ -30,10 +30,13 @@ window in frame, call `bury-buffer'."
   (interactive)
   (let ((window (window-normalize-window window)))
     (cond
-     ((eq major-mode 'help-mode)
-      (call-interactively 'quit-window))
+     ((eq major-mode 'help-mode) (call-interactively 'quit-window))
      ((eq major-mode 'term-mode)
       (call-interactively 'quit-window)
+      (when (window-parent window)
+        (call-interactively 'delete-window)))
+     ((eq major-mode 'cider-repl-mode)
+      (call-interactively 'bury-buffer)
       (when (window-parent window)
         (call-interactively 'delete-window)))
      (t (if (window-parent window)
@@ -53,7 +56,7 @@ window in frame, call `bury-buffer'."
    (format "
 tell application \"Terminal\"
   activate
-  do script \"cd \'%s'\" in window 1
+  do script \"cd %s\" in window 1
 end tell
 "
            (or default-directory "~"))))
@@ -65,7 +68,7 @@ end tell
    (format "
 tell application \"Terminal\"
   activate
-  do script \"cd \'%s\'\" in window 1
+  do script \"cd %s\" in window 1
 end tell
 "
            (or projectile-project-root default-directory "~"))))
