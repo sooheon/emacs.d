@@ -286,8 +286,7 @@
   (nmap :keymaps 'dired-mode-map
     "-" 'dired-jump
     "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
-    "got" 'soo-terminal-pop
-    "goT" 'soo-terminal-pop-project-root
+    "got" 'soo-terminal-pop-project-root
     "gof" 'reveal-in-osx-finder
     "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1))
     "=" 'vinegar/dired-diff

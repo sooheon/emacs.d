@@ -16,8 +16,7 @@
 (nmap "zf" '(lambda () (interactive)
               (reposition-window)
               (reposition-window))
-      "goT" 'soo-terminal-pop-project-root
-      "got" 'soo-terminal-pop)
+      "got" 'soo-terminal-pop-project-root)
 
 (nmap :prefix "SPC"
   "t\C-o" 'sooheon--toggle-right-option-key

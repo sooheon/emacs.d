@@ -54,7 +54,7 @@ window in frame, call `bury-buffer'."
   (interactive)
   (do-applescript
    (format "
-tell application \"Terminal\"
+tell application \"iTerm\"
   activate
   do script \"cd %s\" in window 1
 end tell
@@ -66,10 +66,14 @@ end tell
   (interactive)
   (do-applescript
    (format "
-tell application \"Terminal\"
-  activate
-  do script \"cd %s\" in window 1
+tell application \"iTerm\"
+  tell current window
+    tell current session
+      write text \"cd %s\"
+    end tell
+  end tell
 end tell
+activate application \"iTerm\"
 "
            (or projectile-project-root default-directory "~"))))
 
