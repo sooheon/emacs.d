@@ -9,10 +9,6 @@ profile:
 	(set-background-color \"#F9F9F9\"))" \
 	-f profile-dotemacs
 
-install: upgrade
-	cd lib/org-mode && make compile && make autoloads
-	cd $(BASEDIR) make run
-
 pull:
 	git pull
 	git submodule init
@@ -21,10 +17,17 @@ pull:
 upgrade: pull
 	cd $(BASEDIR) && $(emacs) -batch -l lisp/packages.el
 
+run:
+	$(emacs) -Q -l init.el
+
 up: upgrade
 	run
 
-run:
-	$(emacs) -Q -l init.el
+install: upgrade
+	cd lib/org-mode && make compile && make autoloads
+	cd $(BASEDIR) make run
+
+mininal:
+	$(emacs) -Q -l lisp/minimal-init.el
 
 .PHONY: profile install pull upgrade up run
