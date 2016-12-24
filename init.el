@@ -135,6 +135,7 @@
 
 ;;** keybinds
 (use-package general
+  :demand t
   :config
   (general-evil-setup t t)
   (load (expand-file-name "keybinds.el" lisp-d) nil t))
