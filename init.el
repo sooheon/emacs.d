@@ -309,8 +309,8 @@
 (use-package circe
   :defer t
   :general
-  (nmap :prefix "SPC" "ai" 'sooheon--switch-to-circe)
-  (:prefix "C-c" "ai" 'sooheon--switch-to-circe)
+  (nvmap :prefix "SPC" "ai" 'sooheon--switch-to-circe)
+  ;; (:prefix "C-c" "ai" 'sooheon--switch-to-circe)
   :init
   (setq circe-network-options
         '(("Freenode"
