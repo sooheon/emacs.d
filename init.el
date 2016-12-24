@@ -823,8 +823,8 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :diminish (company-mode . "co")
   :general
   (:keymaps 'company-active-map
-   ;; "C-n" 'company-select-next
-   ;; "C-p" 'company-select-previous
+   "C-n" 'company-select-next
+   "C-p" 'company-select-previous
    "C-w" nil
    [tab] 'company-complete-common
    "<escape>" 'soo-company-esc)
