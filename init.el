@@ -189,7 +189,6 @@
   :commands (ace-link-info ace-link-woman ace-link-help ace-link-custom)
   :general
   (:keymaps 'help-mode-map "o" 'ace-link-help)
-  (nmap "s-o" 'ace-link-addr)
   :config
   (ace-link-setup-default))
 
