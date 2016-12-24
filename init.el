@@ -14,65 +14,59 @@
 (add-to-list 'load-path (expand-file-name "lisp" emacs-d))
 (add-to-list 'load-path (expand-file-name "lib/org-mode/contrib/lisp" emacs-d))
 (add-to-list 'load-path (expand-file-name "lib/org-mode/lisp" emacs-d))
-(add-to-list 'load-path (expand-file-name "lisp/modes" emacs-d))
 (add-to-list 'load-path (expand-file-name "lisp/themes" emacs-d))
+(add-to-list 'load-path (expand-file-name "modes" lisp-d))
 
 ;;** autoloads
 (load (expand-file-name "loaddefs.el" lisp-d) nil t)
 (load (expand-file-name "auto.el" lisp-d) t t)
 
 ;;* customize
-(defmacro csetq (variable value)
-  `(funcall (or (get ',variable 'custom-set) 'set-default) ',variable ,value))
-(csetq custom-file (expand-file-name "custom.el" lisp-d))
+(setq custom-file (expand-file-name "custom.el" lisp-d))
 (load custom-file 'noerror)
 ;;** font
-(add-to-list 'default-frame-alist '(font . "Input Mono Narrow"))
+(set-face-attribute 'default nil :family "Input Mono Narrow")
 (set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
 ;;** decorations
-(csetq tool-bar-mode nil)
-(csetq menu-bar-mode nil)
-(csetq scroll-bar-mode nil)
-(csetq line-spacing 0.1)
+(setq ring-bell-function 'ignore
+      line-spacing 0.1)
 (setq inhibit-startup-screen t
       initial-scratch-message ";; You have power over your mind - not outside events. Realize this, and you \n;; will find strength.\n\n"
       create-lockfiles nil
       window-combination-resize t)
 (eval '(setq inhibit-startup-echo-area-message "sooheon"))
 (blink-cursor-mode -1)
-(csetq blink-cursor-blinks 0)
-(csetq frame-title-format '("%b"
-                            (:eval
-                             (when (bound-and-true-p projectile-mode)
-                               (when-let ((project (projectile-project-name)))
-                                 (list " [" project "]"))))))
-(csetq fringe-indicator-alist
-       '((continuation nil right-curly-arrow)
-         (truncation left-arrow right-arrow)
-         (continuation left-curly-arrow right-curly-arrow)
-         (overlay-arrow . right-triangle)
-         (up . up-arrow)
-         (down . down-arrow)
-         (top top-left-angle top-right-angle)
-         (empty-line . empty-line)
-         (unknown . question-mark)))
+(setq blink-cursor-blinks 0)
+(setq frame-title-format '("%b"
+                           (:eval
+                            (when (bound-and-true-p projectile-mode)
+                              (when-let ((project (projectile-project-name)))
+                                (list " [" project "]"))))))
+(setq fringe-indicator-alist
+      '((continuation nil right-curly-arrow)
+        (truncation left-arrow right-arrow)
+        (continuation left-curly-arrow right-curly-arrow)
+        (overlay-arrow . right-triangle)
+        (up . up-arrow)
+        (down . down-arrow)
+        (top top-left-angle top-right-angle)
+        (empty-line . empty-line)
+        (unknown . question-mark)))
 ;;** minibuffer interaction
 (setq enable-recursive-minibuffers t
       minibuffer-message-timeout 1)
 (minibuffer-depth-indicate-mode 1)
 ;;** editor behavior
-(setq mac-pass-command-to-system nil ; https://github.com/railwaycat/emacs-mac-port/issues/78
-      mac-right-command-modifier 'control ; right cmd is ctrl
-      mac-command-modifier 'super
-      mac-option-modifier 'meta)
-(setq scroll-margin 0
+(put 'scroll-left 'disabled nil)
+(setq scroll-margin 2
       scroll-preserve-screen-position t
-      scroll-conservatively 0)
+      scroll-conservatively 101)
 (progn ;; Deal with large files
-  (setq jit-lock-defer-time 0)
-  (setq bidi-display-reordering nil)      ; http://tinyurl.com/jc9corx
+  ;; (setq jit-lock-defer-time 0)
+  (setq-default bidi-display-reordering nil) ; http://tinyurl.com/jc9corx
   (add-hook 'find-file-hook #'my-find-huge-file-literally-hook))
-(setq lisp-indent-function 'Fuco1/lisp-indent-function) ; don't indent lists starting with keywords
+;; Don't indent lists starting with keywords
+(setq lisp-indent-function 'Fuco1/lisp-indent-function)
 (setq load-prefer-newer t
       vc-follow-symlinks t
       find-file-suppress-same-file-warnings t
@@ -80,15 +74,13 @@
       read-buffer-completion-ignore-case t)
 (prefer-coding-system 'utf-8)
 (electric-indent-mode -1)
-(csetq truncate-lines nil)
-(csetq default-input-method "korean-hangul")
-(csetq indent-tabs-mode nil)
-(setq ring-bell-function 'ignore)
-(csetq highlight-nonselected-windows t)
-(csetq backup-inhibited t)
+(setq truncate-lines nil)
+(setq default-input-method "korean-hangul")
+(setq indent-tabs-mode nil)
+(setq backup-inhibited t)
 (defalias 'yes-or-no-p 'y-or-n-p)
 (setq kill-buffer-query-functions nil)
-(csetq recenter-positions '(top middle bottom))
+(setq recenter-positions '(top middle bottom))
 (setq eval-expression-print-length nil
       eval-expression-print-level nil
       resize-mini-windows t)
@@ -98,8 +90,7 @@
 (put 'narrow-to-region 'disabled nil)
 
 ;;** internals
-(setq gc-cons-threshold (* 12 1024 1024)
-      ad-redefinition-action 'accept)
+(setq gc-cons-threshold (* 12 1024 1024))
 
 ;;** shell
 (setq shell-file-name "/usr/local/bin/fish"
@@ -108,17 +99,15 @@
 
 ;;* Bootstrap
 ;;** Package init
-(setq no-littering-etc-directory
-      (expand-file-name ".etc/" user-emacs-directory))
-(setq no-littering-var-directory
-      (expand-file-name ".var/" user-emacs-directory))
+(setq no-littering-etc-directory (expand-file-name ".etc/" emacs-d)
+      no-littering-var-directory (expand-file-name ".var/" emacs-d))
 (require 'no-littering)
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                          ("gnu" . "http://elpa.gnu.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")))
 (package-initialize)
 (with-eval-after-load 'evil
-  (evil-set-initial-state 'package-menu-mode 'insert))
+  (evil-set-initial-state 'package-menu-mode 'emacs))
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
@@ -129,7 +118,7 @@
 (use-package exec-path-from-shell
   :if (and (eq system-type 'darwin) (display-graphic-p))
   :config
-  (csetq exec-path-from-shell-check-startup-files nil)
+  (setq exec-path-from-shell-check-startup-files nil)
   (exec-path-from-shell-initialize))
 
 ;;** OSX
@@ -379,15 +368,15 @@ friend if it has the same major mode."
 (use-package hydra
   :general
   (:keymaps 'hydra-base-map
-    "C-u" nil
-    "0" nil))
+   "C-u" nil
+   "0" nil))
 
 (use-package help
   :ensure nil
   :init
-  (csetq help-window-select t)
+  (setq help-window-select t)
   :config
-  (evil-set-initial-state 'help-mode 'insert)
+  (evil-set-initial-state 'help-mode 'emacs)
   (add-hook 'help-mode-hook (lambda () (toggle-truncate-lines -1))))
 
 (use-package hl-todo
@@ -411,93 +400,97 @@ friend if it has the same major mode."
   :defer t
   :general
   (:keymaps 'smartparens-mode-map
-   ;; "M-a" 'sp-beginning-of-sexp
-   ;; "M-e" 'soo-end-of-sexp-or-next
+   "C-M-a" 'sp-beginning-of-sexp "C-M-e" 'sp-end-of-sexp
    "M-r" 'sp-raise-sexp
-   "M-S" 'sp-splice-sexp-killing-backward
    [C-backspace] 'sp-backward-kill-sexp
-   "C-)" 'sp-forward-slurp-sexp
-   "C-(" 'sp-backward-slurp-sexp
-   "C-{" 'sp-backward-barf-sexp
-   "C-}" 'sp-forward-barf-sexp
+   "C-)" 'sp-forward-slurp-sexp "C-(" 'sp-backward-slurp-sexp
+   "C-{" 'sp-backward-barf-sexp "C-}" 'sp-forward-barf-sexp
+   "M-S" 'sp-splice-sexp-killing-backward
    [M-up] 'sp-splice-sexp-killing-backward
    [M-down] 'sp-splice-sexp-killing-forward)
   :init
-  (add-hook 'prog-mode-hook 'smartparens-strict-mode)
+  (add-hook 'prog-mode-hook 'smartparens-mode)
   (add-hook 'smartparens-strict-mode-hook 'show-smartparens-mode)
   (add-hook 'smartparens-mode-hook 'show-smartparens-mode)
+  (defun conditionally-enable-sp ()
+    "Enable `smartparens-mode' in the minibuffer, during `eval-expression'."
+    (if (eq this-command 'eval-expression)
+        (smartparens-strict-mode 1)))
+  (add-hook 'minibuffer-setup-hook 'conditionally-enable-sp)
   :config
   (require 'smartparens-config)
   (setq sp-cancel-autoskip-on-backward-movement nil
-        sp-autoskip-closing-pair 'always
+        sp-autoskip-closing-pair 'always-end
+        sp-autoinsert-pair t
+        sp-autodelete-wrap nil
         sp-show-pair-from-inside nil
-        sp-show-pair-delay 0
-        sp-highlight-pair-overlay nil)
+        sp-highlight-pair-overlay nil
+        sp-escape-quotes-after-insert nil)
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
-  (defun soo-end-of-sexp-or-next ()
-    (interactive)
-    (if (or (looking-at "[])}]") (eolp))
-        (sp-end-of-next-sexp)
-      (sp-end-of-sexp))))
+  (sp-pair "\\(" nil :actions :rem)
+  (sp-pair "\\[" nil :actions :rem)
+  (sp-pair "\\{" nil :actions :rem)
+  (sp-pair "\\\"" nil :actions :rem)
+  (sp-pair "(" nil :unless '(sp-after-backslash-p sp-in-string-p))
+  (sp-pair "[" nil :unless '(sp-after-backslash-p sp-in-string-p))
+  (sp-pair "{" nil :unless '(sp-after-backslash-p sp-in-string-p))
+  (sp-pair "\"" nil :unless '(sp-after-backslash-p))
+  (defun sp-after-backslash-p (id action context)
+    (when (eq action 'insert)
+      (save-excursion
+        (backward-char 1)
+        (looking-back "\\\\")))))
 
 (use-package lispy
   :diminish lispy-mode
-  :defer t
   :general
-  (:keymaps 'lispy-mode-map-lispy
-   "C-M-b" 'lispy-backward
-   "C-M-f" 'lispy-forward
-   "[" 'lispy-brackets
-   "]" nil
-   "C-a" nil
-   "\"" nil
-   "M-d" nil
-   "M-(" 'lispy-wrap-round
-   "M-[" 'lispy-wrap-brackets
-   "M-{" 'lispy-wrap-braces)
   (:keymaps 'lispy-mode-map-c-digits
    "C-8" 'lispy-out-forward-newline
    "C-9" 'lispy-parens-down)
-  (:keymaps 'lispy-mode-map-special
-   "+" nil                              ; special-lispy-join
-   )
+  
+  (:keymaps 'lispy-mode-map-special "+" nil)
   ;; Unbind M-k and M-. in normal state, pass through to lispy
   (:keymaps 'evil-normal-state-map
    "M-." nil                            ; evil-repeat-pop-next
    "M-k" nil
    "gd" 'lispy-goto-symbol)
   :init
-  (defun conditionally-enable-lispy ()
-    "Enable `lispy-mode' in the minibuffer, during `eval-expression'."
-    (if (eq this-command 'eval-expression)
-        (lispy-mode 1)))
-  (add-hook 'minibuffer-setup-hook 'conditionally-enable-lispy)
   (defun toggle-lispy-for-lisps (arg)
-    (lambda () (when (member major-mode sp-lisp-modes) (lispy-mode arg))))
+    (lambda () (when (or (member major-mode sp-lisp-modes)
+                         (eq this-command 'eval-expression))
+                 (lispy-mode arg))))
   (add-hook 'smartparens-enabled-hook (toggle-lispy-for-lisps 1))
   (add-hook 'smartparens-disabled-hook (toggle-lispy-for-lisps -1))
-  (csetq iedit-toggle-key-default nil)  ; Don't want to use iedit
+  (setq iedit-toggle-key-default nil)   ; Don't want to use iedit
   :config
-  (lispy-set-key-theme '(special c-digits lispy))
+  (lispy-set-key-theme '(special c-digits))
   (setq lispy-compat '(edebug cider)
         lispy-avy-keys sooheon-avy-keys
         lispy-avy-style-paren 'at-full
         lispy-avy-style-symbol 'at-full
         lispy-delete-backward-recenter nil
-        lispy-safe-paste t
-        lispy-safe-copy t
-        lispy-safe-delete t
         lispy-comment-use-single-semicolon t)
-  (add-to-list 'lispy-parens-preceding-syntax-alist
-               '(cider-repl-mode . ("[`'~@]+" "#" "#\\?@?"))
-               '(clojurescript-mode . ("[`'~@]+" "#" "#\\?@?")))
-  (add-to-list 'lispy-brackets-preceding-syntax-alist
-               '(cider-repl-mode . ("[`']" "#[A-z.]*"))
-               '(cider-clojure-interaction-mode . ("[`']" "#[A-z.]*")))
-  (add-to-list 'lispy-braces-preceding-syntax-alist
-               '(cider-repl-mode . ("[`'^]" "#[A-z.]*")))
   (lispy-define-key lispy-mode-map-special ">" 'lispy-slurp-or-barf-right)
-  (lispy-define-key lispy-mode-map-special "<" 'lispy-slurp-or-barf-left))
+  (lispy-define-key lispy-mode-map-special "<" 'lispy-slurp-or-barf-left)
+  (general-define-key :keymaps 'lispy-mode-map
+    ;; "DEL" 'lispy-delete-backward
+    ;; "C-d" 'lispy-delete
+    ;; "(" 'lispy-parens
+    ;; "[" 'lispy-brackets
+    ;; "{" 'lispy-braces
+    "C-M-b" 'lispy-backward
+    "C-M-f" 'lispy-forward
+    "M-(" 'lispy-wrap-round
+    "M-[" 'lispy-wrap-brackets
+    "M-{" 'lispy-wrap-braces
+    "M-j" 'lispy-split
+    "M-J" 'lispy-join
+    "M-i" 'lispy-iedit
+    "M-k" 'lispy-kill-sentence
+    "C-k" 'lispy-kill
+    ";" 'lispy-comment
+    ;; "<return>" 'lispy-alt-line
+    ))
 
 (use-package lispyville
   :diminish lispyville-mode
@@ -578,29 +571,19 @@ Keep M-n and M-p reserved for history."
 (use-package super-save
   :diminish super-save-mode
   :init
-  (csetq auto-save-default nil)
   (super-save-mode 1))
-
-(use-package pdf-tools
-  :disabled t
-  :defer t
-  :mode (("\\.pdf\\'" . pdf-view-mode))
-  :init
-  (setenv "PKG_CONFIG_PATH" "/usr/local/Cellar/zlib/1.2.8/lib/pkgconfig:/usr/local/lib/pkgconfig:/opt/X11/lib/pkgconfig")
-  :config
-  (pdf-tools-install))
 
 (use-package woman
   :ensure nil
   :defer t
-  :config (evil-set-initial-state 'woman-mode 'insert)
+  :config (evil-set-initial-state 'woman-mode 'emacs)
   (bind-key "s-w" 'Man-quit woman-mode-map))
 
 (use-package projectile
   :diminish projectile-mode
   :general
   ("C-c k" 'soo--projectile-ag)
-  (nmap :prefix "SPC" "p" 'projectile-command-map)
+  (nvmap :prefix "SPC" "p" 'projectile-command-map)
   (:keymaps 'projectile-command-map
    "e" 'projectile-replace
    "r" 'projectile-recentf)
@@ -659,34 +642,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
                 (when (string-prefix-p "semantic-" (symbol-name x))
                   (remove-hook 'completion-at-point-functions x))))))
 
-(use-package shell-pop
-  :defer t
-  :general
-  ("s-`" 'shell-pop)
-  :init
-  (setq shell-pop-window-position 'bottom
-        shell-pop-window-height 30
-        shell-pop-full-span t
-        shell-pop-autocd-to-working-dir nil
-        shell-pop-restore-window-configuration nil)
-  ;; For some reason, returning to a term buffer with some text causes cursor to
-  ;; be misplaced. This hook places cursor back at the prompt.
-  (add-hook 'shell-pop-in-after-hook
-            (lambda () (goto-char (point-max)) (backward-char 1)))
-  ;; Redefine shell-pop: With arg, auto-cd to working directory, otherwise just
-  ;; pop the shell. Don't make multiple shells.
-  (defalias 'shell-pop
-    (lambda (arg)
-      (interactive "P")
-      (if (string= (buffer-name) shell-pop-last-shell-buffer-name)
-          (if (null arg)
-              (shell-pop-out)
-            (shell-pop--switch-to-shell-buffer (prefix-numeric-value arg)))
-        (progn (if (null arg)
-                   (setq shell-pop-autocd-to-working-dir nil)
-                 (setq shell-pop-autocd-to-working-dir t))
-               (shell-pop-up shell-pop-last-shell-buffer-index))))))
-
 (use-package term
   :general
   (:keymaps 'term-raw-map
@@ -700,13 +655,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (add-hook 'term-mode-hook (lambda ()
                               (set (make-local-variable 'scroll-margin) 0)))
   (evil-set-initial-state 'term-mode 'emacs))
-
-(use-package typo
-  :disabled t
-  :init
-  (typo-global-mode 1)
-  (setq typo-language 'English)
-  (add-hook 'text-mode-hook 'typo-mode))
 
 (use-package undo-tree
   :diminish undo-tree-mode
@@ -774,7 +722,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (global-eldoc-mode -1))
 
 ;;** Basic Editing
-(csetq fill-column 80)
+(setq-default fill-column 80)
 (add-hook 'text-mode-hook #'auto-fill-mode)
 (diminish 'auto-fill-function)          ; auto-fill-mode is called this
 
