@@ -27,7 +27,7 @@ install: upgrade
 	cd lib/org-mode && make compile && make autoloads
 	cd $(BASEDIR) make run
 
-mininal:
+minimal:
 	$(emacs) -Q -l lisp/minimal-init.el
 
 .PHONY: profile install pull upgrade up run
