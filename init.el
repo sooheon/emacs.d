@@ -246,9 +246,9 @@
     (define-key irony-mode-map [remap completion-at-point]
       'irony-completion-at-point-async)
     (define-key irony-mode-map [remap complete-symbol]
-      'irony-completion-at-point-async))
-  (add-hook 'irony-mode-hook 'soo-irony-hook)
-  (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
+      'irony-completion-at-point-async)
+    (irony-cdb-autosetup-compile-options))
+  (add-hook 'irony-mode-hook #'soo-irony-hook))
 
 (use-package ggtags
   :defer t
