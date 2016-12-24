@@ -1,3 +1,8 @@
+(setq mac-pass-command-to-system nil
+      mac-right-command-modifier 'control
+      mac-command-modifier 'super
+      mac-option-modifier 'meta)
+
 (general-define-key
  "C-x C-b" 'ibuffer
  "s-u" 'universal-argument
@@ -5,20 +10,17 @@
  "s-k" 'kill-this-buffer
  [remap move-beginning-of-line] 'smart-move-beginning-of-line
  "s-w" 'soo--close-window-dwim
+ "s-o" 'find-file
  [remap fill-paragraph] 'endless/fill-or-unfill
- [remap just-one-space] 'oscillate-spacing
- [remap apropos-command] 'apropos)
-
-(defun oscillate-spacing (&optional n)
-  (interactive "*p")
-  (cycle-spacing 1 nil 'fast))
+ [remap apropos-command] 'apropos
+ "M-SPC" 'soo-just-one-space)
 
 (nmap "zf" '(lambda () (interactive)
               (reposition-window)
               (reposition-window))
       "got" 'soo-terminal-pop-project-root)
 
-(nmap :prefix "SPC"
+(nvmap :prefix "SPC"
   "t\C-o" 'sooheon--toggle-right-option-key
   "tl" 'global-hl-line-mode
   "sc" 'evil-ex-nohighlight
@@ -63,3 +65,7 @@
 (imap "C-o" 'evil-execute-in-normal-state
       "<s-backspace>" 'sooheon--delete-to-bol)
 (define-key universal-argument-map (kbd "s-u") 'universal-argument)
+
+(general-define-key :keymaps 'minibuffer-local-map
+  "C-p" 'previous-history-element
+  "C-n" 'next-history-element)

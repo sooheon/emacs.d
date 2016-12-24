@@ -324,3 +324,18 @@ Lisp function does not specify a special indentation."
   "Runs `prog-mode-hook'. Useful for modes that don't derive from
 `prog-mode' but should."
   (run-hooks 'prog-mode-hook))
+
+;;;###autoload
+(defun soo-just-one-space ()
+  (interactive nil)
+  (let ((orig-pos (point))
+        (skip-characters " \t\n\r"))
+    (skip-chars-backward skip-characters)
+    (constrain-to-field nil orig-pos)
+    (let* ((start (point))
+           (mid (point))
+           (end (progn
+                  (skip-chars-forward skip-characters)
+                  (constrain-to-field nil orig-pos t))))
+      (delete-region start end)
+      (insert (make-string 1 ?\s)))))

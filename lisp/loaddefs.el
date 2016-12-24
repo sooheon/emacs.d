@@ -1,7 +1,7 @@
 ;;
 
 ;;;### (autoloads nil "modes/soo-clojure" "modes/soo-clojure.el"
-;;;;;;  (22592 44570 0 0))
+;;;;;;  (22604 45398 0 0))
 ;;; Generated autoloads from modes/soo-clojure.el
 
 (autoload 'soo-clojure-hook "modes/soo-clojure" "\
@@ -12,7 +12,7 @@
 ;;;***
 
 ;;;### (autoloads nil "modes/soo-haskell" "modes/soo-haskell.el"
-;;;;;;  (22479 41727 0 0))
+;;;;;;  (22607 24633 0 0))
 ;;; Generated autoloads from modes/soo-haskell.el
 
 (autoload 'soo-haskell-hook "modes/soo-haskell" "\
@@ -22,7 +22,7 @@
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22587 10357
+;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22608 58132
 ;;;;;;  0 0))
 ;;; Generated autoloads from modes/soo-org.el
 
@@ -33,8 +33,8 @@
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22582
-;;;;;;  9502 0 0))
+;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22619
+;;;;;;  64337 0 0))
 ;;; Generated autoloads from modes/soo-python.el
 
 (autoload 'soo-python-hook "modes/soo-python" "\
@@ -46,11 +46,11 @@
 
 ;;;### (autoloads nil nil ("custom.el" "keybinds.el" "modes/soo-ess.el"
 ;;;;;;  "modes/soo-evil.el" "modes/soo-ivy.el" "modes/soo-rust.el"
-;;;;;;  "packages.el") (22585 48782 0 0))
+;;;;;;  "packages.el") (22602 3138 0 0))
 
 ;;;***
 
-;;;### (autoloads nil "auto" "auto.el" (22585 61488 0 0))
+;;;### (autoloads nil "auto" "auto.el" (22601 18252 0 0))
 ;;; Generated autoloads from auto.el
 
 (autoload 'smart-move-beginning-of-line "auto" "\
