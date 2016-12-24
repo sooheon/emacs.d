@@ -814,14 +814,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package hungry-delete :defer t)
 
-(use-package typo
-  :disabled t
-  :init
-  (typo-global-mode 1)
-  (add-hook 'text-mode-hook 'typo-mode)
-  :config
-  (setq-default typo-language 'English))
-
 ;;** Completion and expansion
 (use-package hippie-exp
   :ensure nil
