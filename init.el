@@ -506,7 +506,8 @@ Keep M-n and M-p reserved for history."
     (unless (or (memq major-mode '(cider-repl-mode))
                 (eq this-command 'eval-expression))
       (lispyville-mode 1)))
-  (add-hook 'lispy-mode-hook #'conditionally-enable-lispyville)
+  ;; (add-hook 'lispy-mode-hook #'conditionally-enable-lispyville)
+  (add-hook 'lispy-mode-hook 'lispyville-mode)
   (setq lispyville-key-theme '(operators
                                escape
                                slurp/barf-cp)
