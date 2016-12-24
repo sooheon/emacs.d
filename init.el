@@ -521,17 +521,17 @@ Keep M-n and M-p reserved for history."
 
 ;;** Git and version control
 (use-package magit
-  :general
-  (nmap :prefix "SPC g"
-    "s" 'magit-status
+  :config
+  (nvmap :prefix "SPC"
+    "g" 'magit-status)
+  (nvmap :prefix "SPC G"
     "p" 'magit-dispatch-popup
     "b" 'hydra-magit-blame/body)
-  (:keymaps 'magit-mode-map
+  (general-define-key :keymaps 'magit-mode-map
    "SPC" 'scroll-up
    "DEL" 'scroll-down)
-  :config
   (evil-set-initial-state 'magit-submodule-list-mode 'insert)
-  (setq magit-display-buffer-function 'magit-display-buffer-traditional
+  (setq magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1
         magit-popup-show-common-commands nil)
   (defvar hmb--count)
   (defhydra hydra-magit-blame
