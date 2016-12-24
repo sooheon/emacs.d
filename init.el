@@ -263,15 +263,6 @@
   :commands dired-jump
   :general
   (nmap "-" 'dired-jump)
-  :init
-  (add-hook 'dired-mode-hook #'soo--dired-setup)
-  :config
-  (setq dired-listing-switches "-alGh1v --group-directories-first")
-  (defvar dired-dotfiles-show-p)
-  (defun soo--dired-setup ()
-    ;; (setq dired-omit-verbose nil)
-    (setq dired-hide-details-hide-symlink-targets nil)
-    (dired-hide-details-mode t))
   (nmap :keymaps 'dired-mode-map
     "-" 'dired-jump
     "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
@@ -289,7 +280,16 @@
     "T" 'dired-tree-down
     "K" 'dired-do-kill-lines
     "r" 'revert-buffer
-    "C-r" 'dired-do-redisplay))
+    "C-r" 'dired-do-redisplay)
+  :init
+  (add-hook 'dired-mode-hook #'soo--dired-setup)
+  :config
+  (setq dired-listing-switches "-alGh1v --group-directories-first")
+  (defvar dired-dotfiles-show-p)
+  (defun soo--dired-setup ()
+    ;; (setq dired-omit-verbose nil)
+    (setq dired-hide-details-hide-symlink-targets nil)
+    (dired-hide-details-mode t)))
 
 (use-package ediff
   :defer t
