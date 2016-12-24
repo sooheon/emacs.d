@@ -742,8 +742,9 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (column-number-mode 1))
 
 (use-package speck
+  :disabled t
   :commands speck-mode
-  :general (nmap :prefix "SPC" "ts" 'speck-mode)
+  :general (nvmap :prefix "SPC" "ts" 'speck-mode)
   :init
   (setq
    speck-hunspell-minimum-word-length 3
@@ -758,7 +759,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
     (set (make-local-variable 'speck-syntactic) t)
     (set (make-local-variable 'speck-face-inhibit-list)
          '(font-lock-constant-face)))
-  (add-hook 'prog-mode-hook 'soo--speck-prog-hook)
+  ;; (add-hook 'prog-mode-hook 'soo--speck-prog-hook)
   (defun soo--speck-org-hook ()
     (set (make-local-variable 'speck-face-inhibit-list)
          '(org-tag org-latex-and-related org-meta-line org-table))
