@@ -547,15 +547,14 @@ Keep M-n and M-p reserved for history."
                   (setq hydra-deactivate t))) "forwards")
     ("q" (dotimes (i hmb--count)
            (call-interactively 'magit-blame-quit)) "quit"
-           :color blue))
-  (use-package magithub :disabled t))
+           :color blue)))
 
 (use-package diff-hl
-  :disabled t
   :init
   (setq diff-hl-draw-borders nil)
   (global-diff-hl-mode)
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh))
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+  (evil-set-initial-state 'diff-mode 'emacs))
 
 (use-package markdown-mode
   :mode ("\\.m[k]d" . markdown-mode)
