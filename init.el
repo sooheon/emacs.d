@@ -152,11 +152,11 @@
 ;;** Mode Requires
 (require 'soo-evil)
 (require 'soo-ivy)
-(require 'soo-rust)
+;; (require 'soo-rust)
 (require 'soo-clojure)
-(require 'soo-ess)
+;; (require 'soo-ess)
 (add-hook 'python-mode-hook 'soo-python-hook)
-(add-hook 'haskell-mode-hook 'soo-haskell-hook)
+;; (add-hook 'haskell-mode-hook 'soo-haskell-hook)
 (add-hook 'org-mode-hook 'soo-org-hook)
 (run-with-idle-timer 5 nil (lambda () (require 'soo-org)))
 
@@ -559,32 +559,15 @@ Keep M-n and M-p reserved for history."
 ;;** Git and version control
 (use-package magit
   :general
-  (nmap :prefix "SPC g"
-    "s" 'magit-status
-    "p" 'magit-dispatch-popup
-    "b" 'hydra-magit-blame/body)
+  (nmap :prefix "SPC"
+    "g" 'magit-status)
   (:keymaps 'magit-mode-map
    "SPC" 'scroll-up
    "DEL" 'scroll-down)
   :config
   (evil-set-initial-state 'magit-submodule-list-mode 'insert)
   (setq magit-display-buffer-function 'magit-display-buffer-traditional
-        magit-popup-show-common-commands nil)
-  (use-package magithub :disabled t)
-  (defhydra hydra-magit-blame
-    (:color pink
-     :body-pre (progn (setq hmb--count 1) ; var to track recursive blames
-                      (call-interactively 'magit-blame)))
-    "Magit blame"
-    ("b" (progn (call-interactively 'magit-blame)
-                (setq hmb--count (1+ hmb--count))) "backwards")
-    ("f" (progn (magit-blame-quit)
-                ;; once magit-blame-mode is no-longer active, quit hydra
-                (unless (bound-and-true-p magit-blame-mode)
-                  (setq hydra-deactivate t))) "forwards")
-    ("q" (dotimes (i hmb--count)
-           (call-interactively 'magit-blame-quit)) "quit"
-           :color blue)))
+        magit-popup-show-common-commands nil))
 
 (use-package diff-hl
   :config
