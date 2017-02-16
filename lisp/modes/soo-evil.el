@@ -1,11 +1,12 @@
 (use-package evil
   :general
-  (imap "C-w" 'evil-delete-backward-word)
+  (imap "C-w" 'evil-delete-backward-word
+        "C-r" 'evil-paste-from-register)
   :init
   (setq evil-want-C-u-scroll t
         evil-cross-lines t
         evil-symbol-word-search t
-        evil-move-cursor-back nil
+        evil-move-cursor-back t
         evil-want-C-i-jump t
         evil-disable-insert-state-bindings t
         evil-search-module 'evil-search
@@ -15,7 +16,9 @@
         evil-want-C-w-delete t)
   :config
   (evil-mode)
-  (setq evil-ex-search-highlight-all t))
+  (setq evil-ex-search-highlight-all t)
+  (add-hook 'text-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
+  (add-hook 'prog-mode-hook #'(lambda () (modify-syntax-entry ?_ "w"))))
 
 (use-package evil-commentary
   :diminish evil-commentary-mode

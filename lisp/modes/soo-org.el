@@ -24,11 +24,10 @@
     "<" 'org-metaleft
     ">" 'org-metaright))
 
-(require 'ox)
 ;; FIXME: https://bitbucket.org/mituharu/emacs-mac/commits/6e8c84bd419ab425c3359b4ca17e2da9e23136ad
 (define-key org-mode-map (kbd "C-c l") 'org-store-link)
 (use-package org-download
-  :defer t
+  :after org
   :config
   (org-download-enable)
   (csetq org-download-method 'attach))
@@ -58,8 +57,8 @@
 (defun soo-org-hook ()
   (worf-mode)
   (turn-on-org-cdlatex)
-  (auto-fill-mode 1)
-  (smartparens-mode 1)
+  ;; (auto-fill-mode 1)
+  ;; (smartparens-mode 1)
   (toggle-truncate-lines -1))
 
 (defun latexify-line ()
@@ -121,7 +120,8 @@ forward to downcase-word"
       org-confirm-babel-evaluate nil
       geiser-default-implementation 'guile
       org-babel-load-languages '((python . t)
-                                 (clojure . t))
+                                 (clojure . t)
+                                 (dot . t))
       org-babel-default-header-args '((:session . "none")
                                       (:results . "replace")
                                       (:exports . "code")
@@ -180,7 +180,8 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
 (setq org-export-backends '(ascii html latex odt gfm)
       org-export-coding-system 'utf-8
       org-html-html5-fancy t
-      org-html-postamble nil)
+      org-html-postamble nil
+      org-export-with-smart-quotes t)
 
 (sp-local-pair 'org-mode "$" "$")
 (sp-local-pair 'org-mode "\\left(" " \\right)")

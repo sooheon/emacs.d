@@ -35,6 +35,8 @@
 
 (use-package cider
   :defer t
+  :general
+  (nmap :keymaps 'cider-mode-map "K"'cider-doc)
   :config
   (setq cider-prompt-for-symbol nil
         nrepl-hide-special-buffers t
@@ -62,7 +64,6 @@
   (add-hook 'cider-repl-mode-hook 'smartparens-strict-mode)
   (add-hook 'cider-clojure-interaction-mode 'smartparens-strict-mode)
   (add-hook 'cider-repl-mode-hook 'company-mode)
-  (evil-define-key 'normal cider-mode-map "K" 'cider-doc)
 
   (evil-set-initial-state 'cider-docview-mode 'insert)
   (evil-set-initial-state 'cider-stacktrace-mode 'insert)

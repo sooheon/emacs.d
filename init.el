@@ -30,6 +30,7 @@
 (add-to-list 'default-frame-alist '(font . "Input Mono Narrow"))
 (set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
 ;;** decorations
+(when window-system (set-frame-size (selected-frame) 91 50))
 (csetq tool-bar-mode nil)
 (csetq menu-bar-mode nil)
 (csetq scroll-bar-mode nil)
@@ -216,10 +217,6 @@
         auto-revert-use-notify nil            ; OSX doesn't have file-notify
         auto-revert-verbose nil))
 
-(use-package artbollocks-mode
-  :diminish (artbollocks-mode . "ab")
-  :general (nmap :prefix "SPC" "ta" 'artbollocks-mode))
-
 (use-package compile
   :defer t
   :init
@@ -399,6 +396,7 @@ friend if it has the same major mode."
   (setq flyspell-correct-interface 'flyspell-correct-ivy))
 
 (use-package speck
+  :disabled t
   :commands speck-mode
   :general (nmap :prefix "SPC" "ts" 'speck-mode)
   :init
@@ -484,11 +482,12 @@ friend if it has the same major mode."
   (:keymaps 'lispy-mode-map-lispy
    "C-M-b" 'lispy-backward
    "C-M-f" 'lispy-forward
-   "[" nil
+   "[" 'lispy-brackets
    "]" nil
    "C-a" nil
    "\"" nil
    "M-d" nil
+   "M-(" 'lispy-wrap-round
    "M-[" 'lispy-wrap-brackets
    "M-{" 'lispy-wrap-braces)
   (:keymaps 'lispy-mode-map-c-digits
@@ -583,9 +582,7 @@ Keep M-n and M-p reserved for history."
     "gk" 'outline-backward-same-level
     "gh" 'outline-up-heading
     ;; next visible heading is not exactly what we want but close enough
-    "gl" 'outline-next-visible-heading)
-  :config
-  (add-hook 'markdown-mode-hook (lambda () (auto-fill-mode 1))))
+    "gl" 'outline-next-visible-heading))
 
 (use-package super-save
   :diminish super-save-mode
@@ -701,9 +698,13 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (use-package typo
   :disabled t
   :init
-  (typo-global-mode 1)
   (setq typo-language 'English)
-  (add-hook 'text-mode-hook 'typo-mode))
+  (add-hook 'markdown-mode-hook 'typo-mode)
+  :general
+  (:keymaps 'typo-mode-map
+   "-" nil
+   "<" nil
+   ">" nil))
 
 (use-package undo-tree
   :diminish undo-tree-mode
@@ -759,9 +760,11 @@ INITIAL-INPUT can be given as the initial minibuffer input."
                         (cargo-process-mode :align t :size 0.3)))
   (shackle-mode 1))
 
+(use-package yaml-mode :defer t)
+
 ;;** Basic Editing
 (csetq fill-column 80)
-(add-hook 'text-mode-hook #'auto-fill-mode)
+;; (add-hook 'text-mode-hook #'auto-fill-mode)
 (diminish 'auto-fill-function)          ; auto-fill-mode is called this
 
 (use-package eldoc
@@ -781,9 +784,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (evil-set-initial-state 'messages-buffer-mode 'insert)
   (evil-set-initial-state 'special-mode 'insert)
   (column-number-mode 1))
-
-(global-subword-mode 1)
-(diminish 'subword-mode nil)
 
 (use-package ws-butler
   :diminish ws-butler-mode
@@ -831,14 +831,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package hungry-delete :defer t)
 
-(use-package typo
-  :disabled t
-  :init
-  (typo-global-mode 1)
-  (add-hook 'text-mode-hook 'typo-mode)
-  :config
-  (setq-default typo-language 'English))
-
 ;;** Completion and expansion
 (use-package hippie-exp
   :ensure nil
@@ -884,3 +876,4 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (or (server-running-p) (server-start))
 
 ;;; init.el ends here
+(put 'scroll-left 'disabled nil)
