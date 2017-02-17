@@ -67,7 +67,7 @@
 
 (use-package company-anaconda
   :defer t
-  :init
+  :config
   (add-to-list 'company-backends 'company-anaconda))
 
 ;;;###autoload

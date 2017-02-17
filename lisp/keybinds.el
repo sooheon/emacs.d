@@ -16,7 +16,18 @@
  "s-h" 'evil-window-left
  "s-j" 'evil-window-down
  "s-k" 'evil-window-up
- "s-l" 'evil-window-right)
+ "s-l" 'evil-window-right
+ "s-s" 'save-buffer
+ "s-q" 'save-buffers-kill-terminal
+ "s-v" 'yank
+ "s-c" 'kill-ring-save
+ "s-a" 'mark-whole-buffer
+ "s-x" 'kill-region
+ "s-n" 'make-frame
+ "C-s-f" 'toggle-frame-fullscreen
+ "s--" 'dec-face-height
+ "s-=" 'inc-face-height
+ "M-DEL" 'evil-delete-backward-word)
 
 (defun oscillate-spacing (&optional n)
   (interactive "*p")
@@ -56,20 +67,6 @@
 (define-key ctl-x-map "n" #'narrow-or-widen-dwim)
 (add-hook 'LaTeX-mode-hook (lambda () (define-key LaTeX-mode-map "\C-xn" nil)))
 
-;; Other emacs-mac/OSX keybindings
-(general-define-key
- "s-s" 'save-buffer
- "s-q" 'save-buffers-kill-terminal
- "s-v" 'yank
- "s-c" 'kill-ring-save
- "s-a" 'mark-whole-buffer
- "s-x" 'kill-region
- "s-n" 'make-frame
- "s-l" 'evil-avy-goto-line
- "C-s-f" 'toggle-frame-fullscreen
- "s--" 'dec-face-height
- "s-=" 'inc-face-height
- "M-DEL" 'evil-delete-backward-word)
 (imap "C-o" 'evil-execute-in-normal-state
       "<s-backspace>" 'sooheon--delete-to-bol)
 (define-key universal-argument-map (kbd "s-u") 'universal-argument)

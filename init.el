@@ -504,7 +504,6 @@ friend if it has the same major mode."
   (:keymaps 'lispy-mode-map-c-digits
    "C-8" 'lispy-out-forward-newline
    "C-9" 'lispy-parens-down)
-
   (:keymaps 'lispy-mode-map-special "+" nil)
   ;; Unbind M-k and M-. in normal state, pass through to lispy
   (:keymaps 'evil-normal-state-map
