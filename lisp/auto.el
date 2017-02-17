@@ -56,7 +56,7 @@ off a new pane. Switch to iTerm and cd to default-directory."
 tell application \"iTerm\"
   activate
   try
-    set w to the last window
+    set w to current window
   on error
     set w to (make new window)
   end try
