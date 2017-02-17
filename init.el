@@ -634,7 +634,7 @@ Keep M-n and M-p reserved for history."
 (use-package projectile
   :diminish projectile-mode
   :general
-  ("C-c k" 'soo--projectile-ag)
+  ("C-c k" 'soo--projectile-rg)
   (nvmap :prefix "SPC" "p" 'projectile-command-map)
   (:keymaps 'projectile-command-map
    "e" 'projectile-replace
@@ -646,11 +646,11 @@ Keep M-n and M-p reserved for history."
         projectile-sort-order 'recentf
         projectile-create-missing-test-files t
         projectile-completion-system 'ivy)
-  (defun soo--projectile-ag (&optional initial-input)
+  (defun soo--projectile-rg (&optional initial-input)
     "Grep for a string in the current directory or project using ag.
 INITIAL-INPUT can be given as the initial minibuffer input."
     (interactive)
-    (counsel-ag initial-input (or (ignore-errors (projectile-project-root))
+    (counsel-rg initial-input (or (ignore-errors (projectile-project-root))
                                   default-directory))))
 
 (use-package rainbow-mode
