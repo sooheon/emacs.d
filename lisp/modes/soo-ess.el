@@ -50,5 +50,3 @@
   :init
   (add-hook 'ess-mode-hook 'ess-smart-equals-mode)
   (add-hook 'inferior-ess-mode-hook 'ess-smart-equals-mode))
-
-(provide 'soo-ess)

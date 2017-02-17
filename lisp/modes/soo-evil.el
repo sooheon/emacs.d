@@ -16,6 +16,7 @@
         evil-want-C-w-delete t)
   :config
   (evil-mode)
+  (imap "C-w" 'evil-delete-backward-word)
   (setq evil-ex-search-highlight-all t)
   (add-hook 'text-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
   (add-hook 'prog-mode-hook #'(lambda () (modify-syntax-entry ?_ "w"))))
@@ -115,4 +116,5 @@
   (otomap "s" 'sentence-nav-evil-a-sentence)
   (itomap "s" 'sentence-nav-evil-inner-sentence))
 
-(provide 'soo-evil)
+(use-package evil-multiedit
+  :defer t)

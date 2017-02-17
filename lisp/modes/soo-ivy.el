@@ -26,7 +26,7 @@
     "ap" 'counsel-list-processes)
   (define-key evil-normal-state-map "\M-y" 'counsel-yank-pop)
   :config
-  (use-package smex :config (csetq smex-history-length 32)))
+  (use-package smex :config (setq smex-history-length 32)))
 
 (use-package swiper
   :general ([remap isearch-forward] 'counsel-grep-or-swiper
@@ -109,6 +109,6 @@
         ("C" ivy-toggle-case-fold)
         ("o" ivy-occur :exit t)))))
 
-(use-package flx)
+(use-package ivy-rich :after 'ivy)
 
-(provide 'soo-ivy)
+(use-package flx)

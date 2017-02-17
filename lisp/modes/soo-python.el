@@ -1,4 +1,3 @@
-(require 'python)
 (use-package python
   :ensure nil
   :general
@@ -6,7 +5,7 @@
    "C-j" 'newline-and-indent
    "C-m" 'newline)
   :config
-  (csetq python-shell-completion-native-enable nil)
+  (setq python-shell-completion-native-enable nil)
   (add-hook 'inferior-python-mode-hook 'company-mode)
   (add-hook 'inferior-python-mode-hook 'smartparens-mode)
   (nmap :keymaps 'inferior-python-mode-map "C-d" 'evil-scroll-down))
@@ -16,7 +15,10 @@
   :general
   (:keymaps 'python-mode-map "C-c C-c" 'py-yapf-and-send-buffer)
   :init
-  (nmap :prefix "SPC" :keymaps 'python-mode-map "=" 'py-yapf-buffer)
+  (nvmap :prefix "SPC"
+         :keymaps 'python-mode-map
+         "="
+         'py-yapf-buffer)
   :config
   (defun py-yapf-and-send-buffer ()
     (interactive)
@@ -39,6 +41,7 @@
 (use-package lpy
   :ensure nil
   :diminish (lpy-mode . "lpy")
+  :after lispy
   :init
   :config
   (general-define-key :keymaps 'lpy-mode-map
@@ -52,8 +55,6 @@
     "<" nil
     "," nil
     "\"" nil))
-
-;; (require 'le-python)
 
 (use-package anaconda-mode
   :defer t
@@ -74,6 +75,8 @@
   (lpy-mode 1)
   (anaconda-mode 1)
   (anaconda-eldoc-mode 1))
+
+(add-hook 'python-mode-hook 'soo-python-hook)
 
 (defun ora-python-switch-to-shell ()
   "If *Python* is running, switch to it. Else, run new python
