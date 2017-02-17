@@ -6,8 +6,8 @@
 (general-define-key
  "C-x C-b" 'ibuffer
  "s-u" 'universal-argument
- "s-w" 'kill-this-buffer
- "C-s-w" 'soo--close-window-dwim
+ "s-w" 'soo--close-window-dwim
+ "C-s-w" 'bury-buffer
  [remap move-beginning-of-line] 'smart-move-beginning-of-line
  [remap fill-paragraph] 'endless/fill-or-unfill
  [remap just-one-space] 'oscillate-spacing
