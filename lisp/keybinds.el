@@ -1,11 +1,9 @@
 (general-define-key
  "C-x C-b" 'ibuffer
  "s-u" 'universal-argument
- "s-W" 'kill-this-buffer
- "C-s-W" 'kill-this-buffer
+ "s-w" 'kill-this-buffer
+ "C-s-w" 'soo--close-window-dwim
  [remap move-beginning-of-line] 'smart-move-beginning-of-line
- "s-w" 'soo--close-window-dwim
- "s-w" 'soo--close-window-dwim
  [remap fill-paragraph] 'endless/fill-or-unfill
  [remap just-one-space] 'oscillate-spacing
  [remap apropos-command] 'apropos
@@ -45,7 +43,8 @@
   "ws" 'evil-window-split
   "wv" 'evil-window-vsplit
   "wr" 'evil-window-rotate-downwards
-  "wR" 'evil-window-rotate-upwards)
+  "wR" 'evil-window-rotate-upwards
+  "wc" 'soo--close-window-dwim)
 
 ;; This line actually replaces Emacs' entire narrowing keymap, that's how
 ;; much I like this command. Only copy it if that's what you want.
