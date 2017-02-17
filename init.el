@@ -149,7 +149,7 @@
 ;; (require 'soo-rust)
 (require 'soo-clojure)
 ;; (require 'soo-ess)
-(add-hook 'python-mode-hook 'soo-python-hook)
+(require 'soo-python)
 ;; (add-hook 'haskell-mode-hook 'soo-haskell-hook)
 (add-hook 'org-mode-hook 'soo-org-hook)
 (run-with-idle-timer 10 nil (lambda () (require 'soo-org)))
