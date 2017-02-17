@@ -113,3 +113,5 @@ buffer."
                                     (region-end))
     (ora-python-shell-send-region (point-min)
                                   (point-max))))
+
+(provide 'soo-python)

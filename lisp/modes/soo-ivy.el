@@ -112,3 +112,5 @@
 (use-package ivy-rich :after 'ivy)
 
 (use-package flx)
+
+(provide 'soo-ivy)

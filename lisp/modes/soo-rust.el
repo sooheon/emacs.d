@@ -30,3 +30,5 @@
 
 (with-eval-after-load 'smartparens
   (sp-local-pair 'rust-mode "'" nil :actions nil))
+
+(provide 'soo-rust)

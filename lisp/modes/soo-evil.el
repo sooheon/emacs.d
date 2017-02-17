@@ -124,3 +124,5 @@
 
 (use-package evil-multiedit
   :defer t)
+
+(provide 'soo-evil)

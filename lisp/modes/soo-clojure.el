@@ -71,20 +71,6 @@
     (cider-jack-in-clojurescript))
   (general-define-key :keymaps 'cider-mode-map
     "C-c C-M-j" 'cider-figwheel-repl)
-
-<<<<<<< variant A
-  ;; (defadvice cider-jump-to-var (before add-evil-jump activate)
-  ;;   (evil-set-jump))
-  (add-hook 'cider-repl-mode-hook (lambda () (toggle-truncate-lines 1)))
-  (add-hook 'cider-repl-mode-hook 'company-mode)
-  (evil-define-key 'normal cider-mode-map "K" 'cider-doc)
-  (evil-set-initial-state 'cider-repl-mode 'emacs)
-  (evil-set-initial-state 'cider-docview-mode 'insert)
-  (evil-set-initial-state 'cider-stacktrace-mode 'insert)
-  (evil-set-initial-state 'cider-macroexpansion-mode 'insert)
-  (evil-set-initial-state 'cider-browse-ns-mode 'insert)
-  (evil-set-initial-state 'cider-test-report-mode 'insert)
->>>>>>> variant B
   (defun soo-cider-repl-hook ()
     (toggle-truncate-lines 1)
     (company-mode)
@@ -97,7 +83,6 @@
   (evil-set-initial-state 'cider-macroexpansion-mode 'emacs)
   (evil-set-initial-state 'cider-browse-ns-mode 'emacs)
   (evil-set-initial-state 'cider-test-report-mode 'emacs)
-======= end
   (advice-add 'cider-find-var :after #'recenter-top-bottom))
 
 (use-package inf-clojure
@@ -109,3 +94,5 @@
     "C-c C-k" 'inf-clojure-eval-buffer
     "C-c C-e" 'inf-clojure-eval-last-sexp
     "C-M-x" 'inf-clojure-eval-defun))
+
+(provide 'soo-clojure)

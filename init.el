@@ -29,10 +29,10 @@
 (set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
 ;;** decorations
 (when window-system (set-frame-size (selected-frame) 91 50))
-(csetq tool-bar-mode nil)
-(csetq menu-bar-mode nil)
-(csetq scroll-bar-mode nil)
-(csetq line-spacing 0.1)
+(setq tool-bar-mode nil)
+(setq menu-bar-mode nil)
+(setq scroll-bar-mode nil)
+(setq line-spacing 0.1)
 (setq inhibit-startup-screen t
       initial-scratch-message ";; You have power over your mind - not outside events. Realize this, and you \n;; will find strength.\n\n"
       create-lockfiles nil
@@ -578,12 +578,13 @@ Keep M-n and M-p reserved for history."
 
 ;;** Git and version control
 (use-package magit
-  :config
+  :general
   (nvmap :prefix "SPC"
     "g" 'magit-status)
   (:keymaps 'magit-mode-map
    "SPC" 'scroll-up
    "DEL" 'scroll-down)
+  :config
   (evil-set-initial-state 'magit-submodule-list-mode 'insert)
   (setq magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1
         magit-popup-show-common-commands nil)
