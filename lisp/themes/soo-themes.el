@@ -3,5 +3,6 @@
 (use-package solarized-theme :defer t)
 (use-package spacemacs-theme :defer t)
 (use-package base16-theme :defer t)
+(use-package farmhouse-theme :defer t)
 
 (provide 'soo-themes)

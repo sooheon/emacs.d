@@ -1,18 +1,21 @@
-(require 'org)
 (use-package org
+  :defer 20
   :ensure nil
   :general
-  (:keymaps 'org-mode-map
-   "M-n" 'org-metadown
-   "M-p" 'org-metaup
-   "M-h" 'org-metaleft
-   "M-H" 'org-shiftmetaleft
-   "M-l" 'org-metaright2
-   "M-L" 'org-shiftmetaright
-   "M-j" (lambda () (interactive)
-           (org-meta-return)
-           (evil-insert 1))
-   "C-j" 'org-return)
+  ("C-c a" 'org-agenda)
+  :config
+  (setq org-hide-emphasis-markers t)
+  (general-define-key :keymaps 'org-mode-map
+    "M-n" 'org-metadown
+    "M-p" 'org-metaup
+    "M-h" 'org-metaleft
+    "M-H" 'org-shiftmetaleft
+    "M-l" 'org-metaright2
+    "M-L" 'org-shiftmetaright
+    "M-j" (lambda () (interactive)
+            (org-meta-return)
+            (evil-insert 1))
+    "C-j" 'org-return)
   (nmap :keymaps 'org-mode-map
     [C-return] (lambda () (interactive)
                  (org-insert-heading-respect-content) (evil-append 1))
@@ -27,15 +30,17 @@
   :config
   (setq org-hide-emphasis-markers t))
 
-(require 'ox)
+
 ;; FIXME: https://bitbucket.org/mituharu/emacs-mac/commits/6e8c84bd419ab425c3359b4ca17e2da9e23136ad
 (define-key org-mode-map (kbd "C-c l") 'org-store-link)
 (use-package org-download
-  :defer t
+  :after org
   :config
   (org-download-enable)
-  (csetq org-download-method 'attach))
+  (setq org-download-method 'attach))
+
 (use-package worf
+  :after org
   :diminish worf-mode
   :config
   (general-define-key :keymaps 'worf-mode-map
@@ -43,7 +48,9 @@
     "C-j" nil
     "[" nil
     "]" nil))
+
 (use-package auctex :defer t)
+
 (use-package cdlatex :defer t
   :config
   (setq cdlatex-command-alist
@@ -67,9 +74,11 @@
 (defun soo-org-hook ()
   (worf-mode)
   (turn-on-org-cdlatex)
-  (auto-fill-mode 1)
-  (smartparens-mode 1)
+  ;; (auto-fill-mode 1)
+  ;; (smartparens-mode 1)
+  (org-indent-mode)
   (toggle-truncate-lines -1))
+(add-hook 'org-mode-hook 'soo-org-hook)
 
 (defun latexify-line ()
   (interactive)
@@ -89,7 +98,6 @@
       (insert "$")
       (insert "$")
       (backward-char))))
-(imap :keymaps 'org-mode-map "M-$" 'open-$)
 
 (setq-default org-export-in-background nil
               org-src-fontify-natively t
@@ -140,7 +148,8 @@ forward to downcase-word"
       org-confirm-babel-evaluate nil
       geiser-default-implementation 'guile
       org-babel-load-languages '((python . t)
-                                 (clojure . t))
+                                 (clojure . t)
+                                 (dot . t))
       org-babel-default-header-args '((:session . "none")
                                       (:results . "replace")
                                       (:exports . "code")
@@ -190,20 +199,15 @@ _h_tml    ^ ^        ^ ^           _A_SCII:
   (evil-normal-state)
   (org-edit-special)
   (evil-insert-state))
-(define-key org-mode-map "<" (lambda () (interactive)
-                               (if (bolp)
-                                   (hydra-org-template/body)
-                                 (self-insert-command 1))))
 
-(require 'ox)
 (setq org-export-backends '(ascii html latex odt gfm)
       org-export-coding-system 'utf-8
       org-html-html5-fancy t
-      org-html-postamble nil)
+      org-html-postamble nil
+      org-export-with-smart-quotes t)
 
-(sp-local-pair 'org-mode "\\left(" " \\right)")
-(sp-local-pair 'org-mode "\\left[" " \\right]")
-(sp-local-pair 'org-mode "\\left{" " \\right}")
-(sp-local-pair 'org-mode "\\left|" " \\right|")
-
-(provide 'soo-org)
+(with-eval-after-load 'smartparens
+  (sp-local-pair 'org-mode "\\left(" " \\right)")
+  (sp-local-pair 'org-mode "\\left[" " \\right]")
+  (sp-local-pair 'org-mode "\\left{" " \\right}")
+  (sp-local-pair 'org-mode "\\left|" " \\right|"))

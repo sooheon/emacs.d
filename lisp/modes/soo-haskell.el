@@ -1,4 +1,5 @@
 (use-package haskell-mode
+  :defer t
   :config
   (defun haskell-load-file-and-switch-to-repl ()
     (interactive)
@@ -13,6 +14,7 @@
   (setq tab-width 4))
 
 (use-package intero
+  :defer t
   :diminish (intero-mode . "in")
   :config
   (define-key intero-repl-mode-map [tab] 'dabbrev-expand)
@@ -25,16 +27,18 @@
   )
 
 (use-package hindent
+  :defer t
   :diminish hindent-mode
   :commands (hindent-reformat-buffer hindent-reformat-decl)
   :config
-  (nmap :prefix "SPC"
-        :keymaps 'hindent-mode-map
-        "=" 'hindent-reformat-buffer)
+  (nvmap :prefix "SPC"
+         :keymaps 'hindent-mode-map
+         "=" 'hindent-reformat-buffer)
   (evil-define-key 'visual hindent-mode-map "=" 'hindent-reformat-region)
   (setq hindent-process-path "/Users/sooheon/.local/bin/hindent"))
 
 (use-package shm
+  :defer t
   :load-path "/Users/sooheon/.emacs.d/lib/structured-haskell-mode/elisp"
   :config
   (setq shm-program-name (expand-file-name "structured-haskell-mode/dist/build/structured-haskell-mode/structured-haskell-mode" lib-d))
@@ -63,3 +67,5 @@
   (structured-haskell-mode)
   (haskell-indentation-mode -1)
   (setq evil-auto-indent nil))
+
+(add-hook 'haskell-mode-hook 'soo-haskell-hook)

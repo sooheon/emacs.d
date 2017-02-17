@@ -1,4 +1,3 @@
-(require 'python)
 (use-package python
   :ensure nil
   :general
@@ -6,50 +5,43 @@
    "C-j" 'newline-and-indent
    "C-m" 'newline)
   :config
-  (csetq python-shell-completion-native-enable nil)
+  (setq python-shell-completion-native-enable nil)
   (add-hook 'inferior-python-mode-hook 'company-mode)
   (add-hook 'inferior-python-mode-hook 'smartparens-mode)
-  (nmap :keymaps 'inferior-python-mode-map "C-d" 'evil-scroll-down)
-  ;; (setq python-shell-interpreter "ipython"
-  ;;       python-shell-interpreter-args "-i" ; http://tinyurl.com/j44y64d
-  ;;       )
-  )
+  (nmap :keymaps 'inferior-python-mode-map "C-d" 'evil-scroll-down))
 
 (use-package py-yapf
   :commands py-yapf-buffer
   :general
-  (:keymaps 'python-mode-map
-   "C-c C-c" 'py-yapf-and-send-buffer)
+  (:keymaps 'python-mode-map "C-c C-c" 'py-yapf-and-send-buffer)
   :init
-  (nmap :prefix "SPC"
-        :keymaps 'python-mode-map
-        "=" 'py-yapf-buffer)
+  (nvmap :prefix "SPC"
+         :keymaps 'python-mode-map
+         "="
+         'py-yapf-buffer)
   :config
   (defun py-yapf-and-send-buffer ()
     (interactive)
     (py-yapf-buffer)
     (python-shell-send-buffer)))
 
-(defvar no-pip
-  (string-match "Command not found\\|no pip in"
-                (shell-command-to-string "which pip")))
-
-(unless no-pip
-  (use-package jedi
-    :config
-    (setq python-environment-directory "~/.pyenv/versions")
-    (define-key jedi-mode-map [C-tab] nil)
-    (setq jedi:use-shortcuts nil)
-    (setq jedi:complete-on-dot nil)
-    (setq jedi:setup-function nil)
-    (setq jedi:mode-function nil)
-    ;; (define-key jedi-mode-map (kbd "M-.") 'jedi:goto-definition)
-    ;; (define-key jedi-mode-map (kbd "K") 'jedi:show-doc)
-    ))
+(use-package jedi
+  :disabled t
+  :config
+  (setq python-environment-directory "~/.pyenv/versions")
+  (define-key jedi-mode-map [C-tab] nil)
+  (setq jedi:use-shortcuts nil)
+  (setq jedi:complete-on-dot nil)
+  (setq jedi:setup-function nil)
+  (setq jedi:mode-function nil)
+  ;; (define-key jedi-mode-map (kbd "M-.") 'jedi:goto-definition)
+  ;; (define-key jedi-mode-map (kbd "K") 'jedi:show-doc)
+  )
 
 (use-package lpy
   :ensure nil
   :diminish (lpy-mode . "lpy")
+  :after lispy
   :init
   :config
   (general-define-key :keymaps 'lpy-mode-map
@@ -64,8 +56,6 @@
     "," nil
     "\"" nil))
 
-(require 'le-python)
-
 (use-package anaconda-mode
   :defer t
   :diminish anaconda-mode
@@ -73,17 +63,20 @@
   (evil-define-key 'normal anaconda-mode-map "K" 'anaconda-mode-show-doc)
   (evil-set-initial-state 'anaconda-mode-view-mode 'insert)
   (defadvice anaconda-mode-goto (before python/anaconda-mode-goto activate)
-    (evil--jumps-push))
-  (use-package company-anaconda)
+    (evil--jumps-push)))
+
+(use-package company-anaconda
+  :defer t
+  :init
   (add-to-list 'company-backends 'company-anaconda))
 
 ;;;###autoload
 (defun soo-python-hook ()
-  (setq lispy-no-space t)
-  (setq forward-sexp-function 'ora-c-forward-sexp-function)
   (lpy-mode 1)
   (anaconda-mode 1)
   (anaconda-eldoc-mode 1))
+
+(add-hook 'python-mode-hook 'soo-python-hook)
 
 (defun ora-python-switch-to-shell ()
   "If *Python* is running, switch to it. Else, run new python
@@ -120,16 +113,3 @@ buffer."
                                     (region-end))
     (ora-python-shell-send-region (point-min)
                                   (point-max))))
-
-;; (use-package pyenv-mode
-;;   :disabled t
-;;   :if (executable-find "pyenv")
-;;   :commands (pyenv-mode-set pyenv-mode-unset)
-;;   :init
-;;   (require 'pyenv-mode-auto))
-
-;; (use-package company-jedi
-;;   :disabled t
-;;   :init
-;;   (add-hook 'python-mode-hook
-;;             '(lambda () (add-to-list 'company-backends 'company-jedi))))

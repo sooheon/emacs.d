@@ -1,6 +1,7 @@
 (use-package evil
   :general
-  (imap "C-w" 'evil-delete-backward-word)
+  (imap "C-w" 'evil-delete-backward-word
+        "C-r" 'evil-paste-from-register)
   :init
   (setq-default evil-want-C-u-scroll t
                 evil-cross-lines t
@@ -16,46 +17,15 @@
   :config
   (evil-mode)
   (setq evil-ex-search-highlight-all t)
-  (defun blink-cursor-on () (blink-cursor-mode 1))
-  (defun blink-cursor-off () (blink-cursor-mode -1))
-  (add-hook 'evil-insert-state-entry-hook 'blink-cursor-on)
-  (add-hook 'evil-insert-state-exit-hook 'blink-cursor-off)
-  (add-hook 'evil-emacs-state-entry-hook 'blink-cursor-on)
-  (add-hook 'evil-emacs-state-exit-hook 'blink-cursor-off)
-
-  (progn ;; HACK: visual edits can be repeated with `.'
-    ;; make v start recording
-    (evil-set-command-property 'evil-visual-char :repeat t)
-    (evil-set-command-property 'evil-visual-line :repeat t)
-    (evil-set-command-property 'evil-visual-block :repeat t)
-
-    ;; it would be better to advise these functions with :override
-    (defun evil-repeat-motion (flag)
-      "Repeation for motions. Motions are recorded by keystroke but only in insert state."
-      ;; also record motions in visual state
-      (when (memq evil-state '(insert replace visual))
-        (evil-repeat-keystrokes flag)))
-
-    (defun evil-repeat-start ()
-      "Start recording a new repeat into `evil-repeat-info'."
-      ;; don't stop recording in visual state
-      (unless (evil-visual-state-p)
-        (evil-repeat-reset t)
-        (evil-repeat-record-buffer)))
-
-    (defun evil-repeat-stop ()
-      "Stop recording a repeat.
-Update `evil-repeat-ring' with the accumulated changes
-in `evil-repeat-info' and clear variables."
-      ;; don't stop recording in visual state
-      (unless (evil-visual-state-p)
-        (unwind-protect
-            (when (and (evil-repeat-recording-p))
-              (setq evil-repeat-info
-                    (evil-normalize-repeat-info evil-repeat-info))
-              (when (and evil-repeat-info evil-repeat-ring)
-                (ring-insert evil-repeat-ring evil-repeat-info)))
-          (evil-repeat-reset nil))))))
+  (add-hook 'text-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
+  (add-hook 'prog-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
+  ;; (defun blink-cursor-on () (blink-cursor-mode 1))
+  ;; (defun blink-cursor-off () (blink-cursor-mode -1))
+  ;; (add-hook 'evil-insert-state-entry-hook 'blink-cursor-on)
+  ;; (add-hook 'evil-insert-state-exit-hook 'blink-cursor-off)
+  ;; (add-hook 'evil-emacs-state-entry-hook 'blink-cursor-on)
+  ;; (add-hook 'evil-emacs-state-exit-hook 'blink-cursor-off)
+  )
 
 (use-package evil-commentary
   :diminish evil-commentary-mode
@@ -152,4 +122,5 @@ in `evil-repeat-info' and clear variables."
   (otomap "s" 'sentence-nav-evil-a-sentence)
   (itomap "s" 'sentence-nav-evil-inner-sentence))
 
-(provide 'soo-evil)
+(use-package evil-multiedit
+  :defer t)

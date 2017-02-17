@@ -6,19 +6,26 @@
 (general-define-key
  "C-x C-b" 'ibuffer
  "s-u" 'universal-argument
- "s-W" 'delete-frame
- "s-k" 'kill-this-buffer
+ "s-w" 'kill-this-buffer
+ "C-s-w" 'soo--close-window-dwim
  [remap move-beginning-of-line] 'smart-move-beginning-of-line
- "s-w" 'soo--close-window-dwim
- "s-o" 'find-file
  [remap fill-paragraph] 'endless/fill-or-unfill
+ [remap just-one-space] 'oscillate-spacing
  [remap apropos-command] 'apropos
- "M-SPC" 'soo-just-one-space)
+ "s-C" 'count-words
+ "s-h" 'evil-window-left
+ "s-j" 'evil-window-down
+ "s-k" 'evil-window-up
+ "s-l" 'evil-window-right)
+
+(defun oscillate-spacing (&optional n)
+  (interactive "*p")
+  (cycle-spacing 1 nil 'fast))
 
 (nmap "zf" '(lambda () (interactive)
               (reposition-window)
               (reposition-window))
-      "got" 'soo-terminal-pop-project-root)
+      "got" 'soo-terminal-pop)
 
 (nvmap :prefix "SPC"
   "t\C-o" 'sooheon--toggle-right-option-key
@@ -41,7 +48,8 @@
   "ws" 'evil-window-split
   "wv" 'evil-window-vsplit
   "wr" 'evil-window-rotate-downwards
-  "wR" 'evil-window-rotate-upwards)
+  "wR" 'evil-window-rotate-upwards
+  "wc" 'soo--close-window-dwim)
 
 ;; This line actually replaces Emacs' entire narrowing keymap, that's how
 ;; much I like this command. Only copy it if that's what you want.

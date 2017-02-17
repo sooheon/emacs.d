@@ -28,8 +28,11 @@
 (set-face-attribute 'default nil :family "Input Mono Narrow")
 (set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
 ;;** decorations
-(setq ring-bell-function 'ignore
-      line-spacing 0.1)
+(when window-system (set-frame-size (selected-frame) 91 50))
+(csetq tool-bar-mode nil)
+(csetq menu-bar-mode nil)
+(csetq scroll-bar-mode nil)
+(csetq line-spacing 0.1)
 (setq inhibit-startup-screen t
       initial-scratch-message ";; You have power over your mind - not outside events. Realize this, and you \n;; will find strength.\n\n"
       create-lockfiles nil
@@ -143,11 +146,11 @@
 ;;** Mode Requires
 (require 'soo-evil)
 (require 'soo-ivy)
-(require 'soo-rust)
+;; (require 'soo-rust)
 (require 'soo-clojure)
-(require 'soo-ess)
+;; (require 'soo-ess)
 (add-hook 'python-mode-hook 'soo-python-hook)
-(add-hook 'haskell-mode-hook 'soo-haskell-hook)
+;; (add-hook 'haskell-mode-hook 'soo-haskell-hook)
 (add-hook 'org-mode-hook 'soo-org-hook)
 (run-with-idle-timer 10 nil (lambda () (require 'soo-org)))
 
@@ -205,10 +208,6 @@
   (setq global-auto-revert-non-file-buffers t ; revert Dired buffers too
         auto-revert-use-notify nil            ; OSX doesn't have file-notify
         auto-revert-verbose nil))
-
-(use-package artbollocks-mode
-  :diminish (artbollocks-mode . "ab")
-  :general (nmap :prefix "SPC" "ta" 'artbollocks-mode))
 
 (use-package compile
   :defer t
@@ -309,8 +308,7 @@
 (use-package circe
   :defer t
   :general
-  (nvmap :prefix "SPC" "ai" 'sooheon--switch-to-circe)
-  ;; (:prefix "C-c" "ai" 'sooheon--switch-to-circe)
+  (nmap :prefix "SPC" "ai" 'sooheon--switch-to-circe)
   :init
   (setq circe-network-options
         '(("Freenode"
@@ -370,6 +368,54 @@ friend if it has the same major mode."
   (:keymaps 'hydra-base-map
    "C-u" nil
    "0" nil))
+
+(use-package ispell
+  :disabled t
+  :init
+  (setenv "DICTIONARY" "en_US")
+  (setq ispell-program-name (executable-find "hunspell")))
+
+(use-package flyspell
+  :disabled t
+  :defer t
+  :diminish flyspell-mode
+  :general ("C-;" 'flyspell-auto-correct-previous-word)
+  :init
+  (add-hook 'text-mode-hook 'flyspell-mode)
+  (add-hook 'prog-mode-hook 'flyspell-prog-mode))
+
+(use-package flyspell-correct
+  :disabled t
+  :after flyspell
+  :general (:keymaps 'flyspell-mode-map "C-;" 'flyspell-correct-word-generic)
+  :config
+  (setq flyspell-correct-interface 'flyspell-correct-ivy))
+
+(use-package speck
+  :disabled t
+  :commands speck-mode
+  :general (nmap :prefix "SPC" "ts" 'speck-mode)
+  :init
+  (setq
+   speck-hunspell-minimum-word-length 3
+   speck-auto-correct-case 'two
+   speck-hunspell-coding-system "utf-8"
+   speck-hunspell-library-directory (expand-file-name "~/Library/Spelling/")
+   speck-hunspell-dictionary-alist '(("en" . "en_US"))
+   speck-hunspell-default-dictionary-name "en"
+   speck-hunspell-extra-arguments
+   (list "-p" (concat speck-hunspell-library-directory "LocalDictionary")))
+  (defun soo--speck-prog-hook ()
+    (set (make-local-variable 'speck-syntactic) t)
+    (set (make-local-variable 'speck-face-inhibit-list)
+         '(font-lock-constant-face)))
+  (add-hook 'prog-mode-hook 'soo--speck-prog-hook)
+  (defun soo--speck-org-hook ()
+    (set (make-local-variable 'speck-face-inhibit-list)
+         '(org-tag org-latex-and-related org-meta-line org-table))
+    (speck-mode))
+  (add-hook 'org-mode-hook 'soo--speck-org-hook)
+  (add-hook 'text-mode-hook 'speck-mode))
 
 (use-package help
   :ensure nil
@@ -444,10 +490,21 @@ friend if it has the same major mode."
 (use-package lispy
   :diminish lispy-mode
   :general
+  (:keymaps 'lispy-mode-map-lispy
+   "C-M-b" 'lispy-backward
+   "C-M-f" 'lispy-forward
+   "[" 'lispy-brackets
+   "]" nil
+   "C-a" nil
+   "\"" nil
+   "M-d" nil
+   "M-(" 'lispy-wrap-round
+   "M-[" 'lispy-wrap-brackets
+   "M-{" 'lispy-wrap-braces)
   (:keymaps 'lispy-mode-map-c-digits
    "C-8" 'lispy-out-forward-newline
    "C-9" 'lispy-parens-down)
-  
+
   (:keymaps 'lispy-mode-map-special "+" nil)
   ;; Unbind M-k and M-. in normal state, pass through to lispy
   (:keymaps 'evil-normal-state-map
@@ -524,10 +581,7 @@ Keep M-n and M-p reserved for history."
   :config
   (nvmap :prefix "SPC"
     "g" 'magit-status)
-  (nvmap :prefix "SPC G"
-    "p" 'magit-dispatch-popup
-    "b" 'hydra-magit-blame/body)
-  (general-define-key :keymaps 'magit-mode-map
+  (:keymaps 'magit-mode-map
    "SPC" 'scroll-up
    "DEL" 'scroll-down)
   (evil-set-initial-state 'magit-submodule-list-mode 'insert)
@@ -564,9 +618,7 @@ Keep M-n and M-p reserved for history."
     "gk" 'outline-backward-same-level
     "gh" 'outline-up-heading
     ;; next visible heading is not exactly what we want but close enough
-    "gl" 'outline-next-visible-heading)
-  :init
-  (add-hook 'markdown-mode-hook (lambda () (auto-fill-mode 1))))
+    "gl" 'outline-next-visible-heading))
 
 (use-package super-save
   :diminish super-save-mode
@@ -716,6 +768,8 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :defer t
   :config (require 'vlf-setup))
 
+(use-package yaml-mode :defer t)
+
 (use-package eldoc
   :defer t
   :config
@@ -739,31 +793,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (evil-set-initial-state 'messages-buffer-mode 'insert)
   (evil-set-initial-state 'special-mode 'insert)
   (column-number-mode 1))
-
-(use-package speck
-  :disabled t
-  :commands speck-mode
-  :general (nvmap :prefix "SPC" "ts" 'speck-mode)
-  :init
-  (setq
-   speck-hunspell-minimum-word-length 3
-   speck-auto-correct-case 'two
-   speck-hunspell-coding-system "utf-8"
-   speck-hunspell-library-directory (expand-file-name "~/Library/Spelling/")
-   speck-hunspell-dictionary-alist '(("en" . "en_US"))
-   speck-hunspell-default-dictionary-name "en"
-   speck-hunspell-extra-arguments
-   (list "-p" (concat speck-hunspell-library-directory "LocalDictionary")))
-  (defun soo--speck-prog-hook ()
-    (set (make-local-variable 'speck-syntactic) t)
-    (set (make-local-variable 'speck-face-inhibit-list)
-         '(font-lock-constant-face)))
-  ;; (add-hook 'prog-mode-hook 'soo--speck-prog-hook)
-  (defun soo--speck-org-hook ()
-    (set (make-local-variable 'speck-face-inhibit-list)
-         '(org-tag org-latex-and-related org-meta-line org-table))
-    (speck-mode))
-  (add-hook 'org-mode-hook 'soo--speck-org-hook))
 
 (use-package ws-butler
   :diminish ws-butler-mode
@@ -860,3 +889,4 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (or (server-running-p) (server-start))
 
 ;;; init.el ends here
+(put 'scroll-left 'disabled nil)

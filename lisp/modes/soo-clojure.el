@@ -8,7 +8,10 @@
     (add-to-list 'sp-lisp-modes 'cider-clojure-interaction-mode))
   :config
   ;; This is for clojure-semantic, the library file is clojure.el
-  (load-library "clojure"))
+  (load-library "clojure")
+  ;; Indentation
+  (define-clojure-indent
+    (match :defn)))
 
 (use-package clj-refactor
   :diminish clj-refactor-mode
@@ -18,10 +21,10 @@
   (add-hook 'clj-refactor-mode-hook 'yas-minor-mode-on)
   :config
   (cljr-add-keybindings-with-prefix "s-,")
-  (nmap :keymaps 'clj-refactor-map
-    "c" (general-key-dispatch 'lispyville-change
-          "r" (general-simulate-keys "s-,")
-          "c" 'evil-change-whole-line))
+  ;; (nmap :keymaps 'clj-refactor-map
+  ;;   "c" (general-key-dispatch 'lispyville-change
+  ;;         "r" (general-simulate-keys "s-,")
+  ;;         "c" 'evil-change-whole-line))
   (setq cljr-favor-prefix-notation nil
         cljr-warn-on-eval nil)
   (setq cljr-magic-require-namespaces
@@ -39,6 +42,8 @@
 
 (use-package cider
   :defer t
+  :general
+  (nmap :keymaps 'cider-mode-map "K"'cider-doc)
   :config
   (setq cider-prompt-for-symbol nil
         nrepl-hide-special-buffers t
@@ -51,6 +56,12 @@
         cider-pprint-fn 'fipp
         cider-repl-use-pretty-printing t)
 
+  (iemap :keymaps 'cider-repl-mode-map
+    "C-n" 'cider-repl-next-input
+    "C-p" 'cider-repl-previous-input
+    "M-n" nil
+    "M-p" nil)
+
   (defun cider-figwheel-repl ()
     (interactive)
     (setq-local cider-cljs-lein-repl
@@ -61,6 +72,7 @@
   (general-define-key :keymaps 'cider-mode-map
     "C-c C-M-j" 'cider-figwheel-repl)
 
+<<<<<<< variant A
   ;; (defadvice cider-jump-to-var (before add-evil-jump activate)
   ;;   (evil-set-jump))
   (add-hook 'cider-repl-mode-hook (lambda () (toggle-truncate-lines 1)))
@@ -72,6 +84,20 @@
   (evil-set-initial-state 'cider-macroexpansion-mode 'insert)
   (evil-set-initial-state 'cider-browse-ns-mode 'insert)
   (evil-set-initial-state 'cider-test-report-mode 'insert)
+>>>>>>> variant B
+  (defun soo-cider-repl-hook ()
+    (toggle-truncate-lines 1)
+    (company-mode)
+    (smartparens-mode 1))
+  (add-hook 'cider-repl-mode-hook 'soo-cider-repl-hook)
+  (evil-define-key 'normal cider-mode-map "K" 'cider-doc)
+  (evil-set-initial-state 'cider-repl-mode 'emacs)
+  (evil-set-initial-state 'cider-docview-mode 'emacs)
+  (evil-set-initial-state 'cider-stacktrace-mode 'emacs)
+  (evil-set-initial-state 'cider-macroexpansion-mode 'emacs)
+  (evil-set-initial-state 'cider-browse-ns-mode 'emacs)
+  (evil-set-initial-state 'cider-test-report-mode 'emacs)
+======= end
   (advice-add 'cider-find-var :after #'recenter-top-bottom))
 
 (use-package inf-clojure
@@ -83,5 +109,3 @@
     "C-c C-k" 'inf-clojure-eval-buffer
     "C-c C-e" 'inf-clojure-eval-last-sexp
     "C-M-x" 'inf-clojure-eval-defun))
-
-(provide 'soo-clojure)

@@ -35,60 +35,76 @@ window in frame, call `bury-buffer'."
       (call-interactively 'quit-window)
       (when (window-parent window)
         (call-interactively 'delete-window)))
-     ((eq major-mode 'cider-repl-mode)
-      (call-interactively 'bury-buffer)
-      (when (window-parent window)
-        (call-interactively 'delete-window)))
-     (t (if (window-parent window)
-            (call-interactively 'delete-window)
-          (call-interactively 'bury-buffer))))))
+     (t (progn
+          (call-interactively 'bury-buffer)
+          (when (window-parent window)
+            (call-interactively 'delete-window)))))))
 
 ;;;###autoload
 (defun soo-terminal-focus ()
   (interactive)
   (do-applescript
-   "do shell script \"open -a Terminal\"\n"))
+   "do shell script \"open -a iTem\"\n"))
 
 ;;;###autoload
 (defun soo-terminal-pop ()
+  "If iTerm is not open, launch it. If iTerm session is busy, split
+off a new pane. Switch to iTerm and cd to default-directory."
   (interactive)
   (do-applescript
    (format "
 tell application \"iTerm\"
   activate
-  do script \"cd %s\" in window 1
-end tell
-"
-           (or default-directory "~"))))
+  try
+    set w to the last window
+  on error
+    set w to (make new window)
+  end try
+
+  tell w
+    if (is at shell prompt of the current session) then
+      tell the current session to write text \"cd \'%s\'\"
+    else
+      tell current session to split horizontally with default profile
+      tell application \"System Events\" to keystroke \"]\" using command down
+      tell the current session to write text \"cd \'%s\'\"
+    end if
+  end tell
+end tell"
+           (expand-file-name (or default-directory "~"))
+           (expand-file-name (or default-directory "~")))))
 
 ;;;###autoload
-(defun soo-terminal-pop-project-root ()
+(defun soo-terminal-pop-tmux ()
   (interactive)
   (do-applescript
    (format "
 tell application \"iTerm\"
-  tell current window
-    tell current session
-      write text \"cd %s\"
-    end tell
-  end tell
-end tell
-activate application \"iTerm\"
-"
-           (or projectile-project-root default-directory "~"))))
+  activate
+  tell application \"System Events\" to keystroke \"b\" using control down
+  tell application \"System Events\" to keystroke \"\\\"\"
+  tell current session of current window to write text \"cd %s\"
+end tell"
+           (or default-directory "~"))))
 
 ;;;###autoload
 (defun soo-terminal-pop-new-tab ()
   (interactive)
   (do-applescript
    (format "
-tell application \"Terminal\"
+tell application \"iTerm\"
   activate
-  tell application \"System Events\" to keystroke \"t\" using {command down}
-  delay 0.2
-  do script \"cd %s\" in window 1
+  tell the current session of current window
+    if (is processing) then
+      create tab with default profile
+      write text \"cd %s\"
+    else
+      write text \"pushd %s\"
+    end if
+  end tell
 end tell
 "
+           (or default-directory "~")
            (or default-directory "~"))))
 
 ;;;###autoload
@@ -326,16 +342,9 @@ Lisp function does not specify a special indentation."
   (run-hooks 'prog-mode-hook))
 
 ;;;###autoload
-(defun soo-just-one-space ()
-  (interactive nil)
-  (let ((orig-pos (point))
-        (skip-characters " \t\n\r"))
-    (skip-chars-backward skip-characters)
-    (constrain-to-field nil orig-pos)
-    (let* ((start (point))
-           (mid (point))
-           (end (progn
-                  (skip-chars-forward skip-characters)
-                  (constrain-to-field nil orig-pos t))))
-      (delete-region start end)
-      (insert (make-string 1 ?\s)))))
+(defun unfill-region (start end)
+  "Replace newline chars in region by single spaces.
+This command does the reverse of `fill-region'."
+  (interactive "r")
+  (let ((fill-column 90002000))
+    (fill-region start end)))
