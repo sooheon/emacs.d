@@ -10,8 +10,8 @@
             [remap info-lookup-symbol] 'counsel-info-lookup-symbol
             [remap menu-bar-open] 'counsel-tmm
             [remap list-bookmarks] 'counsel-bookmark
-            "C-c g" 'counsel-git
-            "C-c j" 'counsel-git-grep
+            "C-c j" 'counsel-git
+            "C-c g" 'counsel-git-grep
             "C-x l" 'counsel-locate
             "C-x C-l" 'find-library
             "C-c o" 'counsel-outline)

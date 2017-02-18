@@ -490,17 +490,28 @@ friend if it has the same major mode."
 (use-package lispy
   :diminish lispy-mode
   :general
-  (:keymaps 'lispy-mode-map-lispy
+  (:keymaps 'lispy-mode-map
+   "DEL" 'lispy-delete-backward
+   "C-d" 'lispy-delete
+   "(" 'lispy-parens
+   "[" 'lispy-brackets
+   "{" 'lispy-braces
+   "\"" nil
+   "C-a" nil
+   "]" nil
    "C-M-b" 'lispy-backward
    "C-M-f" 'lispy-forward
-   "[" 'lispy-brackets
-   "]" nil
-   "C-a" nil
-   "\"" nil
-   "M-d" nil
    "M-(" 'lispy-wrap-round
    "M-[" 'lispy-wrap-brackets
-   "M-{" 'lispy-wrap-braces)
+   "M-{" 'lispy-wrap-braces
+   "M-j" 'lispy-split
+   "M-J" 'lispy-join
+   "M-i" 'lispy-iedit
+   "M-k" 'lispy-kill-sentence
+   "C-k" 'lispy-kill
+   ";" 'lispy-comment
+   ;; "<return>" 'lispy-alt-line
+   "M-RET" 'lispy-meta-return)
   (:keymaps 'lispy-mode-map-c-digits
    "C-8" 'lispy-out-forward-newline
    "C-9" 'lispy-parens-down)
@@ -527,26 +538,7 @@ friend if it has the same major mode."
         lispy-delete-backward-recenter nil
         lispy-comment-use-single-semicolon t)
   (lispy-define-key lispy-mode-map-special ">" 'lispy-slurp-or-barf-right)
-  (lispy-define-key lispy-mode-map-special "<" 'lispy-slurp-or-barf-left)
-  (general-define-key :keymaps 'lispy-mode-map
-    ;; "DEL" 'lispy-delete-backward
-    ;; "C-d" 'lispy-delete
-    ;; "(" 'lispy-parens
-    ;; "[" 'lispy-brackets
-    ;; "{" 'lispy-braces
-    "C-M-b" 'lispy-backward
-    "C-M-f" 'lispy-forward
-    "M-(" 'lispy-wrap-round
-    "M-[" 'lispy-wrap-brackets
-    "M-{" 'lispy-wrap-braces
-    "M-j" 'lispy-split
-    "M-J" 'lispy-join
-    "M-i" 'lispy-iedit
-    "M-k" 'lispy-kill-sentence
-    "C-k" 'lispy-kill
-    ";" 'lispy-comment
-    ;; "<return>" 'lispy-alt-line
-    ))
+  (lispy-define-key lispy-mode-map-special "<" 'lispy-slurp-or-barf-left))
 
 (use-package lispyville
   :diminish lispyville-mode
