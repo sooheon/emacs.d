@@ -117,6 +117,16 @@
 (eval-when-compile (require 'use-package))
 (setq use-package-always-ensure t)
 
+(use-package paradox
+  :config
+  (setq paradox-execute-asynchronously t
+        paradox-github-token (getenv "PARADOX_GITHUB_TOKEN"))
+  (with-eval-after-load 'evil (evil-set-initial-state 'paradox-menu-mode 'emacs)))
+
+(use-package async
+  :config
+  (async-bytecomp-package-mode t))
+
 ;;** Set up environment
 (use-package exec-path-from-shell
   :if (and (eq system-type 'darwin) (display-graphic-p))
