@@ -1,28 +1,28 @@
 ;;; init.el --- user-init-file
 
-;;* Base directory
-(defvar emacs-d (directory-file-name "~/.emacs.d/")
-  "The giant turtle on which the world rests.")
-(setq package-user-dir (expand-file-name "elpa" emacs-d))
-(defvar lisp-d (expand-file-name "lisp" emacs-d))
-(defvar lib-d (expand-file-name "lib/" emacs-d))
-(mapc (lambda (x)
-        (add-to-list 'load-path (expand-file-name x lib-d)))
-      (delete ".." (directory-files lib-d)))
+;;* loads
+(defvar my-load-paths
+  (mapcar (lambda (p) (concat user-emacs-directory p))
+          '("lisp"
+            "lib/org-mode/contrib/lisp"
+            "lib/org-mode/lisp"
+            "lisp/themes"
+            "lisp/modes"
+            "lib/clojure-semantic"
+            "lib/lpy"
+            "lib/no-littering"
+            "lib/org-mode"
+            "lib/soap"
+            "lib/structured-haskell-mode")))
 
-;;** load some packages manually
-(add-to-list 'load-path (expand-file-name "lisp" emacs-d))
-(add-to-list 'load-path (expand-file-name "lib/org-mode/contrib/lisp" emacs-d))
-(add-to-list 'load-path (expand-file-name "lib/org-mode/lisp" emacs-d))
-(add-to-list 'load-path (expand-file-name "lisp/themes" emacs-d))
-(add-to-list 'load-path (expand-file-name "modes" lisp-d))
+(mapc (apply-partially 'add-to-list 'load-path) my-load-paths)
 
-;;** autoloads
-(load (expand-file-name "loaddefs.el" lisp-d) nil t)
-(load (expand-file-name "auto.el" lisp-d) t t)
+(load "loaddefs.el" nil t)
+(load "auto.el" t t)
+(load "my-easypg")
 
 ;;* customize
-(setq custom-file (expand-file-name "custom.el" lisp-d))
+(setq custom-file (expand-file-name "lisp/custom.el" user-emacs-directory))
 (load custom-file 'noerror)
 ;;** font
 (set-face-attribute 'default nil :family "Input Mono Narrow")
@@ -102,11 +102,11 @@
 
 ;;* Bootstrap
 ;;** Package init
-(setq no-littering-etc-directory (expand-file-name ".etc/" emacs-d)
-      no-littering-var-directory (expand-file-name ".var/" emacs-d))
+(setq no-littering-etc-directory (expand-file-name ".etc/" user-emacs-directory)
+      no-littering-var-directory (expand-file-name ".var/" user-emacs-directory))
 (require 'no-littering)
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
-                         ("gnu" . "http://elpa.gnu.org/packages/")
+                         ;; ("gnu" . "http://elpa.gnu.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")))
 (package-initialize)
 (with-eval-after-load 'evil
@@ -143,7 +143,7 @@
   (osx-trash-setup))
 
 ;;** themes
-(add-to-list 'custom-theme-load-path (expand-file-name "themes" lisp-d))
+(add-to-list 'custom-theme-load-path (expand-file-name "lisp/themes" user-emacs-directory))
 (require 'soo-themes)
 
 ;;** keybinds
@@ -151,7 +151,7 @@
   :demand t
   :config
   (general-evil-setup t t)
-  (load (expand-file-name "keybinds.el" lisp-d) nil t))
+  (load "keybinds.el" nil t))
 
 ;;** Mode Requires
 (require 'soo-evil)
@@ -275,7 +275,7 @@
   (nmap :keymaps 'dired-mode-map
     "-" 'dired-jump
     "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
-    "got" 'soo-terminal-pop-project-root
+    "got" 'soo-terminal-pop
     "gof" 'reveal-in-osx-finder
     "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1))
     "=" 'vinegar/dired-diff
