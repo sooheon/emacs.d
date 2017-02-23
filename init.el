@@ -319,7 +319,8 @@
 (use-package circe
   :defer t
   :general
-  (nmap :prefix "SPC" "ai" 'sooheon--switch-to-circe)
+  (nmap :prefix "SPC" "i" 'sooheon--switch-to-circe)
+  (:prefix "C-c" "i" 'sooheon--switch-to-circe)
   :init
   (defun sooheon--switch-to-circe ()
     "Switch to CIRCE buffers using completing-read, or start
@@ -340,6 +341,14 @@ CIRCE if no buffers open."
   (enable-lui-track-bar)
   (require 'lui-autopaste)
   (add-hook 'circe-channel-mode-hook 'enable-lui-autopaste))
+
+(use-package circe-notifications
+  :disabled t
+  :defer t
+  :init
+  (add-hook 'circe-server-connected-hook 'enable-circe-notifications)
+  :config
+  (setq circe-notifications-alert-style 'osx-notifier))
 
 (use-package dabbrev
   :defer t
@@ -496,28 +505,6 @@ friend if it has the same major mode."
 (use-package lispy
   :diminish lispy-mode
   :general
-  (:keymaps 'lispy-mode-map
-   "DEL" 'lispy-delete-backward
-   "C-d" 'lispy-delete
-   "(" 'lispy-parens
-   "[" 'lispy-brackets
-   "{" 'lispy-braces
-   "\"" nil
-   "C-a" nil
-   "]" nil
-   "C-M-b" 'lispy-backward
-   "C-M-f" 'lispy-forward
-   "M-(" 'lispy-wrap-round
-   "M-[" 'lispy-wrap-brackets
-   "M-{" 'lispy-wrap-braces
-   "M-j" 'lispy-split
-   "M-J" 'lispy-join
-   "M-i" 'lispy-iedit
-   "M-k" 'lispy-kill-sentence
-   "C-k" 'lispy-kill
-   ";" 'lispy-comment
-   ;; "<return>" 'lispy-alt-line
-   "M-RET" 'lispy-meta-return)
   (:keymaps 'lispy-mode-map-c-digits
    "C-8" 'lispy-out-forward-newline
    "C-9" 'lispy-parens-down)
@@ -544,7 +531,29 @@ friend if it has the same major mode."
         lispy-delete-backward-recenter nil
         lispy-comment-use-single-semicolon t)
   (lispy-define-key lispy-mode-map-special ">" 'lispy-slurp-or-barf-right)
-  (lispy-define-key lispy-mode-map-special "<" 'lispy-slurp-or-barf-left))
+  (lispy-define-key lispy-mode-map-special "<" 'lispy-slurp-or-barf-left)
+  (general-define-key :keymaps 'lispy-mode-map
+    "DEL" 'lispy-delete-backward
+    "C-d" 'lispy-delete
+    "(" 'lispy-parens
+    "[" 'lispy-brackets
+    "{" 'lispy-braces
+    "\"" nil
+    "C-a" nil
+    "]" nil
+    "C-M-b" 'lispy-backward
+    "C-M-f" 'lispy-forward
+    "M-(" 'lispy-wrap-round
+    "M-[" 'lispy-wrap-brackets
+    "M-{" 'lispy-wrap-braces
+    "M-j" 'lispy-split
+    "M-J" 'lispy-join
+    "M-i" 'lispy-iedit
+    "M-k" 'lispy-kill-sentence
+    "C-k" 'lispy-kill
+    ";" 'lispy-comment
+    ;; "<return>" 'lispy-alt-line
+    "M-RET" 'lispy-meta-return))
 
 (use-package lispyville
   :diminish lispyville-mode
