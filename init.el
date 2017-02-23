@@ -895,5 +895,8 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (require 'server)
 (or (server-running-p) (server-start))
 
-;;; init.el ends here
 (put 'scroll-left 'disabled nil)
+
+(read-secrets)
+
+;;; init.el ends here

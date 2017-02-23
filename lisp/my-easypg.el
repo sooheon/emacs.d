@@ -23,9 +23,3 @@
         (add-hook 'kill-emacs-hook 'pinentry-stop))
       (add-to-list 'load-suffixes ".el.gpg")
       (load-gpg "secrets"))))
-
-(defun first-frame-hook (frame)
-  (remove-hook 'after-make-frame-functions 'first-frame-hook)
-  (run-at-time nil nil 'read-secrets))
-
-(add-hook 'after-make-frame-functions 'first-frame-hook)
