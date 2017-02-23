@@ -20,6 +20,8 @@
 (load "loaddefs.el" nil t)
 (load "auto.el" t t)
 (load "my-easypg")
+(if (file-exists-p (concat user-emacs-directory "lisp/secrets.el"))
+    (load "secrets.el"))
 
 ;;* customize
 (setq custom-file (expand-file-name "lisp/custom.el" user-emacs-directory))
@@ -119,8 +121,7 @@
 
 (use-package paradox
   :config
-  (setq paradox-execute-asynchronously t
-        paradox-github-token (getenv "PARADOX_GITHUB_TOKEN"))
+  (setq paradox-execute-asynchronously t)
   (with-eval-after-load 'evil (evil-set-initial-state 'paradox-menu-mode 'emacs)))
 
 (use-package async
@@ -320,11 +321,6 @@
   :general
   (nmap :prefix "SPC" "ai" 'sooheon--switch-to-circe)
   :init
-  (setq circe-network-options
-        '(("Freenode"
-           :nick "sooheon"
-           :channels ("#clojure" "#haskell" "##crawl" "#lesswrong")
-           :nickserv-password "qwefasdf")))
   (defun sooheon--switch-to-circe ()
     "Switch to CIRCE buffers using completing-read, or start
 CIRCE if no buffers open."
