@@ -109,7 +109,8 @@
 (require 'no-littering)
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                          ;; ("gnu" . "http://elpa.gnu.org/packages/")
-                         ("org" . "http://orgmode.org/elpa/")))
+                         ;; ("org" . "http://orgmode.org/elpa/")
+                         ))
 (package-initialize)
 (with-eval-after-load 'evil
   (evil-set-initial-state 'package-menu-mode 'emacs))
