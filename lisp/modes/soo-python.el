@@ -70,6 +70,9 @@
   :config
   (add-to-list 'company-backends 'company-anaconda))
 
+(use-package ein
+  :defer t)
+
 ;;;###autoload
 (defun soo-python-hook ()
   (lpy-mode 1)
