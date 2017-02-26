@@ -454,7 +454,11 @@ friend if it has the same major mode."
   :general
   (nmap :prefix "SPC" "hi" 'info)
   :config
-  (evil-set-initial-state 'Info-mode 'insert))
+  (evil-set-initial-state 'Info-mode 'emacs))
+
+(use-package golden-ratio
+  :general
+  (nmap :prefix "SPC" "tg" 'golden-ratio))
 
 ;;** Parens and lisp
 (use-package smartparens
