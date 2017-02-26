@@ -15,7 +15,8 @@
     "M-j" (lambda () (interactive)
             (org-meta-return)
             (evil-insert 1))
-    "C-j" 'org-return)
+    "C-j" 'org-return
+    "M-$" 'open-$)
   (nmap :keymaps 'org-mode-map
     [C-return] (lambda () (interactive)
                  (org-insert-heading-respect-content) (evil-append 1))
@@ -75,7 +76,7 @@
   (worf-mode)
   (turn-on-org-cdlatex)
   ;; (auto-fill-mode 1)
-  ;; (smartparens-mode 1)
+  (smartparens-mode 1)
   (org-indent-mode)
   (toggle-truncate-lines -1))
 (add-hook 'org-mode-hook 'soo-org-hook)
@@ -90,14 +91,16 @@
       (end-of-line)
       (insert "$"))))
 
+;;;###autoload
 (defun open-$ ()
   (interactive)
   (if (region-active-p)
       (print "to be impl.")
     (progn
-      (insert "$")
-      (insert "$")
-      (backward-char))))
+      (insert "$$$$")
+      (backward-char)
+      (backward-char)
+      (evil-insert 1))))
 
 (setq-default org-export-in-background nil
               org-src-fontify-natively t
