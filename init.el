@@ -875,8 +875,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
         company-dabbrev-ignore-case nil
         company-dabbrev-downcase nil
         company-idle-delay 0.4
-        company-minimum-prefix-length 2
-        company-require-match nil
+        company-minimum-prefix-length 3
         company-elisp-detect-function-context nil
         company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
                             company-preview-if-just-one-frontend)
