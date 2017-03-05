@@ -19,9 +19,6 @@
 
 (load "loaddefs.el" nil t)
 (load "auto.el" t t)
-(load "my-easypg")
-(if (file-exists-p (concat user-emacs-directory "lisp/secrets.el"))
-    (load "secrets.el"))
 
 ;;* customize
 (setq custom-file (expand-file-name "lisp/custom.el" user-emacs-directory))
@@ -274,6 +271,7 @@
   :commands dired-jump
   :general
   (nmap "-" 'dired-jump)
+  :config
   (nmap :keymaps 'dired-mode-map
     "-" 'dired-jump
     "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
@@ -292,15 +290,13 @@
     "K" 'dired-do-kill-lines
     "r" 'revert-buffer
     "C-r" 'dired-do-redisplay)
-  :init
-  (add-hook 'dired-mode-hook #'soo--dired-setup)
-  :config
   (setq dired-listing-switches "-alGh1v --group-directories-first")
   (defvar dired-dotfiles-show-p)
   (defun soo--dired-setup ()
     ;; (setq dired-omit-verbose nil)
     (setq dired-hide-details-hide-symlink-targets nil)
-    (dired-hide-details-mode t)))
+    (dired-hide-details-mode t))
+  (add-hook 'dired-mode-hook 'soo--dired-setup))
 
 (use-package ediff
   :defer t
@@ -334,6 +330,7 @@ CIRCE if no buffers open."
             (setq candidates (append (list (buffer-name buf)) candidates))))
       (if candidates
           (switch-to-buffer (completing-read "IRC buffer: " candidates))
+        ;; (circe "EsperNet")
         (circe "Freenode"))))
   :config
   (setq circe-reduce-lurker-spam t
@@ -789,7 +786,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 ;;** Basic Editing
 (setq-default fill-column 80)
-(add-hook 'text-mode-hook #'auto-fill-mode)
+(add-hook 'text-mode-hook 'visual-line-mode)
 (diminish 'auto-fill-function)          ; auto-fill-mode is called this
 
 (use-package simple
@@ -801,9 +798,9 @@ INITIAL-INPUT can be given as the initial minibuffer input."
     "j" 'evil-next-visual-line)
   :init
   (add-hook 'visual-line-mode-hook 'evil-normalize-keymaps)
-  :config
   (evil-set-initial-state 'messages-buffer-mode 'insert)
   (evil-set-initial-state 'special-mode 'insert)
+  :config
   (column-number-mode 1))
 
 (use-package ws-butler
@@ -901,6 +898,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (put 'scroll-left 'disabled nil)
 
-(read-secrets)
+(load "my-easypg")
 
 ;;; init.el ends here

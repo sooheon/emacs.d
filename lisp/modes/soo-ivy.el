@@ -109,11 +109,6 @@
       ("C" ivy-toggle-case-fold)
       ("o" ivy-occur :exit t))))
 
-(use-package ivy-rich
-  :ensure ivy
-  :config
-  (ivy-set-display-transformer 'ivy-switch-buffer 'ivy-rich-switch-buffer-transformer))
-
 (use-package flx)
 
 (provide 'soo-ivy)

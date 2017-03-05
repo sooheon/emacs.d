@@ -1,7 +1,7 @@
 ;;
 
 ;;;### (autoloads nil "modes/soo-clojure" "modes/soo-clojure.el"
-;;;;;;  (22604 45398 0 0))
+;;;;;;  (22694 27273 0 0))
 ;;; Generated autoloads from modes/soo-clojure.el
 
 (autoload 'soo-clojure-hook "modes/soo-clojure" "\
@@ -12,7 +12,7 @@
 ;;;***
 
 ;;;### (autoloads nil "modes/soo-haskell" "modes/soo-haskell.el"
-;;;;;;  (22607 24633 0 0))
+;;;;;;  (22694 26521 0 0))
 ;;; Generated autoloads from modes/soo-haskell.el
 
 (autoload 'soo-haskell-hook "modes/soo-haskell" "\
@@ -22,7 +22,7 @@
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22608 58132
+;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22694 27336
 ;;;;;;  0 0))
 ;;; Generated autoloads from modes/soo-org.el
 
@@ -33,8 +33,8 @@
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22619
-;;;;;;  64337 0 0))
+;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22703
+;;;;;;  31136 0 0))
 ;;; Generated autoloads from modes/soo-python.el
 
 (autoload 'soo-python-hook "modes/soo-python" "\
@@ -44,13 +44,7 @@
 
 ;;;***
 
-;;;### (autoloads nil nil ("custom.el" "keybinds.el" "modes/soo-ess.el"
-;;;;;;  "modes/soo-evil.el" "modes/soo-ivy.el" "modes/soo-rust.el"
-;;;;;;  "packages.el") (22602 3138 0 0))
-
-;;;***
-
-;;;### (autoloads nil "auto" "auto.el" (22601 18252 0 0))
+;;;### (autoloads nil "auto" "auto.el" (22695 4535 0 0))
 ;;; Generated autoloads from auto.el
 
 (autoload 'smart-move-beginning-of-line "auto" "\
@@ -81,11 +75,12 @@ window in frame, call `bury-buffer'.
 \(fn)" t nil)
 
 (autoload 'soo-terminal-pop "auto" "\
-
+If iTerm is not open, launch it. If iTerm session is busy, split
+off a new pane. Switch to iTerm and cd to default-directory.
 
 \(fn)" t nil)
 
-(autoload 'soo-terminal-pop-project-root "auto" "\
+(autoload 'soo-terminal-pop-tmux "auto" "\
 
 
 \(fn)" t nil)
@@ -196,5 +191,11 @@ Runs `prog-mode-hook'. Useful for modes that don't derive from
 `prog-mode' but should.
 
 \(fn)" nil nil)
+
+(autoload 'unfill-region "auto" "\
+Replace newline chars in region by single spaces.
+This command does the reverse of `fill-region'.
+
+\(fn START END)" t nil)
 
 ;;;***

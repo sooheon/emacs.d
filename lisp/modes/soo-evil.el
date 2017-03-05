@@ -18,14 +18,7 @@
   (evil-mode)
   (setq evil-ex-search-highlight-all t)
   (add-hook 'text-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
-  (add-hook 'prog-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
-  ;; (defun blink-cursor-on () (blink-cursor-mode 1))
-  ;; (defun blink-cursor-off () (blink-cursor-mode -1))
-  ;; (add-hook 'evil-insert-state-entry-hook 'blink-cursor-on)
-  ;; (add-hook 'evil-insert-state-exit-hook 'blink-cursor-off)
-  ;; (add-hook 'evil-emacs-state-entry-hook 'blink-cursor-on)
-  ;; (add-hook 'evil-emacs-state-exit-hook 'blink-cursor-off)
-  )
+  (add-hook 'prog-mode-hook #'(lambda () (modify-syntax-entry ?_ "w"))))
 
 (use-package evil-commentary
   :diminish evil-commentary-mode

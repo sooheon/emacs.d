@@ -77,7 +77,7 @@
   (turn-on-org-cdlatex)
   ;; (auto-fill-mode 1)
   (smartparens-mode 1)
-  (org-indent-mode)
+  ;; (org-indent-mode)
   (toggle-truncate-lines -1))
 (add-hook 'org-mode-hook 'soo-org-hook)
 
