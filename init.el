@@ -517,12 +517,12 @@ friend if it has the same major mode."
    "M-k" nil
    "gd" 'lispy-goto-symbol)
   :init
-  (defun toggle-lispy-for-lisps (arg)
-    (lambda () (when (or (member major-mode sp-lisp-modes)
-                         (eq this-command 'eval-expression))
-                 (lispy-mode arg))))
-  (add-hook 'smartparens-enabled-hook (toggle-lispy-for-lisps 1))
-  (add-hook 'smartparens-disabled-hook (toggle-lispy-for-lisps -1))
+  (defun enable-lispy-for-lisps ()
+    (when (or (member major-mode sp-lisp-modes)
+              (eq this-command 'eval-expression))
+      (lispy-mode 1)))
+  (add-hook 'smartparens-enabled-hook 'enable-lispy-for-lisps)
+  (add-hook 'smartparens-disabled-hook (lambda () (lispy-mode -1)))
   (setq iedit-toggle-key-default nil)   ; Don't want to use iedit
   :config
   (lispy-set-key-theme '(special c-digits))
