@@ -28,3 +28,6 @@
 [submodule "lib/pamparam"]
 	path = lib/pamparam
 	url = git@github.com:abo-abo/pamparam.git
+[submodule "lib/vim-empty-lines-mode"]
+	path = lib/vim-empty-lines-mode
+	url = git@github.com:hchbaw/vim-empty-lines-mode.git

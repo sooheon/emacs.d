@@ -39,6 +39,7 @@
   )
 
 (use-package lpy
+  :disabled t
   :ensure nil
   :diminish (lpy-mode . "lpy")
   :after lispy
@@ -75,7 +76,6 @@
 
 ;;;###autoload
 (defun soo-python-hook ()
-  (lpy-mode 1)
   (anaconda-mode 1)
   (anaconda-eldoc-mode 1))
 
