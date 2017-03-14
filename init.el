@@ -505,7 +505,7 @@ friend if it has the same major mode."
         (looking-back "\\\\")))))
 
 (use-package lispy
-  :diminish lispy-mode
+  :diminish (lispy-mode . "ly")
   :general
   (:keymaps 'lispy-mode-map-c-digits
    "C-8" 'lispy-out-forward-newline
