@@ -95,8 +95,9 @@
 (setq gc-cons-threshold (* 12 1024 1024))
 
 ;;** shell
-(setq shell-file-name "/usr/local/bin/fish"
-      explicit-shell-file-name "/usr/local/bin/fish")
+(when-let (fish (executable-find "fish"))
+  (setq shell-file-name fish
+        explicit-shell-file-name fish))
 (setenv "LANG" "en_US.UTF-8")
 
 ;;* Bootstrap
