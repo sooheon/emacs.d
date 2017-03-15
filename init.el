@@ -17,8 +17,8 @@
 
 (mapc (apply-partially 'add-to-list 'load-path) my-load-paths)
 
-(load "loaddefs.el" nil t)
-(load "auto.el" t t)
+(load "loaddefs.el" nil 'nomessage)
+(load "auto.el" 'noerror 'nomessage)
 
 ;;* customize
 (setq custom-file (expand-file-name "lisp/custom.el" user-emacs-directory))
