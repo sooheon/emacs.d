@@ -627,16 +627,21 @@ Keep M-n and M-p reserved for history."
   (bind-key "s-w" 'Man-quit woman-mode-map))
 
 (use-package projectile
+  :commands (projectile-switch-project projectile-find-file projectile-find-dir)
   :diminish projectile-mode
   :general
   ("C-c k" 'soo--projectile-rg)
-  (nvmap :prefix "SPC" "p" 'projectile-command-map)
+  ;; https://github.com/jwiegley/use-package/issues/121#issuecomment-237624152
+  (nvmap :prefix "SPC" "p" '(:keymap projectile-command-map))
   (:keymaps 'projectile-command-map
    "e" 'projectile-replace
    "r" 'projectile-recentf)
-  :init
-  (projectile-mode)
   :config
+  ;; Starting projectile-mode in these hooks is necessary so that tramp does not
+  ;; hang on ssh.
+  ;; https://github.com/bbatsov/prelude/issues/594#issuecomment-220951394
+  (add-hook 'text-mode-hook 'projectile-mode)
+  (add-hook 'prog-mode-hook 'projectile-mode)
   (setq projectile-enable-caching t
         projectile-sort-order 'recentf
         projectile-create-missing-test-files t
