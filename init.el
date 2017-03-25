@@ -283,7 +283,8 @@
     "T" 'dired-tree-down
     "K" 'dired-do-kill-lines
     "r" 'revert-buffer
-    "C-r" 'dired-do-redisplay)
+    "C-r" 'dired-do-redisplay
+    "e" 'ora-ediff-files)
   (setq dired-listing-switches "-alGh1v --group-directories-first")
   (defvar dired-dotfiles-show-p)
   (defun soo--dired-setup ()

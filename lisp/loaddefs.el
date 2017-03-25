@@ -1,55 +1,6 @@
 ;;
 
-;;;### (autoloads nil "modes/soo-clojure" "modes/soo-clojure.el"
-;;;;;;  (22694 27273 0 0))
-;;; Generated autoloads from modes/soo-clojure.el
-
-(autoload 'soo-clojure-hook "modes/soo-clojure" "\
-
-
-\(fn)" nil nil)
-
-;;;***
-
-;;;### (autoloads nil "modes/soo-haskell" "modes/soo-haskell.el"
-;;;;;;  (22694 26521 0 0))
-;;; Generated autoloads from modes/soo-haskell.el
-
-(autoload 'soo-haskell-hook "modes/soo-haskell" "\
-
-
-\(fn)" nil nil)
-
-;;;***
-
-;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22731 55556
-;;;;;;  0 0))
-;;; Generated autoloads from modes/soo-org.el
-
-(autoload 'soo-org-hook "modes/soo-org" "\
-
-
-\(fn)" nil nil)
-
-(autoload 'open-$ "modes/soo-org" "\
-
-
-\(fn)" t nil)
-
-;;;***
-
-;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22742
-;;;;;;  37276 0 0))
-;;; Generated autoloads from modes/soo-python.el
-
-(autoload 'soo-python-hook "modes/soo-python" "\
-
-
-\(fn)" nil nil)
-
-;;;***
-
-;;;### (autoloads nil "auto" "auto.el" (22695 4535 0 0))
+;;;### (autoloads nil "auto" "auto.el" (22742 44318 0 0))
 ;;; Generated autoloads from auto.el
 
 (autoload 'smart-move-beginning-of-line "auto" "\
@@ -202,5 +153,66 @@ Replace newline chars in region by single spaces.
 This command does the reverse of `fill-region'.
 
 \(fn START END)" t nil)
+
+(autoload 'ora-ediff-files "auto" "\
+
+
+\(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads nil "modes/soo-clojure" "modes/soo-clojure.el"
+;;;;;;  (22742 36910 0 0))
+;;; Generated autoloads from modes/soo-clojure.el
+
+(autoload 'soo-clojure-hook "modes/soo-clojure" "\
+
+
+\(fn)" nil nil)
+
+;;;***
+
+;;;### (autoloads nil "modes/soo-haskell" "modes/soo-haskell.el"
+;;;;;;  (22694 26521 0 0))
+;;; Generated autoloads from modes/soo-haskell.el
+
+(autoload 'soo-haskell-hook "modes/soo-haskell" "\
+
+
+\(fn)" nil nil)
+
+;;;***
+
+;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22731 55556
+;;;;;;  0 0))
+;;; Generated autoloads from modes/soo-org.el
+
+(autoload 'soo-org-hook "modes/soo-org" "\
+
+
+\(fn)" nil nil)
+
+(autoload 'open-$ "modes/soo-org" "\
+
+
+\(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads nil nil ("custom.el" "keybinds.el" "minimal-init.el"
+;;;;;;  "modes/soo-ess.el" "modes/soo-evil.el" "modes/soo-ivy.el"
+;;;;;;  "modes/soo-rust.el" "my-easypg.el" "on-trial.el" "packages.el")
+;;;;;;  (22742 44018 0 0))
+
+;;;***
+
+;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22742
+;;;;;;  37276 0 0))
+;;; Generated autoloads from modes/soo-python.el
+
+(autoload 'soo-python-hook "modes/soo-python" "\
+
+
+\(fn)" nil nil)
 
 ;;;***
