@@ -22,7 +22,7 @@
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22694 27336
+;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22731 55556
 ;;;;;;  0 0))
 ;;; Generated autoloads from modes/soo-org.el
 
@@ -31,10 +31,15 @@
 
 \(fn)" nil nil)
 
+(autoload 'open-$ "modes/soo-org" "\
+
+
+\(fn)" t nil)
+
 ;;;***
 
-;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22703
-;;;;;;  31136 0 0))
+;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22740
+;;;;;;  45738 0 0))
 ;;; Generated autoloads from modes/soo-python.el
 
 (autoload 'soo-python-hook "modes/soo-python" "\

@@ -65,7 +65,7 @@ tell application \"iTerm\"
     if (is at shell prompt of the current session) then
       tell the current session to write text \"cd \'%s\'\"
     else
-      tell current session to split vertically with default profile
+      tell current session to split horizontally with default profile
       tell application \"System Events\" to keystroke \"]\" using command down
       tell the current session to write text \"cd \'%s\'\"
     end if

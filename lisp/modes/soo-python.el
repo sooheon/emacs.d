@@ -26,7 +26,6 @@
     (python-shell-send-buffer)))
 
 (use-package jedi
-  :disabled t
   :config
   (setq python-environment-directory "~/.pyenv/versions")
   (define-key jedi-mode-map [C-tab] nil)
@@ -35,8 +34,7 @@
   (setq jedi:setup-function nil)
   (setq jedi:mode-function nil)
   ;; (define-key jedi-mode-map (kbd "M-.") 'jedi:goto-definition)
-  ;; (define-key jedi-mode-map (kbd "K") 'jedi:show-doc)
-  )
+  (define-key jedi-mode-map (kbd "K") 'jedi:show-doc))
 
 (use-package lpy
   :disabled t
@@ -72,7 +70,16 @@
   (add-to-list 'company-backends 'company-anaconda))
 
 (use-package ein
-  :defer t)
+  :defer t
+  :config
+  (setq ein:console-args "--simple-prompt"))
+
+(use-package hy-mode
+  :defer t
+  :init
+  (add-hook 'hy-mode-hook 'lispy-mode)
+  :config
+  (add-to-list 'sp-lisp-modes 'hy-mode))
 
 ;;;###autoload
 (defun soo-python-hook ()

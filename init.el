@@ -27,7 +27,6 @@
 (set-face-attribute 'default nil :family "Input Mono Narrow")
 (set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
 ;;** decorations
-(when window-system (set-frame-size (selected-frame) 91 50))
 (setq tool-bar-mode nil)
 (setq menu-bar-mode nil)
 (setq scroll-bar-mode nil)
@@ -212,7 +211,6 @@
   (setq aw-keys sooheon-avy-keys))
 
 (use-package autorevert
-  :defer t
   :diminish auto-revert-mode
   :config
   (setq global-auto-revert-non-file-buffers t ; revert Dired buffers too
@@ -296,7 +294,7 @@
   (defun soo--dired-setup ()
     ;; (setq dired-omit-verbose nil)
     (setq dired-hide-details-hide-symlink-targets nil)
-    (dired-hide-details-mode t))
+    (dired-hide-details-mode -1))
   (add-hook 'dired-mode-hook 'soo--dired-setup))
 
 (use-package ediff
@@ -490,20 +488,7 @@ friend if it has the same major mode."
         sp-show-pair-from-inside nil
         sp-highlight-pair-overlay nil
         sp-escape-quotes-after-insert nil)
-  (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
-  (sp-pair "\\(" nil :actions :rem)
-  (sp-pair "\\[" nil :actions :rem)
-  (sp-pair "\\{" nil :actions :rem)
-  (sp-pair "\\\"" nil :actions :rem)
-  (sp-pair "(" nil :unless '(sp-after-backslash-p sp-in-string-p))
-  (sp-pair "[" nil :unless '(sp-after-backslash-p sp-in-string-p))
-  (sp-pair "{" nil :unless '(sp-after-backslash-p sp-in-string-p))
-  (sp-pair "\"" nil :unless '(sp-after-backslash-p))
-  (defun sp-after-backslash-p (id action context)
-    (when (eq action 'insert)
-      (save-excursion
-        (backward-char 1)
-        (looking-back "\\\\")))))
+  (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil))
 
 (use-package lispy
   :diminish (lispy-mode . "ly")
@@ -541,6 +526,9 @@ friend if it has the same major mode."
     "(" 'lispy-parens
     "[" 'lispy-brackets
     "{" 'lispy-braces
+    ;; "(" nil
+    ;; "[" nil
+    ;; "{" nil
     "\"" nil
     "C-a" nil
     "]" nil

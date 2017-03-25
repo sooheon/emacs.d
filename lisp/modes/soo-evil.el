@@ -2,6 +2,8 @@
   :general
   (imap "C-w" 'evil-delete-backward-word
         "C-r" 'evil-paste-from-register)
+  (nvmap "C-n" 'evil-next-visual-line
+         "C-p" 'evil-previous-visual-line)
   :init
   (setq-default evil-want-C-u-scroll t
                 evil-cross-lines t
@@ -17,6 +19,7 @@
   :config
   (evil-mode)
   (setq evil-ex-search-highlight-all t)
+  ;; Let underscores be part of words
   (add-hook 'text-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
   (add-hook 'prog-mode-hook #'(lambda () (modify-syntax-entry ?_ "w"))))
 

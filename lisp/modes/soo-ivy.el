@@ -14,14 +14,15 @@
             "C-c g" 'counsel-git-grep
             "C-x l" 'counsel-locate
             "C-x C-l" 'find-library
-            "C-c o" 'counsel-outline)
+            "C-c o" 'counsel-outline
+            "s-o" 'counsel-find-file)
+  (:keymaps 'read-expression-map "C-r" 'counsel-expression-history)
   :init
   (nmap :prefix "SPC"
     "r" 'counsel-recentf
     "hv" 'counsel-describe-variable
     "hf" 'counsel-describe-function
     "hk" 'describe-key
-    "f" 'counsel-find-file
     "th" 'counsel-load-theme
     "ap" 'counsel-list-processes)
   (define-key evil-normal-state-map "\M-y" 'counsel-yank-pop)
@@ -55,8 +56,9 @@
         ivy-use-virtual-buffers t
         ivy-count-format "%d "
         ivy-height 12
-        ivy-re-builders-alist '(;; (t . ivy--regex-plus)
-                                (t . ivy--regex-fuzzy))
+        ivy-re-builders-alist '((t . ivy--regex-plus)
+                                ;; (t . ivy--regex-fuzzy)
+                                )
         ivy-initial-inputs-alist '((org-refile . "^")
                                    (org-agenda-refile . "^")
                                    (org-capture-refile . "^")
@@ -70,7 +72,7 @@
   (define-key ivy-minibuffer-map "\C-o"
     (defhydra soo-ivy (:hint nil :color pink)
       "
- Move     ^^^^^^^^^^ | Call         ^^^^ | Cancel^^ | Options^^ | Action _w_/_s_/_a_: %s(ivy-action-name)
+ Move     ^^^^^^^^^^ | Call         ^^^^ | Cancel^^ | Options^^ |     Action _w_/_s_/_a_: %s(ivy-action-name)
 ----------^^^^^^^^^^-+--------------^^^^-+-------^^-+--------^^-+---------------------------------
  _g_ ^ ^ _k_ ^ ^ _u_ | _f_orward _o_ccur | _i_nsert | _c_alling: %-7s(if ivy-calling \"on\" \"off\") _C_ase-fold: %-10`ivy-case-fold-search
  ^↨^ _h_ ^+^ _l_ ^↕^ | _RET_ done     ^^ | _q_uit   | _m_atcher: %-7s(ivy--matcher-desc) _t_runcate: %-11`truncate-lines

@@ -5,6 +5,7 @@
 
 (general-define-key
  "C-x C-b" 'ibuffer
+ "C-x k" 'kill-this-buffer
  "s-u" 'universal-argument
  "s-w" 'soo--close-window-dwim
  "C-s-w" 'bury-buffer
@@ -17,6 +18,7 @@
  "s-j" 'evil-window-down
  "s-k" 'evil-window-up
  "s-l" 'evil-window-right
+ "<C-tab>" 'other-window
  "s-s" 'save-buffer
  "s-q" 'save-buffers-kill-terminal
  "s-v" 'yank
@@ -46,8 +48,8 @@
   "u" 'universal-argument
   "wl" 'evil-window-right
   "wh" 'evil-window-left
-  "wk" 'evil-window-top
-  "wj" 'evil-window-bottom
+  "wk" 'evil-window-up
+  "wj" 'evil-window-down
   "wL" 'evil-window-move-far-right
   "wH" 'evil-window-move-far-left
   "wK" 'evil-window-move-very-top

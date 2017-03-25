@@ -3,20 +3,19 @@
   :ensure nil
   :general
   ("C-c a" 'org-agenda)
-  :config
-  (setq org-hide-emphasis-markers t)
-  (general-define-key :keymaps 'org-mode-map
-    "M-n" 'org-metadown
-    "M-p" 'org-metaup
-    "M-h" 'org-metaleft
-    "M-H" 'org-shiftmetaleft
-    "M-l" 'org-metaright2
-    "M-L" 'org-shiftmetaright
-    "M-j" (lambda () (interactive)
-            (org-meta-return)
-            (evil-insert 1))
-    "C-j" 'org-return
-    "M-$" 'open-$)
+  (:keymaps 'org-mode-map
+   "M-n" 'org-metadown
+   "M-p" 'org-metaup
+   "M-h" 'org-metaleft
+   "M-H" 'org-shiftmetaleft
+   "M-l" 'org-metaright2
+   "M-L" 'org-shiftmetaright
+   "M-j" (lambda () (interactive)
+           (org-meta-return)
+           (evil-insert 1))
+   "C-j" 'org-return
+   "M-$" 'open-$
+   "C-c l" 'org-store-link)
   (nmap :keymaps 'org-mode-map
     [C-return] (lambda () (interactive)
                  (org-insert-heading-respect-content) (evil-append 1))
@@ -29,11 +28,20 @@
     "<" 'org-metaleft
     ">" 'org-metaright)
   :config
-  (setq org-hide-emphasis-markers t))
+  (setq org-export-in-background nil
+        org-src-fontify-natively t
+        org-M-RET-may-split-line nil
+        org-catch-invisible-edits 'show
+        org-footnote-auto-adjust t
+        org-hide-emphasis-markers t
+        org-return-follows-link t
+        org-startup-with-latex-preview t
+        org-startup-with-inline-images t
+        org-log-done 'time
+        org-highlight-latex-and-related '(latex script entities)
+        org-adapt-indentation nil
+        org-preview-latex-default-process 'dvisvgm))
 
-
-;; FIXME: https://bitbucket.org/mituharu/emacs-mac/commits/6e8c84bd419ab425c3359b4ca17e2da9e23136ad
-(define-key org-mode-map (kbd "C-c l") 'org-store-link)
 (use-package org-download
   :after org
   :config
@@ -75,7 +83,7 @@
 (defun soo-org-hook ()
   (worf-mode)
   (turn-on-org-cdlatex)
-  ;; (auto-fill-mode 1)
+  (auto-fill-mode 1)
   (smartparens-mode 1)
   ;; (org-indent-mode)
   (toggle-truncate-lines -1))
@@ -101,20 +109,6 @@
       (backward-char)
       (backward-char)
       (evil-insert 1))))
-
-(setq-default org-export-in-background nil
-              org-src-fontify-natively t
-              org-M-RET-may-split-line nil
-              org-catch-invisible-edits 'show
-              org-footnote-auto-adjust t
-              org-hide-emphasis-markers t
-              org-return-follows-link t
-              org-startup-with-latex-preview t
-              org-startup-with-inline-images t
-              org-log-done 'time
-              org-highlight-latex-and-related '(latex script entities)
-              org-adapt-indentation nil
-              org-preview-latex-default-process 'dvisvgm)
 
 (defun org-metaright2 (&optional arg)
   "My evil version of `org-metaright', to be bound to M-l and
@@ -149,7 +143,6 @@ forward to downcase-word"
 (setq org-edit-src-content-indentation 0
       org-src-tab-acts-natively t
       org-confirm-babel-evaluate nil
-      geiser-default-implementation 'guile
       org-babel-load-languages '((python . t)
                                  (clojure . t)
                                  (dot . t))
