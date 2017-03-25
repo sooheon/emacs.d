@@ -17,15 +17,14 @@
             "C-c o" 'counsel-outline
             "s-o" 'counsel-find-file)
   (:keymaps 'read-expression-map "C-r" 'counsel-expression-history)
-  :init
   (nmap :prefix "SPC"
     "r" 'counsel-recentf
     "hv" 'counsel-describe-variable
     "hf" 'counsel-describe-function
     "hk" 'describe-key
     "th" 'counsel-load-theme
-    "ap" 'counsel-list-processes)
-  (define-key evil-normal-state-map "\M-y" 'counsel-yank-pop)
+    "ap" 'counsel-list-processes
+    "M-y" 'counsel-yank-pop)
   :config
   (use-package smex :config (setq smex-history-length 32)))
 
@@ -67,7 +66,7 @@
         ivy-action-wrap t))
 
 (use-package ivy-hydra
-  :ensure ivy
+  :commands soo-ivy/body
   :config
   (define-key ivy-minibuffer-map "\C-o"
     (defhydra soo-ivy (:hint nil :color pink)

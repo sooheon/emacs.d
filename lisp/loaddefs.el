@@ -38,8 +38,8 @@
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22740
-;;;;;;  45738 0 0))
+;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22742
+;;;;;;  37276 0 0))
 ;;; Generated autoloads from modes/soo-python.el
 
 (autoload 'soo-python-hook "modes/soo-python" "\

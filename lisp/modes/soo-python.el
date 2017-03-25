@@ -17,8 +17,7 @@
   :init
   (nvmap :prefix "SPC"
          :keymaps 'python-mode-map
-         "="
-         'py-yapf-buffer)
+         "=" 'py-yapf-buffer)
   :config
   (defun py-yapf-and-send-buffer ()
     (interactive)
@@ -26,6 +25,7 @@
     (python-shell-send-buffer)))
 
 (use-package jedi
+  :defer t
   :config
   (setq python-environment-directory "~/.pyenv/versions")
   (define-key jedi-mode-map [C-tab] nil)
@@ -87,41 +87,5 @@
   (anaconda-eldoc-mode 1))
 
 (add-hook 'python-mode-hook 'soo-python-hook)
-
-(defun ora-python-switch-to-shell ()
-  "If *Python* is running, switch to it. Else, run new python
-buffer."
-  (interactive)
-  (let ((buffer (process-buffer (lispy--python-proc))))
-    (if buffer
-        (pop-to-buffer buffer)
-      (run-python)
-      (pop-to-buffer "*Python*"))))
-
-(defun ora-python-shell-send-region (start end &optional nomain)
-  "Send the region delimited by START and END to inferior Python process."
-  (interactive "r")
-  (let* ((python--use-fake-loc
-          (not buffer-file-name))
-         (string (python-shell-buffer-substring start end nomain))
-         (process (python-shell-get-or-create-process))
-         (_ (string-match "\\`\n*\\(.*\\)" string)))
-    (let* ((temp-file-name (python-shell--save-temp-file string))
-           (file-name (or (buffer-file-name) temp-file-name)))
-      (python-shell-send-file file-name process temp-file-name t)
-      (unless python--use-fake-loc
-        (with-current-buffer (process-buffer process)
-          (compilation-fake-loc (copy-marker start) temp-file-name
-                                2))))))
-
-(defun ora-python-send ()
-  "If region is active, send region to REPL. Else, send entire
-buffer."
-  (interactive)
-  (if (region-active-p)
-      (ora-python-shell-send-region (region-beginning)
-                                    (region-end))
-    (ora-python-shell-send-region (point-min)
-                                  (point-max))))
 
 (provide 'soo-python)

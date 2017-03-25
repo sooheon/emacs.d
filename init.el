@@ -41,8 +41,8 @@
 (setq frame-title-format '("%b"
                            (:eval
                             (when (bound-and-true-p projectile-mode)
-                              (when-let ((project (projectile-project-name)))
-                                (list " [" project "]"))))))
+                              (when (projectile-project-name)
+                                (list " [" (projectile-project-name) "]"))))))
 (setq fringe-indicator-alist
       '((continuation nil right-curly-arrow)
         (truncation left-arrow right-arrow)
@@ -94,9 +94,9 @@
 (setq gc-cons-threshold (* 12 1024 1024))
 
 ;;** shell
-(when-let (fish (executable-find "fish"))
-  (setq shell-file-name fish
-        explicit-shell-file-name fish))
+(when (executable-find "fish")
+  (setq shell-file-name "/usr/local/bin/fish"
+        explicit-shell-file-name "/usr/local/bin/fish"))
 (setenv "LANG" "en_US.UTF-8")
 
 ;;* Bootstrap
@@ -116,11 +116,6 @@
   (package-install 'use-package))
 (eval-when-compile (require 'use-package))
 (setq use-package-always-ensure t)
-
-(use-package paradox
-  :config
-  (setq paradox-execute-asynchronously t)
-  (with-eval-after-load 'evil (evil-set-initial-state 'paradox-menu-mode 'emacs)))
 
 (use-package async
   :config
@@ -211,6 +206,7 @@
   (setq aw-keys sooheon-avy-keys))
 
 (use-package autorevert
+  :defer 2
   :diminish auto-revert-mode
   :config
   (setq global-auto-revert-non-file-buffers t ; revert Dired buffers too
@@ -602,6 +598,7 @@ Keep M-n and M-p reserved for history."
            :color blue)))
 
 (use-package diff-hl
+  :defer 2
   :init
   (setq diff-hl-draw-borders nil)
   (global-diff-hl-mode)
@@ -674,7 +671,10 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   :if (eq system-type 'darwin)
   :general (nmap "gof" 'reveal-in-osx-finder))
 
-(use-package savehist :ensure nil :config (savehist-mode))
+(use-package savehist
+  :ensure nil
+  :defer 1
+  :config (savehist-mode))
 
 (use-package saveplace
   :ensure nil
@@ -887,6 +887,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (put 'scroll-left 'disabled nil)
 
-(load "my-easypg")
+;; (load "my-easypg")
 
 ;;; init.el ends here

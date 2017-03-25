@@ -5,17 +5,17 @@
   (nvmap "C-n" 'evil-next-visual-line
          "C-p" 'evil-previous-visual-line)
   :init
-  (setq-default evil-want-C-u-scroll t
-                evil-cross-lines t
-                evil-symbol-word-search t
-                evil-move-cursor-back t
-                evil-want-C-i-jump t
-                evil-disable-insert-state-bindings t
-                evil-search-module 'evil-search
-                evil-ex-search-persistent-highlight t
-                evil-want-Y-yank-to-eol t
-                evil-ex-substitute-global t
-                evil-want-C-w-delete t)
+  (setq evil-want-C-u-scroll t
+        evil-cross-lines t
+        evil-symbol-word-search t
+        evil-move-cursor-back t
+        evil-want-C-i-jump t
+        evil-disable-insert-state-bindings t
+        evil-search-module 'evil-search
+        evil-ex-search-persistent-highlight t
+        evil-want-Y-yank-to-eol t
+        evil-ex-substitute-global t
+        evil-want-C-w-delete t)
   :config
   (evil-mode)
   (setq evil-ex-search-highlight-all t)
@@ -79,7 +79,7 @@
   (otomap "$" 'evil-outer-$
           "*" 'evil-outer-*
           "/" 'evil-outer-/)
-  :init
+  :config
   (global-evil-surround-mode 1)
   (add-hook 'emacs-lisp-mode-hook
             (lambda ()
