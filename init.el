@@ -1,5 +1,7 @@
 ;;; init.el --- user-init-file
 
+(setq gc-cons-threshold (* 12 1024 1024))
+
 ;;* loads
 (defvar my-load-paths
   (mapcar (lambda (p) (concat user-emacs-directory p))
@@ -89,9 +91,6 @@
 (setq search-default-mode 'char-fold-to-regexp)
 (add-hook 'server-switch-hook 'raise-frame)
 (put 'narrow-to-region 'disabled nil)
-
-;;** internals
-(setq gc-cons-threshold (* 12 1024 1024))
 
 ;;** shell
 (when (executable-find "fish")
@@ -601,6 +600,7 @@ Keep M-n and M-p reserved for history."
   :defer 2
   :init
   (setq diff-hl-draw-borders nil)
+  :config
   (global-diff-hl-mode)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
   (evil-set-initial-state 'diff-mode 'emacs))
@@ -663,8 +663,9 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package recentf
   :ensure nil
-  :init
-  (recentf-mode 1)
+  :commands (counsel-recentf)
+  :config
+  (recentf-mode)
   (setq recentf-exclude '("COMMIT_MSG" "COMMIT_EDITMSG" "github.*txt$"
                           ".*png$" ".*cache$" "^/\\(?:ssh\\|su\\|sudo\\)?:"
                           ".*el.gz$" "/\\.get/.*\\'" "/elpa/\\.*"
@@ -683,6 +684,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package saveplace
   :ensure nil
+  :defer 2
   :if (version< "25" emacs-version)
   :config (save-place-mode))
 
