@@ -493,10 +493,9 @@ friend if it has the same major mode."
    "C-9" 'lispy-parens-down)
   (:keymaps 'lispy-mode-map-special "+" nil)
   ;; Unbind M-k and M-. in normal state, pass through to lispy
-  (:keymaps 'evil-normal-state-map
-   "M-." nil                            ; evil-repeat-pop-next
-   "M-k" nil
-   "gd" 'lispy-goto-symbol)
+  (nmap "M-." nil
+        "M-k" nil
+        "gd" 'lispy-goto-symbol)
   :init
   (defun enable-lispy-for-lisps ()
     (when (or (member major-mode sp-lisp-modes)
@@ -518,13 +517,19 @@ friend if it has the same major mode."
   (general-define-key :keymaps 'lispy-mode-map
     "DEL" 'lispy-delete-backward
     "C-d" 'lispy-delete
-    "(" 'lispy-parens
-    "[" 'lispy-brackets
-    "{" 'lispy-braces
-    ;; "(" nil
-    ;; "[" nil
-    ;; "{" nil
-    "\"" nil
+    "(" 'lispy-parens-auto-wrap
+    "[" 'lispy-brackets-auto-wrap
+    "{" 'lispy-braces-auto-wrap
+    ")" 'lispy-barf-to-point-nostring
+    "]" 'lispy-barf-to-point-nostring
+    "}" 'lispy-barf-to-point-nostring
+    ;; "(" 'lispy-parens
+    ;; "[" 'lispy-brackets
+    ;; "{" 'lispy-braces
+    ;; ")" 'lispy-right-nostring
+    ;; "]" 'lispy-right-nostring
+    ;; "}" 'lispy-right-nostring
+    "\"" nil ;; 'lispy-quotes
     "C-a" nil
     "]" nil
     "C-M-b" 'lispy-backward
