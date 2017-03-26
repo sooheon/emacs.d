@@ -632,6 +632,13 @@ Keep M-n and M-p reserved for history."
   :config (evil-set-initial-state 'woman-mode 'emacs)
   (bind-key "s-w" 'Man-quit woman-mode-map))
 
+(use-package paradox
+  :defer t
+  :config
+  (load "my-easypg")
+  (setq paradox-execute-asynchronously t)
+  (with-eval-after-load 'evil (evil-set-initial-state 'paradox-menu-mode 'emacs)))
+
 (use-package projectile
   :commands (projectile-switch-project projectile-find-file projectile-find-dir)
   :diminish projectile-mode
