@@ -328,6 +328,7 @@ CIRCE if no buffers open."
         ;; (circe "EsperNet")
         (circe "Freenode"))))
   :config
+  (load "my-easypg")
   (setq circe-reduce-lurker-spam t
         tracking-position 'end)
   (enable-circe-color-nicks)
@@ -336,7 +337,6 @@ CIRCE if no buffers open."
   (add-hook 'circe-channel-mode-hook 'enable-lui-autopaste))
 
 (use-package circe-notifications
-  :disabled t
   :defer t
   :init
   (add-hook 'circe-server-connected-hook 'enable-circe-notifications)
@@ -899,7 +899,5 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (or (server-running-p) (server-start))
 
 (put 'scroll-left 'disabled nil)
-
-;; (load "my-easypg")
 
 ;;; init.el ends here
