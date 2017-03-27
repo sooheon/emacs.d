@@ -71,8 +71,12 @@
 
 (use-package ein
   :defer t
+  :general
+  (emap :keymaps 'ein:notebooklist-mode-map
+    "o" 'ace-link-custom)
   :config
-  (setq ein:console-args "--simple-prompt"))
+  (setq ein:console-args "--simple-prompt")
+  (with-eval-after-load 'evil (evil-set-initial-state 'ein:notebooklist-mode 'emacs)))
 
 (use-package hy-mode
   :defer t

@@ -1,6 +1,7 @@
 (use-package org
-  :defer 20
-  :ensure nil
+  :defer 10
+  :ensure org-plus-contrib
+  :mode ("\\.org$" . org-mode)
   :general
   ("C-c a" 'org-agenda)
   (:keymaps 'org-mode-map

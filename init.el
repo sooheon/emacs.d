@@ -6,8 +6,8 @@
 (defvar my-load-paths
   (mapcar (lambda (p) (concat user-emacs-directory p))
           '("lisp"
-            "lib/org-mode/contrib/lisp"
-            "lib/org-mode/lisp"
+            ;; "lib/org-mode/contrib/lisp"
+            ;; "lib/org-mode/lisp"
             "lisp/themes"
             "lisp/modes"
             "lib/clojure-semantic"
@@ -105,7 +105,7 @@
 (require 'no-littering)
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                          ;; ("gnu" . "http://elpa.gnu.org/packages/")
-                         ;; ("org" . "http://orgmode.org/elpa/")
+                         ("org" . "http://orgmode.org/elpa/")
                          ))
 (package-initialize)
 (with-eval-after-load 'evil
@@ -493,10 +493,8 @@ friend if it has the same major mode."
    "C-8" 'lispy-out-forward-newline
    "C-9" 'lispy-parens-down)
   (:keymaps 'lispy-mode-map-special "+" nil)
-  ;; Unbind M-k and M-. in normal state, pass through to lispy
-  (nmap "M-." nil
-        "M-k" nil
-        "gd" 'lispy-goto-symbol)
+  (nmap "gd" 'lispy-goto-symbol
+        "M-." 'lispy-goto-symbol)
   :init
   (defun enable-lispy-for-lisps ()
     (when (or (member major-mode sp-lisp-modes)

@@ -183,7 +183,7 @@ This command does the reverse of `fill-region'.
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22731 55556
+;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22744 40316
 ;;;;;;  0 0))
 ;;; Generated autoloads from modes/soo-org.el
 
@@ -196,6 +196,17 @@ This command does the reverse of `fill-region'.
 
 
 \(fn)" t nil)
+
+;;;***
+
+;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22743
+;;;;;;  46638 0 0))
+;;; Generated autoloads from modes/soo-python.el
+
+(autoload 'soo-python-hook "modes/soo-python" "\
+
+
+\(fn)" nil nil)
 
 ;;;***
 
