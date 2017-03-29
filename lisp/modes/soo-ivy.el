@@ -38,7 +38,7 @@
   :commands (magit-status epkg-describe-package)
   :general ("s-b" 'ivy-switch-buffer
             "C-c r" 'ivy-resume
-            "<f2> j" 'counsel-set-variable
+            "C-h C-v" 'counsel-set-variable
             "C-c v" 'ivy-push-view
             "C-c V" 'ivy-pop-view)
   (:keymaps 'ivy-minibuffer-map

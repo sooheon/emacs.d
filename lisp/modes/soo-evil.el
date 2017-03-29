@@ -4,6 +4,7 @@
         "C-r" 'evil-paste-from-register)
   (nvmap "C-n" 'evil-next-visual-line
          "C-p" 'evil-previous-visual-line)
+  (:keymaps 'evil-normal-state-map "M-." nil)
   :init
   (setq evil-want-C-u-scroll t
         evil-cross-lines t

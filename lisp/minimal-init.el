@@ -7,7 +7,7 @@
 (package-initialize)
 (setq package-archives
       '(("melpa" . "http://melpa.org/packages/")
-        ("gnu" . "http://elpa.gnu.org/packages/")))
+        ("org" . "http://orgmode.org/elpa/")))
 
 (setq mac-pass-command-to-system nil
       mac-right-command-modifier 'control

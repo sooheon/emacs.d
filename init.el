@@ -55,6 +55,7 @@
         (top top-left-angle top-right-angle)
         (empty-line . empty-line)
         (unknown . question-mark)))
+(setq inhibit-message t)                ; disable "<key> is not defined" spam
 ;;** minibuffer interaction
 (setq enable-recursive-minibuffers t
       minibuffer-message-timeout 1)
@@ -104,9 +105,7 @@
       no-littering-var-directory (expand-file-name ".var/" user-emacs-directory))
 (require 'no-littering)
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
-                         ;; ("gnu" . "http://elpa.gnu.org/packages/")
-                         ("org" . "http://orgmode.org/elpa/")
-                         ))
+                         ("org" . "http://orgmode.org/elpa/")))
 (package-initialize)
 (with-eval-after-load 'evil
   (evil-set-initial-state 'package-menu-mode 'emacs))
@@ -150,6 +149,7 @@
 (require 'soo-evil)
 (require 'soo-ivy)
 ;; (require 'soo-rust)
+(require 'soo-c)
 (require 'soo-clojure)
 ;; (require 'soo-ess)
 (require 'soo-python)
@@ -237,29 +237,6 @@
   :config
   (fa-config-default))
 
-(use-package irony
-  :defer t
-  :init
-  (add-hook 'c++-mode-hook 'irony-mode)
-  (add-hook 'c-mode-hook 'irony-mode)
-  (add-hook 'objc-mode-hook 'irony-mode)
-  :config
-  (defun soo-irony-hook ()
-    (define-key irony-mode-map [remap completion-at-point]
-      'irony-completion-at-point-async)
-    (define-key irony-mode-map [remap complete-symbol]
-      'irony-completion-at-point-async)
-    (irony-cdb-autosetup-compile-options))
-  (add-hook 'irony-mode-hook #'soo-irony-hook))
-
-(use-package ggtags
-  :defer t
-  :init
-  (add-hook 'c-mode-common-hook
-            (lambda ()
-              (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
-                (ggtags-mode 1)))))
-
 (use-package dired
   :ensure nil
   :commands dired-jump
@@ -325,7 +302,6 @@ CIRCE if no buffers open."
             (setq candidates (append (list (buffer-name buf)) candidates))))
       (if candidates
           (switch-to-buffer (completing-read "IRC buffer: " candidates))
-        ;; (circe "EsperNet")
         (circe "Freenode"))))
   :config
   (load "my-easypg")
@@ -337,6 +313,7 @@ CIRCE if no buffers open."
   (add-hook 'circe-channel-mode-hook 'enable-lui-autopaste))
 
 (use-package circe-notifications
+  :disabled t
   :defer t
   :init
   (add-hook 'circe-server-connected-hook 'enable-circe-notifications)
@@ -493,8 +470,9 @@ friend if it has the same major mode."
    "C-8" 'lispy-out-forward-newline
    "C-9" 'lispy-parens-down)
   (:keymaps 'lispy-mode-map-special "+" nil)
-  (nmap "gd" 'lispy-goto-symbol
-        "M-." 'lispy-goto-symbol)
+  (nmap :keymaps 'lispy-mode-map
+    "gd" 'lispy-goto-symbol
+    "M-." 'lispy-goto-symbol)
   :init
   (defun enable-lispy-for-lisps ()
     (when (or (member major-mode sp-lisp-modes)
@@ -514,8 +492,8 @@ friend if it has the same major mode."
   (lispy-define-key lispy-mode-map-special ">" 'lispy-slurp-or-barf-right)
   (lispy-define-key lispy-mode-map-special "<" 'lispy-slurp-or-barf-left)
   (general-define-key :keymaps 'lispy-mode-map
-    "DEL" 'lispy-delete-backward
-    "C-d" 'lispy-delete
+    "DEL" 'lispy-delete-backward-or-splice-or-slurp
+    "C-d" 'lispy-delete-or-splice-or-slurp
     "(" 'lispy-parens-auto-wrap
     "[" 'lispy-brackets-auto-wrap
     "{" 'lispy-braces-auto-wrap
@@ -638,7 +616,6 @@ Keep M-n and M-p reserved for history."
   (with-eval-after-load 'evil (evil-set-initial-state 'paradox-menu-mode 'emacs)))
 
 (use-package projectile
-  :commands (projectile-switch-project projectile-find-file projectile-find-dir)
   :diminish projectile-mode
   :general
   ("C-c k" 'soo--projectile-rg)
@@ -647,12 +624,13 @@ Keep M-n and M-p reserved for history."
   (:keymaps 'projectile-command-map
    "e" 'projectile-replace
    "r" 'projectile-recentf)
+  :init
+  (add-hook 'text-mode-hook 'projectile-mode)
+  (add-hook 'prog-mode-hook 'projectile-mode)
   :config
   ;; Starting projectile-mode in these hooks is necessary so that tramp does not
   ;; hang on ssh.
   ;; https://github.com/bbatsov/prelude/issues/594#issuecomment-220951394
-  (add-hook 'text-mode-hook 'projectile-mode)
-  (add-hook 'prog-mode-hook 'projectile-mode)
   (setq projectile-enable-caching t
         projectile-sort-order 'recentf
         projectile-create-missing-test-files t
