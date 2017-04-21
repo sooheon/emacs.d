@@ -10,14 +10,14 @@
             [remap info-lookup-symbol] 'counsel-info-lookup-symbol
             [remap menu-bar-open] 'counsel-tmm
             [remap list-bookmarks] 'counsel-bookmark
-            "C-c j" 'counsel-git
+            "C-c f" 'counsel-git
             "C-c g" 'counsel-git-grep
             "C-x l" 'counsel-locate
             "C-x C-l" 'find-library
-            "C-c o" 'counsel-outline
-            "s-o" 'counsel-find-file)
+            "C-c o" 'counsel-outline)
   (:keymaps 'read-expression-map "C-r" 'counsel-expression-history)
   (nmap :prefix "SPC"
+    "f" 'counsel-find-file
     "r" 'counsel-recentf
     "hv" 'counsel-describe-variable
     "hf" 'counsel-describe-function
@@ -38,6 +38,7 @@
   :commands (magit-status epkg-describe-package)
   :general ("s-b" 'ivy-switch-buffer
             "C-c r" 'ivy-resume
+            "C-c j" 'lispy-goto
             "C-h C-v" 'counsel-set-variable
             "C-c v" 'ivy-push-view
             "C-c V" 'ivy-pop-view)
@@ -47,7 +48,7 @@
    "<s-backspace>" (lambda () (interactive) (kill-line 0))
    "<M-backspace>" 'ivy-backward-kill-word
    "C-w" 'ivy-backward-kill-word)
-  :init
+  (nmap "gb" 'ivy-switch-buffer)
   (nmap :prefix "SPC" "b" 'ivy-switch-buffer)
   :config
   (ivy-mode 1)

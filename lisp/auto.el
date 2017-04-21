@@ -44,7 +44,7 @@ window in frame, call `bury-buffer'."
 (defun soo-terminal-focus ()
   (interactive)
   (do-applescript
-   "do shell script \"open -a iTem\"\n"))
+   "do shell script \"open -a iTerm\"\n"))
 
 ;;;###autoload
 (defun soo-terminal-pop ()
@@ -154,11 +154,12 @@ already narrowed."
         (t (narrow-to-defun))))
 
 ;;;###autoload
-(defun sooheon--delete-to-bol ()
-  (interactive)
-  (if (fboundp 'lispyville-delete)
-      (lispyville-delete (line-beginning-position) (point))
-    (evil-delete (line-beginning-position) (point))))
+(defun sooheon--delete-to-bol (arg)
+  (interactive "p")
+  (if (bound-and-true-p lispyville-mode)
+      (lispyville--safe-manipulate (line-beginning-position) (point) t)
+    (kill-line (- 1 arg)))
+  (indent-for-tab-command))
 
 ;;;###autoload
 (defun inc-face-height ()

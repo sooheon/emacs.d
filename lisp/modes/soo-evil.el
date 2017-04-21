@@ -4,7 +4,6 @@
         "C-r" 'evil-paste-from-register)
   (nvmap "C-n" 'evil-next-visual-line
          "C-p" 'evil-previous-visual-line)
-  (:keymaps 'evil-normal-state-map "M-." nil)
   :init
   (setq evil-want-C-u-scroll t
         evil-cross-lines t
@@ -20,6 +19,7 @@
   :config
   (evil-mode)
   (setq evil-ex-search-highlight-all t)
+  (general-define-key :keymaps 'evil-normal-state-map "M-." nil)
   ;; Let underscores be part of words
   (add-hook 'text-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
   (add-hook 'prog-mode-hook #'(lambda () (modify-syntax-entry ?_ "w"))))
@@ -28,15 +28,6 @@
   :diminish evil-commentary-mode
   :general (nmap "gc" 'evil-commentary
                  "gy" 'evil-commentary-yank))
-
-(use-package evil-cleverparens
-  :general
-  (otomap "f" 'evil-cp-a-form
-          "c" 'evil-cp-a-comment
-          "d" 'evil-cp-a-defun)
-  (itomap "f" 'evil-cp-inner-form
-          "c" 'evil-cp-inner-comment
-          "d" 'evil-cp-inner-defun))
 
 (use-package evil-exchange
   :diminish evil-exchange
@@ -80,7 +71,10 @@
   (otomap "$" 'evil-outer-$
           "*" 'evil-outer-*
           "/" 'evil-outer-/)
-  :config
+  (vmap :keymaps 'evil-surround-mode-map
+    "s" 'evil-surround-region
+    "S" 'evil-surround-region)
+  :init
   (global-evil-surround-mode 1)
   (add-hook 'emacs-lisp-mode-hook
             (lambda ()

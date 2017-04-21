@@ -31,7 +31,7 @@
   :config
   (setq org-export-in-background nil
         org-src-fontify-natively t
-        org-M-RET-may-split-line nil
+        org-M-RET-may-split-line '((default . t))
         org-catch-invisible-edits 'show
         org-footnote-auto-adjust t
         org-hide-emphasis-markers t
@@ -59,7 +59,9 @@
     "[" nil
     "]" nil))
 
-(use-package auctex :defer t)
+(use-package auctex :defer t
+  :init
+  (add-hook 'LaTeX-mode-hook 'turn-on-auto-fill))
 
 (use-package cdlatex :defer t
   :config
@@ -69,16 +71,19 @@
           ("dd" "Insert ddot" "\\ddot{?}"
            cdlatex-position-cursor nil nil t))))
 
-(use-package pamparam
-  :ensure nil
-  :general
-  (:keymaps 'org-mode-map
-   "C-c y" 'pam-drill))
-
-(use-package org-pomodoro
-  :disabled t
-  :general
-  ("C-s-r" 'org-pomodoro))
+(use-package org-brain
+  :defer t
+  :general ("s-o" 'org-brain-hydra/body)
+  :config
+  (when (member 'smart-mode-line package-selected-packages)
+    (add-to-list 'sml/replacer-regexp-list '("^~/Dropbox/brain" ":BRAIN:")))
+  (defhydra org-brain-hydra (:color blue)
+    "Org Brain"
+    ("o" org-brain-open "open")
+    ("a" org-brain-agenda "agenda")
+    ("v" org-brain-visualize "visualize")
+    ("i" org-brain-insert-link "insert link")
+    ("r" org-brain-rename-entry "rename entry")))
 
 ;;;###autoload
 (defun soo-org-hook ()

@@ -1,6 +1,6 @@
 ;;
 
-;;;### (autoloads nil "auto" "auto.el" (22742 44318 0 0))
+;;;### (autoloads nil "auto" "auto.el" (22770 18430 0 0))
 ;;; Generated autoloads from auto.el
 
 (autoload 'smart-move-beginning-of-line "auto" "\
@@ -70,7 +70,7 @@ already narrowed.
 (autoload 'sooheon--delete-to-bol "auto" "\
 
 
-\(fn)" t nil)
+\(fn ARG)" t nil)
 
 (autoload 'inc-face-height "auto" "\
 
@@ -183,7 +183,7 @@ This command does the reverse of `fill-region'.
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22744 40316
+;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22771 12983
 ;;;;;;  0 0))
 ;;; Generated autoloads from modes/soo-org.el
 

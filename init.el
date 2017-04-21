@@ -1,6 +1,6 @@
 ;;; init.el --- user-init-file
 
-(setq gc-cons-threshold (* 12 1024 1024))
+(setq gc-cons-threshold (* 24 1024 1024))
 
 ;;* loads
 (defvar my-load-paths
@@ -27,13 +27,14 @@
 (load custom-file 'noerror)
 ;;** font
 (set-face-attribute 'default nil :family "Input Mono Narrow")
-(set-fontset-font "fontset-default" 'hangul '("NanumGothic" . "unicode-bmp"))
+(set-fontset-font "fontset-default" 'hangul '("NanumGothicCoding" . "unicode-bmp"))
 ;;** decorations
 (setq tool-bar-mode nil)
 (setq menu-bar-mode nil)
 (setq scroll-bar-mode nil)
 (setq line-spacing 0.1)
 (setq inhibit-startup-screen t
+      inhibit-message nil
       initial-scratch-message ";; You have power over your mind - not outside events. Realize this, and you \n;; will find strength.\n\n"
       create-lockfiles nil
       window-combination-resize t)
@@ -55,7 +56,6 @@
         (top top-left-angle top-right-angle)
         (empty-line . empty-line)
         (unknown . question-mark)))
-(setq inhibit-message t)                ; disable "<key> is not defined" spam
 ;;** minibuffer interaction
 (setq enable-recursive-minibuffers t
       minibuffer-message-timeout 1)
@@ -106,16 +106,22 @@
 (require 'no-littering)
 (setq package-archives '(("melpa" . "http://melpa.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")))
+
+(setq package-enable-at-startup nil)
 (package-initialize)
-(with-eval-after-load 'evil
-  (evil-set-initial-state 'package-menu-mode 'emacs))
+
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
+
+(with-eval-after-load 'evil
+  (evil-set-initial-state 'package-menu-mode 'emacs))
+
 (eval-when-compile (require 'use-package))
 (setq use-package-always-ensure t)
 
 (use-package async
+  :after paradox
   :config
   (async-bytecomp-package-mode t))
 
@@ -288,12 +294,12 @@
 (use-package circe
   :defer t
   :general
-  (nmap :prefix "SPC" "i" 'sooheon--switch-to-circe)
-  (:prefix "C-c" "i" 'sooheon--switch-to-circe)
-  :init
-  (defun sooheon--switch-to-circe ()
-    "Switch to CIRCE buffers using completing-read, or start
-CIRCE if no buffers open."
+  (nmap :prefix "SPC" "i" 'soo--counsel-circe)
+  (:prefix "C-c" "i" 'soo--counsel-circe)
+  :config
+  (defun soo--counsel-circe ()
+    "Switch to Circe buffers using completing-read, or start
+Circe if no buffers open."
     (interactive)
     (let ((candidates (list)))
       (dolist (buf (buffer-list) candidates)
@@ -301,16 +307,36 @@ CIRCE if no buffers open."
                   '(circe-channel-mode circe-server-mode circe-query-mode))
             (setq candidates (append (list (buffer-name buf)) candidates))))
       (if candidates
-          (switch-to-buffer (completing-read "IRC buffer: " candidates))
+          (switch-to-buffer (completing-read "cIRCe buffer: " candidates))
         (circe "Freenode"))))
-  :config
+  (defun counsel-tracking ()
+    (interactive)
+    (switch-to-buffer (completing-read "Tracked buffer: " tracking-buffers)))
   (load "my-easypg")
   (setq circe-reduce-lurker-spam t
         tracking-position 'end)
   (enable-circe-color-nicks)
   (enable-lui-track-bar)
   (require 'lui-autopaste)
-  (add-hook 'circe-channel-mode-hook 'enable-lui-autopaste))
+  (add-hook 'circe-channel-mode-hook 'enable-lui-autopaste)
+  (add-hook 'circe-chat-mode-hook 'my-circe-prompt)
+  (defun my-circe-prompt ()
+    (lui-set-prompt
+     (concat (propertize (concat (buffer-name) ">") 'face 'circe-prompt-face)
+             " ")))
+  (load "lui-logging" nil t)
+  (enable-lui-logging-globally)
+
+  (setq lui-time-stamp-position 'right-margin
+        lui-fill-type nil
+        lui-time-stamp-format "%H:%M")
+  (add-hook 'lui-mode-hook 'my-lui-setup)
+  (defun my-lui-setup ()
+    (setq fringes-outside-margins t
+          right-margin-width 5
+          word-wrap t
+          wrap-prefix "    ")
+    (setf (cdr (assoc 'continuation fringe-indicator-alist)) nil)))
 
 (use-package circe-notifications
   :disabled t
@@ -440,7 +466,7 @@ friend if it has the same major mode."
    [C-backspace] 'sp-backward-kill-sexp
    "C-)" 'sp-forward-slurp-sexp "C-(" 'sp-backward-slurp-sexp
    "C-{" 'sp-backward-barf-sexp "C-}" 'sp-forward-barf-sexp
-   "M-S" 'sp-splice-sexp-killing-backward
+   "M-S" 'sp-splice-sexp
    [M-up] 'sp-splice-sexp-killing-backward
    [M-down] 'sp-splice-sexp-killing-forward)
   :init
@@ -461,6 +487,8 @@ friend if it has the same major mode."
         sp-show-pair-from-inside nil
         sp-highlight-pair-overlay nil
         sp-escape-quotes-after-insert nil)
+  (show-paren-mode 1)
+  (turn-off-show-smartparens-mode)
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil))
 
 (use-package lispy
@@ -470,9 +498,6 @@ friend if it has the same major mode."
    "C-8" 'lispy-out-forward-newline
    "C-9" 'lispy-parens-down)
   (:keymaps 'lispy-mode-map-special "+" nil)
-  (nmap :keymaps 'lispy-mode-map
-    "gd" 'lispy-goto-symbol
-    "M-." 'lispy-goto-symbol)
   :init
   (defun enable-lispy-for-lisps ()
     (when (or (member major-mode sp-lisp-modes)
@@ -482,6 +507,10 @@ friend if it has the same major mode."
   (add-hook 'smartparens-disabled-hook (lambda () (lispy-mode -1)))
   (setq iedit-toggle-key-default nil)   ; Don't want to use iedit
   :config
+  (with-eval-after-load 'evil
+    (nmap :keymaps 'lispy-mode-map
+      "gd" 'lispy-goto-symbol
+      "M-." 'lispy-goto-symbol))
   (lispy-set-key-theme '(special c-digits))
   (setq lispy-compat '(edebug cider)
         lispy-avy-keys sooheon-avy-keys
@@ -492,21 +521,23 @@ friend if it has the same major mode."
   (lispy-define-key lispy-mode-map-special ">" 'lispy-slurp-or-barf-right)
   (lispy-define-key lispy-mode-map-special "<" 'lispy-slurp-or-barf-left)
   (general-define-key :keymaps 'lispy-mode-map
-    "DEL" 'lispy-delete-backward-or-splice-or-slurp
-    "C-d" 'lispy-delete-or-splice-or-slurp
-    "(" 'lispy-parens-auto-wrap
-    "[" 'lispy-brackets-auto-wrap
-    "{" 'lispy-braces-auto-wrap
-    ")" 'lispy-barf-to-point-nostring
-    "]" 'lispy-barf-to-point-nostring
-    "}" 'lispy-barf-to-point-nostring
-    ;; "(" 'lispy-parens
-    ;; "[" 'lispy-brackets
-    ;; "{" 'lispy-braces
-    ;; ")" 'lispy-right-nostring
-    ;; "]" 'lispy-right-nostring
-    ;; "}" 'lispy-right-nostring
-    "\"" nil ;; 'lispy-quotes
+    ;; "DEL" 'lispy-delete-backward-or-splice-or-slurp
+    ;; "C-d" 'lispy-delete-or-splice-or-slurp
+    "DEL" 'lispy-delete-backward
+    "C-d" 'lispy-delete
+    ;; "(" 'lispy-parens-auto-wrap
+    ;; "[" 'lispy-brackets-auto-wrap
+    ;; "{" 'lispy-braces-auto-wrap
+    ;; ")" 'lispy-barf-to-point-nostring
+    ;; "]" 'lispy-barf-to-point-nostring
+    ;; "}" 'lispy-barf-to-point-nostring
+    "(" 'lispy-parens
+    "[" 'lispy-brackets
+    "{" 'lispy-braces
+    ")" 'lispy-right-nostring
+    "]" 'lispy-right-nostring
+    "}" 'lispy-right-nostring
+    "\"" 'lispy-quotes
     "C-a" nil
     "]" nil
     "C-M-b" 'lispy-backward
@@ -688,6 +719,15 @@ INITIAL-INPUT can be given as the initial minibuffer input."
                 (when (string-prefix-p "semantic-" (symbol-name x))
                   (remove-hook 'completion-at-point-functions x))))))
 
+(use-package smart-mode-line
+  :defer t
+  :init
+  (sml/setup))
+
+(use-package swift-mode :defer t)
+
+(use-package company-sourcekit :defer t)
+
 (use-package term
   :general
   (:keymaps 'term-raw-map
@@ -701,6 +741,14 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (add-hook 'term-mode-hook (lambda ()
                               (set (make-local-variable 'scroll-margin) 0)))
   (evil-set-initial-state 'term-mode 'emacs))
+
+(use-package terminal-here
+  :defer t
+  :general
+  (nmap "got" #'terminal-here-launch)
+  :init
+  (setq terminal-here-terminal-command
+        (lambda (dir) (list "open" "-a" "iTerm.app" dir))))
 
 (use-package undo-tree
   :diminish undo-tree-mode
@@ -759,7 +807,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (shackle-mode 1))
 
 (use-package vlf
-  :defer t
+  :defer 3
   :config (require 'vlf-setup))
 
 (use-package yaml-mode :defer t)
@@ -785,8 +833,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (add-hook 'visual-line-mode-hook 'evil-normalize-keymaps)
   (evil-set-initial-state 'messages-buffer-mode 'insert)
   (evil-set-initial-state 'special-mode 'insert)
-  :config
-  (column-number-mode 1))
+  (column-number-mode))
 
 (use-package ws-butler
   :diminish ws-butler-mode

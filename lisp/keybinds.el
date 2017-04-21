@@ -29,7 +29,7 @@
  "C-s-f" 'toggle-frame-fullscreen
  "s--" 'dec-face-height
  "s-=" 'inc-face-height
- "M-DEL" 'evil-delete-backward-word)
+ "M-DEL" 'backward-kill-word)
 
 (defun oscillate-spacing (&optional n)
   (interactive "*p")
@@ -62,7 +62,8 @@
   "wv" 'evil-window-vsplit
   "wr" 'evil-window-rotate-downwards
   "wR" 'evil-window-rotate-upwards
-  "wc" 'soo--close-window-dwim)
+  "wc" 'soo--close-window-dwim
+  "ESC" nil)
 
 ;; This line actually replaces Emacs' entire narrowing keymap, that's how
 ;; much I like this command. Only copy it if that's what you want.

@@ -3,6 +3,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(LaTeX-indent-level 0)
+ '(LaTeX-left-right-indent-level 0)
+ '(ansi-color-names-vector
+   ["#3F3F3F" "#CC9393" "#7F9F7F" "#F0DFAF" "#8CD0D3" "#DC8CC3" "#93E0E3" "#DCDCCC"])
  '(auto-image-file-mode t)
  '(cljr-favor-prefix-notation nil)
  '(compilation-message-face (quote default))
@@ -12,7 +16,7 @@
  '(cua-read-only-cursor-color "#859900")
  '(custom-safe-themes
    (quote
-    ("08b8807d23c290c840bbb14614a83878529359eaba1805618b3be7d61b0b0a32" "cdbd0a803de328a4986659d799659939d13ec01da1f482d838b68038c1bb35e8" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
+    ("a27c00821ccfd5a78b01e4f35dc056706dd9ede09a8b90c6955ae6a390eb1c1e" "08b8807d23c290c840bbb14614a83878529359eaba1805618b3be7d61b0b0a32" "cdbd0a803de328a4986659d799659939d13ec01da1f482d838b68038c1bb35e8" "fa2b58bb98b62c3b8cf3b6f02f058ef7827a8e497125de0254f56e373abee088" default)))
  '(debug-on-error nil)
  '(dired-dwim-target t)
  '(eldoc-idle-delay 0)
@@ -59,6 +63,7 @@
  '(nrepl-message-colors
    (quote
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
+ '(org-ascii-text-width 9999999999)
  '(org-indent-indentation-per-level 1)
  '(org-latex-classes
    (quote
@@ -93,7 +98,7 @@
  '(org-preview-latex-default-process (quote dvisvgm))
  '(package-selected-packages
    (quote
-    (org-plus-contrib paradox async hy-mode vim-empty-lines ein circe-notifications vlf hl-todo base16-theme farmhouse-theme yaml-mode doom-themes ace-window rainbow-mode org-download htmlize rust-mode haskell-mode org-pomodoro ess-smart-equals ess ess-site pamparam lpy tex cdlatex texmathp magithub suggest wgrep general hungry-delete hungry-delete-mode toml-mode soap atom-one-dark-theme ggtags cpputils-cmake irony clang-format company-statistics osx-trash ox help evil-cleverparens-text-objects dired racer cargo golden-ratio jade yasnippet evil-evilified-state artbollocks-mode company-quickhelp evil-exchange clj-refactor with-editor undo-tree swiper smartparens queue pyenv-mode projectile magit ivy hydra flycheck finalize evil diminish dash counsel company closql clojure-mode avy anaconda-mode ace-link lispyville auctex exec-path-from-shell org-bullets evil-mc git-modes function-args zenburn-theme ws-butler worf window-numbering which-key use-package typo term-manager super-save speck spacemacs-theme solarized-theme smex shm shell-pop shackle sentence-navigation reveal-in-osx-finder rainbow-delimiters pyenv-mode-auto py-yapf pdf-tools pandoc-mode osx-dictionary multiple-cursors markdown-mode jedi ivy-hydra intero inf-clojure hindent highlight-escape-sequences gist flyspell-correct flx expand-region evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-multiedit evil-matchit evil-magit evil-commentary evil-cleverparens epkg elisp-slime-nav diff-hl counsel-projectile company-anaconda circe cider bind-map auto-compile)))
+    (org-board terminal-here company-sourcekit swift-mode smart-mode-line org-brain org-plus-contrib paradox async hy-mode vim-empty-lines ein circe-notifications vlf hl-todo base16-theme farmhouse-theme yaml-mode doom-themes ace-window rainbow-mode org-download htmlize rust-mode haskell-mode ess-smart-equals ess ess-site lpy tex cdlatex texmathp magithub suggest wgrep general hungry-delete hungry-delete-mode toml-mode soap atom-one-dark-theme ggtags cpputils-cmake irony clang-format company-statistics osx-trash help evil-cleverparens-text-objects dired racer cargo golden-ratio jade yasnippet evil-evilified-state artbollocks-mode company-quickhelp evil-exchange clj-refactor with-editor undo-tree swiper smartparens queue pyenv-mode projectile magit ivy hydra flycheck finalize evil diminish dash counsel company closql clojure-mode avy anaconda-mode ace-link lispyville auctex exec-path-from-shell evil-mc git-modes function-args zenburn-theme ws-butler worf window-numbering which-key use-package typo term-manager super-save speck spacemacs-theme solarized-theme smex shm shell-pop shackle sentence-navigation reveal-in-osx-finder rainbow-delimiters pyenv-mode-auto py-yapf pdf-tools pandoc-mode osx-dictionary multiple-cursors markdown-mode jedi ivy-hydra intero inf-clojure hindent highlight-escape-sequences gist flyspell-correct flx expand-region evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-multiedit evil-matchit evil-magit evil-commentary epkg elisp-slime-nav diff-hl counsel-projectile company-anaconda circe cider bind-map auto-compile)))
  '(paradox-automatically-star t)
  '(paradox-github-token t)
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
@@ -119,6 +124,21 @@
      (lambda nil
        (ansi-term shell-pop-term-shell)))))
  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#657b83" 0.2))
+ '(sml/replacer-regexp-list
+   (quote
+    (("^~/code/" ":code:")
+     ("^~/Dropbox/QxBranch/" ":Qx:")
+     ("^~/Dropbox/[Ww]ork/" ":Work:")
+     ("^~/org/" ":Org:")
+     ("^~/\\.emacs\\.d/elpa/" ":ELPA:")
+     ("^~/\\.emacs\\.d/" ":ED:")
+     ("^/sudo:.*:" ":SU:")
+     ("^~/Documents/" ":Doc:")
+     ("^~/Dropbox/" ":DB:")
+     ("^:\\([^:]*\\):Documento?s/" ":\\1/Doc:")
+     ("^~/[Gg]it/" ":Git:")
+     ("^~/[Gg]it[Hh]ub/" ":Git:")
+     ("^~/[Gg]it\\([Hh]ub\\|\\)-?[Pp]rojects/" ":Git:"))))
  '(solarized-distinct-doc-face t)
  '(solarized-high-contrast-mode-line t)
  '(solarized-use-more-italic t)
@@ -195,6 +215,7 @@
  '(weechat-color-list
    (quote
     (unspecified "#fdf6e3" "#eee8d5" "#990A1B" "#dc322f" "#546E00" "#859900" "#7B6000" "#b58900" "#00629D" "#268bd2" "#93115C" "#d33682" "#00736F" "#2aa198" "#657b83" "#839496")))
+ '(which-key-show-prefix (quote bottom))
  '(xterm-color-names
    ["#eee8d5" "#dc322f" "#859900" "#b58900" "#268bd2" "#d33682" "#2aa198" "#073642"])
  '(xterm-color-names-bright
