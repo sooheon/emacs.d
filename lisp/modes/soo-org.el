@@ -41,7 +41,8 @@
         org-log-done 'time
         org-highlight-latex-and-related '(latex script entities)
         org-adapt-indentation nil
-        org-preview-latex-default-process 'dvisvgm))
+        org-preview-latex-default-process 'dvisvgm
+        org-directory "~/Dropbox/org/"))
 
 (use-package org-download
   :after org
@@ -73,7 +74,6 @@
 
 (use-package org-brain
   :defer t
-  :general ("s-o" 'org-brain-hydra/body)
   :config
   (when (member 'smart-mode-line package-selected-packages)
     (add-to-list 'sml/replacer-regexp-list '("^~/Dropbox/brain" ":BRAIN:")))

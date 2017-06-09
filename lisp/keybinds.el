@@ -1,5 +1,5 @@
 (setq mac-pass-command-to-system nil
-      mac-right-command-modifier 'control
+      ;; mac-right-command-modifier 'control
       mac-command-modifier 'super
       mac-option-modifier 'meta)
 
@@ -14,10 +14,10 @@
  [remap just-one-space] 'oscillate-spacing
  [remap apropos-command] 'apropos
  "s-C" 'count-words
- "s-h" 'evil-window-left
- "s-j" 'evil-window-down
- "s-k" 'evil-window-up
- "s-l" 'evil-window-right
+ ;; "s-h" 'evil-window-left
+ ;; "s-j" 'evil-window-down
+ ;; "s-k" 'evil-window-up
+ ;; "s-l" 'evil-window-right
  "<C-tab>" 'other-window
  "s-s" 'save-buffer
  "s-q" 'save-buffers-kill-terminal
@@ -29,7 +29,10 @@
  "C-s-f" 'toggle-frame-fullscreen
  "s--" 'dec-face-height
  "s-=" 'inc-face-height
- "M-DEL" 'backward-kill-word)
+ "s-[" 'previous-buffer
+ "s-]" 'next-buffer
+ "M-DEL" 'backward-kill-word
+ "s-o" 'find-file)
 
 (defun oscillate-spacing (&optional n)
   (interactive "*p")
@@ -38,7 +41,8 @@
 (nmap "zf" '(lambda () (interactive)
               (reposition-window)
               (reposition-window))
-      "got" 'soo-terminal-pop)
+      ;; "got" 'soo-terminal-pop
+      )
 
 (nvmap :prefix "SPC"
   "t\C-o" 'sooheon--toggle-right-option-key
@@ -64,6 +68,9 @@
   "wR" 'evil-window-rotate-upwards
   "wc" 'soo--close-window-dwim
   "ESC" nil)
+
+(mmap "<down>" 'next-line
+      "<up>" 'previous-line)
 
 ;; This line actually replaces Emacs' entire narrowing keymap, that's how
 ;; much I like this command. Only copy it if that's what you want.

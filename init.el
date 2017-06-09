@@ -27,7 +27,8 @@
 (load custom-file 'noerror)
 ;;** font
 (set-face-attribute 'default nil :family "Input Mono Narrow")
-(set-fontset-font "fontset-default" 'hangul '("NanumGothicCoding" . "unicode-bmp"))
+(set-face-attribute 'default nil :height 140)
+(set-fontset-font t 'hangul (font-spec :name "NanumGothic"))
 ;;** decorations
 (setq tool-bar-mode nil)
 (setq menu-bar-mode nil)
@@ -35,12 +36,10 @@
 (setq line-spacing 0.1)
 (setq inhibit-startup-screen t
       inhibit-message nil
-      initial-scratch-message ";; You have power over your mind - not outside events. Realize this, and you \n;; will find strength.\n\n"
+      initial-scratch-message nil
       create-lockfiles nil
       window-combination-resize t)
 (eval '(setq inhibit-startup-echo-area-message "sooheon"))
-(blink-cursor-mode -1)
-(setq blink-cursor-blinks 0)
 (setq frame-title-format '("%b"
                            (:eval
                             (when (bound-and-true-p projectile-mode)
@@ -65,6 +64,7 @@
 (setq scroll-margin 2
       scroll-preserve-screen-position t
       scroll-conservatively 101)
+(add-to-list 'default-frame-alist '(width . 90))
 (progn ;; Deal with large files
   ;; (setq jit-lock-defer-time 0)
   (setq-default bidi-display-reordering nil) ; http://tinyurl.com/jc9corx
@@ -104,7 +104,8 @@
 (setq no-littering-etc-directory (expand-file-name ".etc/" user-emacs-directory)
       no-littering-var-directory (expand-file-name ".var/" user-emacs-directory))
 (require 'no-littering)
-(setq package-archives '(("melpa" . "http://melpa.org/packages/")
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                         ("melpa" . "http://melpa.org/packages/")
                          ("org" . "http://orgmode.org/elpa/")))
 
 (setq package-enable-at-startup nil)
@@ -182,7 +183,8 @@
   :commands spacemacs/avy-open-url
   :general
   ("s-g" 'evil-avy-goto-word-1
-   [remap goto-line] 'evil-avy-goto-line)
+   [remap goto-line] 'evil-avy-goto-line
+   "s-l" 'evil-avy-goto-line)
   (nmap :prefix "SPC" "xo" 'spacemacs/avy-open-url)
   :config
   (setq avy-keys sooheon-avy-keys)
@@ -312,7 +314,6 @@ Circe if no buffers open."
   (defun counsel-tracking ()
     (interactive)
     (switch-to-buffer (completing-read "Tracked buffer: " tracking-buffers)))
-  (load "my-easypg")
   (setq circe-reduce-lurker-spam t
         tracking-position 'end)
   (enable-circe-color-nicks)
@@ -364,6 +365,21 @@ friend if it has the same major mode."
           (with-current-buffer other-buffer
             major-mode))))
   (setq dabbrev-friend-buffer-function #'soo--dabbrev-friend-buffer))
+
+(use-package eyebrowse
+  :init
+  (eyebrowse-setup-evil-keys)
+  (eyebrowse-mode t)
+  :general
+  (nmap :keymaps 'eyebrowse-mode-map :prefix "g"
+        "1" 'eyebrowse-switch-to-window-config-1
+        "2" 'eyebrowse-switch-to-window-config-2
+        "3" 'eyebrowse-switch-to-window-config-3
+        "4" 'eyebrowse-switch-to-window-config-4
+        "x" 'eyebrowse-close-window-config)
+  :config
+  (setq eyebrowse-wrap-around t
+        eyebrowse-switch-back-and-forth t))
 
 (use-package flycheck
   :defer t
@@ -455,6 +471,12 @@ friend if it has the same major mode."
   :general
   (nmap :prefix "SPC" "tg" 'golden-ratio))
 
+(use-package restclient :defer t
+  :config
+  (use-package company-restclient
+    :config
+    (add-to-list 'company-backends 'company-restclient)))
+
 ;;** Parens and lisp
 (use-package smartparens
   :diminish (smartparens-mode . "sp")
@@ -468,7 +490,11 @@ friend if it has the same major mode."
    "C-{" 'sp-backward-barf-sexp "C-}" 'sp-forward-barf-sexp
    "M-S" 'sp-splice-sexp
    [M-up] 'sp-splice-sexp-killing-backward
-   [M-down] 'sp-splice-sexp-killing-forward)
+   [M-down] 'sp-splice-sexp-killing-forward
+   "DEL" 'sp-backward-delete-char
+   "C-d" 'sp-delete-char
+   "M-d" 'sp-kill-word
+   "M-DEL" 'sp-backward-kill-word)
   :init
   (add-hook 'prog-mode-hook 'smartparens-mode)
   (add-hook 'smartparens-strict-mode-hook 'show-smartparens-mode)
@@ -505,7 +531,8 @@ friend if it has the same major mode."
       (lispy-mode 1)))
   (add-hook 'smartparens-enabled-hook 'enable-lispy-for-lisps)
   (add-hook 'smartparens-disabled-hook (lambda () (lispy-mode -1)))
-  (setq iedit-toggle-key-default nil)   ; Don't want to use iedit
+  (setq iedit-toggle-key-default nil    ; Don't want to use iedit
+        lispy-delete-atom-from-within t)
   :config
   (with-eval-after-load 'evil
     (nmap :keymaps 'lispy-mode-map
@@ -523,8 +550,8 @@ friend if it has the same major mode."
   (general-define-key :keymaps 'lispy-mode-map
     ;; "DEL" 'lispy-delete-backward-or-splice-or-slurp
     ;; "C-d" 'lispy-delete-or-splice-or-slurp
-    "DEL" 'lispy-delete-backward
-    "C-d" 'lispy-delete
+    ;; "DEL" 'lispy-delete-backward
+    ;; "C-d" 'lispy-delete
     ;; "(" 'lispy-parens-auto-wrap
     ;; "[" 'lispy-brackets-auto-wrap
     ;; "{" 'lispy-braces-auto-wrap
@@ -537,9 +564,8 @@ friend if it has the same major mode."
     ")" 'lispy-right-nostring
     "]" 'lispy-right-nostring
     "}" 'lispy-right-nostring
-    "\"" 'lispy-quotes
+    "\"" nil                            ; lispy-quotes
     "C-a" nil
-    "]" nil
     "C-M-b" 'lispy-backward
     "C-M-f" 'lispy-forward
     "M-(" 'lispy-wrap-round
@@ -551,7 +577,6 @@ friend if it has the same major mode."
     "M-k" 'lispy-kill-sentence
     "C-k" 'lispy-kill
     ";" 'lispy-comment
-    ;; "<return>" 'lispy-alt-line
     "M-RET" 'lispy-meta-return))
 
 (use-package lispyville
@@ -584,14 +609,14 @@ Keep M-n and M-p reserved for history."
 ;;** Git and version control
 (use-package magit
   :general
-  (nvmap :prefix "SPC"
-    "g" 'magit-status)
+  ("s-9" 'magit-status)
+  (nvmap :prefix "SPC" "g" 'magit-status)
   (:keymaps 'magit-mode-map
    "SPC" 'scroll-up
    "DEL" 'scroll-down)
   :config
   (evil-set-initial-state 'magit-submodule-list-mode 'insert)
-  (setq magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1
+  (setq magit-display-buffer-function 'magit-display-buffer-traditional
         magit-popup-show-common-commands nil)
   (defvar hmb--count)
   (defhydra hydra-magit-blame
@@ -642,14 +667,15 @@ Keep M-n and M-p reserved for history."
 (use-package paradox
   :defer t
   :config
-  (load "my-easypg")
   (setq paradox-execute-asynchronously t)
   (with-eval-after-load 'evil (evil-set-initial-state 'paradox-menu-mode 'emacs)))
 
 (use-package projectile
   :diminish projectile-mode
   :general
-  ("C-c k" 'soo--projectile-rg)
+  ("C-c k" 'soo--projectile-rg
+   "s-O" 'projectile-find-file)
+  (nmap "gs" 'soo--projectile-rg)
   ;; https://github.com/jwiegley/use-package/issues/121#issuecomment-237624152
   (nvmap :prefix "SPC" "p" '(:keymap projectile-command-map))
   (:keymaps 'projectile-command-map
@@ -667,7 +693,7 @@ Keep M-n and M-p reserved for history."
         projectile-create-missing-test-files t
         projectile-completion-system 'ivy)
   (defun soo--projectile-rg (&optional initial-input)
-    "Grep for a string in the current directory or project using ag.
+    "Grep for a string in the current directory or project using rg.
 INITIAL-INPUT can be given as the initial minibuffer input."
     (interactive)
     (counsel-rg initial-input (or (ignore-errors (projectile-project-root))
@@ -683,6 +709,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package recentf
   :ensure nil
+  :general ("s-e" 'counsel-recentf)
   :commands (counsel-recentf)
   :config
   (recentf-mode)
@@ -722,7 +749,10 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (use-package smart-mode-line
   :defer t
   :init
-  (sml/setup))
+  (sml/setup)
+  (setq sml/name-width '(29 . 38)
+        ;; 29 is just enough to display two eyebrowse numbers at 80 width
+        sml/mode-width 'full))
 
 (use-package swift-mode :defer t)
 
@@ -812,13 +842,8 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package yaml-mode :defer t)
 
-(use-package eldoc
-  :defer t
-  :config
-  (global-eldoc-mode -1))
-
 ;;** Basic Editing
-(setq-default fill-column 80)
+(setq-default fill-column 90)
 (add-hook 'text-mode-hook 'visual-line-mode)
 (diminish 'auto-fill-function)          ; auto-fill-mode is called this
 
@@ -877,9 +902,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
    "s" #'mc/sort-regions
    "l" #'mc/edit-lines
    "C-a" #'mc/edit-beginnings-of-lines
-   "C-e" #'mc/edit-ends-of-lines)
-  :config
-  (defalias 'mc/cursor-is-bar (lambda () ())))
+   "C-e" #'mc/edit-ends-of-lines))
 
 (use-package hungry-delete :defer t)
 

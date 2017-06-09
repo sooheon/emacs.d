@@ -1,6 +1,6 @@
 ;;
 
-;;;### (autoloads nil "auto" "auto.el" (22770 18430 0 0))
+;;;### (autoloads nil "auto" "auto.el" (22780 22861 0 0))
 ;;; Generated autoloads from auto.el
 
 (autoload 'smart-move-beginning-of-line "auto" "\
@@ -162,7 +162,7 @@ This command does the reverse of `fill-region'.
 ;;;***
 
 ;;;### (autoloads nil "modes/soo-clojure" "modes/soo-clojure.el"
-;;;;;;  (22742 36910 0 0))
+;;;;;;  (22805 60513 0 0))
 ;;; Generated autoloads from modes/soo-clojure.el
 
 (autoload 'soo-clojure-hook "modes/soo-clojure" "\
@@ -173,7 +173,7 @@ This command does the reverse of `fill-region'.
 ;;;***
 
 ;;;### (autoloads nil "modes/soo-haskell" "modes/soo-haskell.el"
-;;;;;;  (22694 26521 0 0))
+;;;;;;  (22777 36229 0 0))
 ;;; Generated autoloads from modes/soo-haskell.el
 
 (autoload 'soo-haskell-hook "modes/soo-haskell" "\
@@ -183,7 +183,7 @@ This command does the reverse of `fill-region'.
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22771 12983
+;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22779 12790
 ;;;;;;  0 0))
 ;;; Generated autoloads from modes/soo-org.el
 
@@ -199,26 +199,15 @@ This command does the reverse of `fill-region'.
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22743
-;;;;;;  46638 0 0))
-;;; Generated autoloads from modes/soo-python.el
-
-(autoload 'soo-python-hook "modes/soo-python" "\
-
-
-\(fn)" nil nil)
-
-;;;***
-
 ;;;### (autoloads nil nil ("custom.el" "keybinds.el" "minimal-init.el"
-;;;;;;  "modes/soo-ess.el" "modes/soo-evil.el" "modes/soo-ivy.el"
-;;;;;;  "modes/soo-rust.el" "my-easypg.el" "on-trial.el" "packages.el")
-;;;;;;  (22742 44018 0 0))
+;;;;;;  "modes/soo-c.el" "modes/soo-ess.el" "modes/soo-evil.el" "modes/soo-ivy.el"
+;;;;;;  "modes/soo-rust.el" "on-trial.el" "packages.el") (22801 49676
+;;;;;;  0 0))
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22742
-;;;;;;  37276 0 0))
+;;;### (autoloads nil "modes/soo-python" "modes/soo-python.el" (22777
+;;;;;;  36229 0 0))
 ;;; Generated autoloads from modes/soo-python.el
 
 (autoload 'soo-python-hook "modes/soo-python" "\

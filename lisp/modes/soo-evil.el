@@ -2,10 +2,11 @@
   :general
   (imap "C-w" 'evil-delete-backward-word
         "C-r" 'evil-paste-from-register)
-  (nvmap "C-n" 'evil-next-visual-line
-         "C-p" 'evil-previous-visual-line)
+  (nvmap "C-n" 'next-line
+         "C-p" 'previous-line)
   :init
   (setq evil-want-C-u-scroll t
+        evil-scroll-line-count 2
         evil-cross-lines t
         evil-symbol-word-search t
         evil-move-cursor-back t
@@ -103,17 +104,47 @@
         "C-S-x" 'evil-numbers/dec-at-pt))
 
 (use-package sentence-navigation
-  :disabled t
-  :defer t
-  :general
-  (mmap ")" 'sentence-nav-evil-forward
-        "(" 'sentence-nav-evil-backward)
+ :disabled t
+ :defer t
+ :general
+ (mmap ")" 'sentence-nav-evil-forward
+       "(" 'sentence-nav-evil-backward)
   (nmap "g)" 'sentence-nav-evil-forward-end
         "g(" 'sentence-nav-evil-backward-end)
   (otomap "s" 'sentence-nav-evil-a-sentence)
   (itomap "s" 'sentence-nav-evil-inner-sentence))
 
 (use-package evil-multiedit
-  :defer t)
+  :disabled t
+  :general
+  (nvmap "s-d" 'evil-multiedit-match-and-next
+         "s-D" 'evil-multiedit-match-and-prev)
+  (imap "s-d" 'evil-multiedit-toggle-marker-here)
+  (:keymaps '(evil-multiedit-state-map evil-multiedit-insert-state-map)
+   "<return>" 'evil-multiedit-toggle-or-restrict-region
+   "C-n" 'evil-multiedit-next
+   "C-p" 'evil-multiedit-prev)
+  (mmap "<return>" 'evil-multiedit-toggle-or-restrict-region))
+
+(use-package evil-mc
+  :disabled t
+  :init
+  (global-evil-mc-mode 1)
+  :general
+  ("s-d" #'evil-mc-make-cursor-here))
+
+(blink-cursor-mode -1)
+(use-package frame
+  :disabled t
+  :ensure nil
+  :init
+  (setq blink-cursor-blinks 0
+        blink-cursor-delay 0)
+  (defun blink-cursor-mode-on () (blink-cursor-mode 1))
+  (defun blink-cursor-mode-off () (blink-cursor-mode -1))
+  (add-hook 'evil-insert-state-entry-hook 'blink-cursor-mode-on)
+  (add-hook 'evil-insert-state-exit-hook 'blink-cursor-mode-off)
+  (add-hook 'evil-normal-state-entry-hook 'blink-cursor-mode-off)
+  (add-hook 'evil-visual-state-entry-hook 'blink-cursor-mode-off))
 
 (provide 'soo-evil)

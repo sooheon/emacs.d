@@ -47,34 +47,6 @@ window in frame, call `bury-buffer'."
    "do shell script \"open -a iTerm\"\n"))
 
 ;;;###autoload
-(defun soo-terminal-pop ()
-  "If iTerm is not open, launch it. If iTerm session is busy, split
-off a new pane. Switch to iTerm and cd to default-directory."
-  (interactive)
-  (do-applescript
-   (format "
-tell application \"iTerm\"
-  activate
-  try
-    set w to current window
-  on error
-    set w to (make new window)
-  end try
-
-  tell w
-    if (is at shell prompt of the current session) then
-      tell the current session to write text \"cd \'%s\'\"
-    else
-      tell current session to split horizontally with default profile
-      tell application \"System Events\" to keystroke \"]\" using command down
-      tell the current session to write text \"cd \'%s\'\"
-    end if
-  end tell
-end tell"
-           (expand-file-name (or default-directory "~"))
-           (expand-file-name (or default-directory "~")))))
-
-;;;###autoload
 (defun soo-terminal-pop-tmux ()
   (interactive)
   (do-applescript
@@ -88,7 +60,7 @@ end tell"
            (or default-directory "~"))))
 
 ;;;###autoload
-(defun soo-terminal-pop-new-tab ()
+(defun soo-terminal-pop ()
   (interactive)
   (do-applescript
    (format "

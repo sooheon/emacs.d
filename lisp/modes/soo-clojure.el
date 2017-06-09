@@ -11,7 +11,8 @@
   (load-library "clojure")
   ;; Indentation
   (define-clojure-indent
-    (match :defn)))
+    (match :defn))
+  (setq clojure-align-forms-automatically t))
 
 (use-package clj-refactor
   :diminish clj-refactor-mode
@@ -48,7 +49,7 @@
   (setq cider-prompt-for-symbol nil
         nrepl-hide-special-buffers t
         cider-repl-pop-to-buffer-on-connect nil
-        cider-prompt-save-file-on-load 'always-save
+        cider-prompt-save-file-on-load 't
         cider-repl-use-clojure-font-lock nil
         cider-font-lock-dynamically '(macro core deprecated)
         cider-mode-line '(:eval (format " %s" (cider--modeline-info)))
@@ -62,20 +63,14 @@
     "M-n" nil
     "M-p" nil)
 
-  (defun cider-figwheel-repl ()
-    (interactive)
-    (setq-local cider-cljs-lein-repl
-                "(do (require 'figwheel-sidecar.repl-api)
-                     (figwheel-sidecar.repl-api/start-figwheel!)
-                     (figwheel-sidecar.repl-api/cljs-repl))")
-    (cider-jack-in-clojurescript))
-  (general-define-key :keymaps 'cider-mode-map
-    "C-c C-M-j" 'cider-figwheel-repl)
   (defun soo-cider-repl-hook ()
     (toggle-truncate-lines 1)
     (company-mode)
+    (cider-company-enable-fuzzy-completion)
     (smartparens-mode 1))
   (add-hook 'cider-repl-mode-hook 'soo-cider-repl-hook)
+  (add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion)
+
   (evil-define-key 'normal cider-mode-map "K" 'cider-doc)
   (evil-set-initial-state 'cider-repl-mode 'emacs)
   (evil-set-initial-state 'cider-docview-mode 'emacs)
