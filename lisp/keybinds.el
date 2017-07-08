@@ -14,11 +14,15 @@
  [remap just-one-space] 'oscillate-spacing
  [remap apropos-command] 'apropos
  "s-C" 'count-words
- ;; "s-h" 'evil-window-left
- ;; "s-j" 'evil-window-down
- ;; "s-k" 'evil-window-up
- ;; "s-l" 'evil-window-right
- "<C-tab>" 'other-window
+ "s-h" 'evil-window-left
+ "s-j" 'evil-window-down
+ "s-k" 'evil-window-up
+ "s-l" 'evil-window-right
+ "C-s-h" 'evil-window-move-far-left
+ "C-s-j" 'evil-window-move-very-bottom
+ "C-s-k" 'evil-window-move-very-top
+ "C-s-l" 'evil-window-move-far-right
+ "<c-tab>" 'other-window
  "s-s" 'save-buffer
  "s-q" 'save-buffers-kill-terminal
  "s-v" 'yank

@@ -11,8 +11,9 @@
   (load-library "clojure")
   ;; Indentation
   (define-clojure-indent
-    (match :defn))
-  (setq clojure-align-forms-automatically t))
+    (match :defn)
+    (s/fdef :defn))
+  (setq clojure-align-forms-automatically nil))
 
 (use-package clj-refactor
   :diminish clj-refactor-mode
@@ -26,7 +27,7 @@
   ;;   "c" (general-key-dispatch 'lispyville-change
   ;;         "r" (general-simulate-keys "s-,")
   ;;         "c" 'evil-change-whole-line))
-  (setq cljr-favor-prefix-notation nil
+  (setq cljr-favor-prefix-notation t
         cljr-warn-on-eval nil)
   (setq cljr-magic-require-namespaces
         '(("io" . "clojure.java.io")
@@ -44,7 +45,8 @@
 (use-package cider
   :defer t
   :general
-  (nmap :keymaps 'cider-mode-map "K"'cider-doc)
+  (nmap :keymaps 'cider-mode-map "K" 'cider-doc)
+  (nmap :keymaps 'cider-repl-mode-map "," 'cider-repl-handle-shortcut)
   :config
   (setq cider-prompt-for-symbol nil
         nrepl-hide-special-buffers t
@@ -56,6 +58,12 @@
         cider-default-repl-command "boot"
         cider-pprint-fn 'fipp
         cider-repl-use-pretty-printing t)
+
+  (nmap :keymaps '(cider-popup-buffer-mode-map
+                   cider-docview-mode-map
+                   cider-inspector-mode-map
+                   cider-test-report-mode-map)
+    "q" 'cider-popup-buffer-quit-function)
 
   (iemap :keymaps 'cider-repl-mode-map
     "C-n" 'cider-repl-next-input
@@ -72,13 +80,12 @@
   (add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion)
 
   (evil-define-key 'normal cider-mode-map "K" 'cider-doc)
-  (evil-set-initial-state 'cider-repl-mode 'emacs)
-  (evil-set-initial-state 'cider-docview-mode 'emacs)
-  (evil-set-initial-state 'cider-stacktrace-mode 'emacs)
-  (evil-set-initial-state 'cider-macroexpansion-mode 'emacs)
-  (evil-set-initial-state 'cider-browse-ns-mode 'emacs)
-  (evil-set-initial-state 'cider-test-report-mode 'emacs)
-  (advice-add 'cider-find-var :after #'recenter-top-bottom))
+  (evil-set-initial-state 'cider-repl-mode 'insert)
+  (evil-set-initial-state 'cider-docview-mode 'normal)
+  (evil-set-initial-state 'cider-stacktrace-mode 'insert)
+  (evil-set-initial-state 'cider-macroexpansion-mode 'insert)
+  (evil-set-initial-state 'cider-browse-ns-mode 'insert)
+  (evil-set-initial-state 'cider-test-report-mode 'insert))
 
 (use-package inf-clojure
   :defer t

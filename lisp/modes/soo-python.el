@@ -10,19 +10,27 @@
   (add-hook 'inferior-python-mode-hook 'smartparens-mode)
   (nmap :keymaps 'inferior-python-mode-map "C-d" 'evil-scroll-down))
 
-(use-package py-yapf
-  :commands py-yapf-buffer
+;; (use-package py-yapf
+;;   :commands py-yapf-buffer
+;;   :general
+;;   (:keymaps 'python-mode-map "C-c C-c" 'py-yapf-and-send-buffer)
+;;   :init
+;;   (nvmap :prefix "SPC"
+;;          :keymaps 'python-mode-map
+;;          "=" 'py-yapf-buffer)
+;;   :config
+;;   (defun py-yapf-and-send-buffer ()
+;;     (interactive)
+;;     (py-yapf-buffer)
+;;     (python-shell-send-buffer)))
+
+(use-package yapfify
+  :defer t
   :general
-  (:keymaps 'python-mode-map "C-c C-c" 'py-yapf-and-send-buffer)
+  (nvmap :keymaps 'python-mode-map
+    :prefix "SPC" "=" 'yapify-buffer)
   :init
-  (nvmap :prefix "SPC"
-         :keymaps 'python-mode-map
-         "=" 'py-yapf-buffer)
-  :config
-  (defun py-yapf-and-send-buffer ()
-    (interactive)
-    (py-yapf-buffer)
-    (python-shell-send-buffer)))
+  (add-hook 'python-mode-hook 'yapf-mode))
 
 (use-package jedi
   :defer t

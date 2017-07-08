@@ -10,13 +10,16 @@
  '(ansi-term-color-vector
    [unspecified "#090300" "#db2d20" "#01a252" "#fded02" "#01a0e4" "#a16a94" "#01a0e4" "#a5a2a2"] t)
  '(auto-image-file-mode t)
- '(cider-boot-parameters "dev")
+ '(cider-boot-parameters "cider repl -s wait")
  '(cider-cljs-boot-repl
    "(do (require 'adzerk.boot-cljs-repl) (adzerk.boot-cljs-repl/start-repl))")
  '(cider-cljs-lein-repl
    "(do (require 'figwheel-sidecar.repl-api) (figwheel-sidecar.repl-api/start-figwheel!) (figwheel-sidecar.repl-api/cljs-repl))")
+ '(cider-preferred-build-tool "boot")
+ '(cider-repl-display-help-banner nil)
  '(cider-save-file-on-load (quote t))
- '(cljr-favor-prefix-notation nil)
+ '(cljr-clojure-test-namespace-under-test-alias "")
+ '(cljr-favor-prefix-notation t)
  '(compilation-message-face (quote default))
  '(cua-global-mark-cursor-color "#2aa198")
  '(cua-normal-cursor-color "#657b83")
@@ -31,6 +34,7 @@
  '(epa-pinentry-mode (quote loopback))
  '(evil-disable-insert-state-bindings t)
  '(evil-lookup-func (quote man))
+ '(evil-magit-want-horizontal-movement nil)
  '(evil-want-C-u-scroll t)
  '(evil-want-C-w-delete t)
  '(eyebrowse-mode t)
@@ -108,7 +112,7 @@
  '(org-preview-latex-default-process (quote dvisvgm))
  '(package-selected-packages
    (quote
-    (frame company-restclient restclient restclient-mode eyebrowse org-board terminal-here company-sourcekit swift-mode smart-mode-line org-brain org-plus-contrib paradox async hy-mode vim-empty-lines ein circe-notifications vlf hl-todo base16-theme farmhouse-theme yaml-mode doom-themes ace-window rainbow-mode org-download htmlize rust-mode haskell-mode ess-smart-equals ess ess-site lpy tex cdlatex texmathp magithub suggest wgrep general hungry-delete hungry-delete-mode toml-mode soap atom-one-dark-theme ggtags cpputils-cmake irony clang-format company-statistics osx-trash help evil-cleverparens-text-objects dired racer cargo golden-ratio jade yasnippet evil-evilified-state artbollocks-mode company-quickhelp evil-exchange clj-refactor with-editor undo-tree swiper smartparens queue pyenv-mode projectile magit ivy hydra flycheck finalize evil diminish dash counsel company closql clojure-mode avy anaconda-mode ace-link lispyville auctex exec-path-from-shell evil-mc git-modes function-args zenburn-theme ws-butler worf window-numbering which-key use-package typo term-manager super-save speck spacemacs-theme solarized-theme smex shm shell-pop shackle sentence-navigation reveal-in-osx-finder rainbow-delimiters pyenv-mode-auto py-yapf pdf-tools pandoc-mode osx-dictionary multiple-cursors markdown-mode jedi ivy-hydra intero inf-clojure hindent highlight-escape-sequences gist flyspell-correct flx expand-region evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-multiedit evil-matchit evil-magit evil-commentary epkg elisp-slime-nav diff-hl counsel-projectile company-anaconda circe cider bind-map auto-compile)))
+    (persp-mode window-purpose yapfify frame company-restclient restclient restclient-mode eyebrowse org-board terminal-here company-sourcekit swift-mode smart-mode-line org-brain org-plus-contrib paradox async hy-mode vim-empty-lines ein circe-notifications vlf hl-todo base16-theme farmhouse-theme yaml-mode doom-themes ace-window rainbow-mode org-download htmlize rust-mode haskell-mode ess-smart-equals ess ess-site lpy tex cdlatex texmathp magithub suggest wgrep general hungry-delete hungry-delete-mode toml-mode soap atom-one-dark-theme ggtags cpputils-cmake irony clang-format company-statistics osx-trash help evil-cleverparens-text-objects dired racer cargo golden-ratio jade yasnippet artbollocks-mode company-quickhelp evil-exchange clj-refactor with-editor undo-tree swiper smartparens queue pyenv-mode projectile magit ivy hydra flycheck finalize evil diminish dash counsel company closql clojure-mode avy anaconda-mode ace-link lispyville auctex exec-path-from-shell evil-mc git-modes function-args zenburn-theme ws-butler worf window-numbering which-key use-package typo term-manager super-save speck spacemacs-theme solarized-theme smex shm shell-pop shackle sentence-navigation reveal-in-osx-finder rainbow-delimiters pyenv-mode-auto py-yapf pdf-tools pandoc-mode osx-dictionary multiple-cursors markdown-mode jedi ivy-hydra intero inf-clojure hindent highlight-escape-sequences gist flyspell-correct flx expand-region evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-multiedit evil-matchit evil-magit evil-commentary epkg elisp-slime-nav diff-hl counsel-projectile company-anaconda circe cider bind-map auto-compile)))
  '(paradox-automatically-star t)
  '(paradox-github-token t)
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
@@ -117,6 +121,18 @@
  '(projectile-globally-ignored-directories
    (quote
     (".idea" ".ensime_cache" ".eunit" ".git" ".hg" ".fslckout" "_FOSSIL_" ".bzr" "_darcs" ".tox" ".svn" ".stack-work" "ltximg")))
+ '(purpose-user-mode-purposes
+   (quote
+    ((prog-mode . edit)
+     (text-mode . edit)
+     (comint-mode . terminal)
+     (occur-mode . search)
+     (grep-mode . search)
+     (compilation-mode . search)
+     (package-menu-mode . package)
+     (paradox-menu-mode . package))))
+ '(purpose-user-name-purposes (quote (("\".gitignore\"" . edit))))
+ '(purpose-user-regexp-purposes (quote (("\"^ \\\\*Minibuf-[0-9]*\\\\*$\" " . minibuf))))
  '(rainbow-identifiers-choose-face-function (quote rainbow-identifiers-cie-l*a*b*-choose-face))
  '(rainbow-identifiers-cie-l*a*b*-color-count 1024)
  '(rainbow-identifiers-cie-l*a*b*-lightness 80)
@@ -124,7 +140,9 @@
  '(ring-bell-function (quote ignore))
  '(safe-local-variable-values
    (quote
-    ((outline-minor-mode)
+    ((cider-boot-parameters . "repl -s -H :: wait dev")
+     (cider-boot-parameters . "repl -s H :: wait dev")
+     (outline-minor-mode)
      (whitespace-style face tabs spaces trailing lines space-before-tab::space newline indentation::space empty space-after-tab::space space-mark tab-mark newline-mark)
      (checkdoc-package-keywords-flag))))
  '(scroll-bar-mode nil)

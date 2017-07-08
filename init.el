@@ -33,7 +33,7 @@
 (setq tool-bar-mode nil)
 (setq menu-bar-mode nil)
 (setq scroll-bar-mode nil)
-(setq line-spacing 0.1)
+(setq line-spacing 1)
 (setq inhibit-startup-screen t
       inhibit-message nil
       initial-scratch-message nil
@@ -62,8 +62,8 @@
 ;;** editor behavior
 (put 'scroll-left 'disabled nil)
 (setq scroll-margin 2
-      scroll-preserve-screen-position t
-      scroll-conservatively 101)
+      scroll-preserve-screen-position 'always
+      scroll-conservatively 0)
 (add-to-list 'default-frame-alist '(width . 90))
 (progn ;; Deal with large files
   ;; (setq jit-lock-defer-time 0)
@@ -115,9 +115,6 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
-(with-eval-after-load 'evil
-  (evil-set-initial-state 'package-menu-mode 'emacs))
-
 (eval-when-compile (require 'use-package))
 (setq use-package-always-ensure t)
 
@@ -158,7 +155,7 @@
 ;; (require 'soo-rust)
 (require 'soo-c)
 (require 'soo-clojure)
-;; (require 'soo-ess)
+(require 'soo-ess)
 (require 'soo-python)
 ;; (add-hook 'haskell-mode-hook 'soo-haskell-hook)
 (add-hook 'org-mode-hook 'soo-org-hook)
@@ -183,8 +180,7 @@
   :commands spacemacs/avy-open-url
   :general
   ("s-g" 'evil-avy-goto-word-1
-   [remap goto-line] 'evil-avy-goto-line
-   "s-l" 'evil-avy-goto-line)
+   [remap goto-line] 'evil-avy-goto-line)
   (nmap :prefix "SPC" "xo" 'spacemacs/avy-open-url)
   :config
   (setq avy-keys sooheon-avy-keys)
@@ -252,7 +248,7 @@
   (nmap "-" 'dired-jump)
   :config
   (nmap :keymaps 'dired-mode-map
-    "-" 'dired-jump
+    "-" '(lambda () (interactive) (find-alternate-file ".."))
     "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
     "got" 'soo-terminal-pop
     "gof" 'reveal-in-osx-finder
@@ -260,7 +256,7 @@
     "=" 'vinegar/dired-diff
     "I" 'vinegar/dotfiles-toggle
     "~" '(lambda () (interactive) (find-alternate-file "~/"))
-    "<return>" 'dired-find-file
+    "<return>" 'dired-find-alternate-file
     "f" 'counsel-find-file
     "J" 'dired-goto-file
     "C-f" nil                           ; 'find-name-dired
@@ -269,6 +265,7 @@
     "K" 'dired-do-kill-lines
     "r" 'revert-buffer
     "C-r" 'dired-do-redisplay
+    "RET" 'dired-find-alternate-file
     "e" 'ora-ediff-files)
   (setq dired-listing-switches "-alGh1v --group-directories-first")
   (defvar dired-dotfiles-show-p)
@@ -366,21 +363,6 @@ friend if it has the same major mode."
             major-mode))))
   (setq dabbrev-friend-buffer-function #'soo--dabbrev-friend-buffer))
 
-(use-package eyebrowse
-  :init
-  (eyebrowse-setup-evil-keys)
-  (eyebrowse-mode t)
-  :general
-  (nmap :keymaps 'eyebrowse-mode-map :prefix "g"
-        "1" 'eyebrowse-switch-to-window-config-1
-        "2" 'eyebrowse-switch-to-window-config-2
-        "3" 'eyebrowse-switch-to-window-config-3
-        "4" 'eyebrowse-switch-to-window-config-4
-        "x" 'eyebrowse-close-window-config)
-  :config
-  (setq eyebrowse-wrap-around t
-        eyebrowse-switch-back-and-forth t))
-
 (use-package flycheck
   :defer t
   :config
@@ -449,7 +431,6 @@ friend if it has the same major mode."
   :init
   (setq help-window-select t)
   :config
-  (evil-set-initial-state 'help-mode 'emacs)
   (add-hook 'help-mode-hook (lambda () (toggle-truncate-lines -1))))
 
 (use-package hl-todo
@@ -477,6 +458,8 @@ friend if it has the same major mode."
     :config
     (add-to-list 'company-backends 'company-restclient)))
 
+(with-eval-after-load 'warnings (add-to-list 'warning-suppress-types '(undo discard-info)))
+
 ;;** Parens and lisp
 (use-package smartparens
   :diminish (smartparens-mode . "sp")
@@ -491,8 +474,8 @@ friend if it has the same major mode."
    "M-S" 'sp-splice-sexp
    [M-up] 'sp-splice-sexp-killing-backward
    [M-down] 'sp-splice-sexp-killing-forward
-   "DEL" 'sp-backward-delete-char
-   "C-d" 'sp-delete-char
+   ;; "DEL" 'sp-backward-delete-char
+   ;; "C-d" 'sp-delete-char
    "M-d" 'sp-kill-word
    "M-DEL" 'sp-backward-kill-word)
   :init
@@ -532,12 +515,11 @@ friend if it has the same major mode."
   (add-hook 'smartparens-enabled-hook 'enable-lispy-for-lisps)
   (add-hook 'smartparens-disabled-hook (lambda () (lispy-mode -1)))
   (setq iedit-toggle-key-default nil    ; Don't want to use iedit
-        lispy-delete-atom-from-within t)
+        lispy-delete-atom-from-within nil)
   :config
   (with-eval-after-load 'evil
     (nmap :keymaps 'lispy-mode-map
-      "gd" 'lispy-goto-symbol
-      "M-." 'lispy-goto-symbol))
+      "gd" 'lispy-goto-symbol))
   (lispy-set-key-theme '(special c-digits))
   (setq lispy-compat '(edebug cider)
         lispy-avy-keys sooheon-avy-keys
@@ -550,8 +532,8 @@ friend if it has the same major mode."
   (general-define-key :keymaps 'lispy-mode-map
     ;; "DEL" 'lispy-delete-backward-or-splice-or-slurp
     ;; "C-d" 'lispy-delete-or-splice-or-slurp
-    ;; "DEL" 'lispy-delete-backward
-    ;; "C-d" 'lispy-delete
+    "DEL" 'lispy-delete-backward
+    "C-d" 'lispy-delete
     ;; "(" 'lispy-parens-auto-wrap
     ;; "[" 'lispy-brackets-auto-wrap
     ;; "{" 'lispy-braces-auto-wrap
@@ -564,7 +546,7 @@ friend if it has the same major mode."
     ")" 'lispy-right-nostring
     "]" 'lispy-right-nostring
     "}" 'lispy-right-nostring
-    "\"" nil                            ; lispy-quotes
+    "\"" 'lispy-quotes
     "C-a" nil
     "C-M-b" 'lispy-backward
     "C-M-f" 'lispy-forward
@@ -611,28 +593,14 @@ Keep M-n and M-p reserved for history."
   :general
   ("s-9" 'magit-status)
   (nvmap :prefix "SPC" "g" 'magit-status)
-  (:keymaps 'magit-mode-map
-   "SPC" 'scroll-up
-   "DEL" 'scroll-down)
   :config
-  (evil-set-initial-state 'magit-submodule-list-mode 'insert)
   (setq magit-display-buffer-function 'magit-display-buffer-traditional
-        magit-popup-show-common-commands nil)
-  (defvar hmb--count)
-  (defhydra hydra-magit-blame
-    (:color pink
-     :body-pre (progn (setq hmb--count 1) ; var to track recursive blames
-                      (call-interactively 'magit-blame)))
-    "Magit blame"
-    ("b" (progn (call-interactively 'magit-blame)
-                (setq hmb--count (1+ hmb--count))) "backwards")
-    ("f" (progn (magit-blame-quit)
-                ;; once magit-blame-mode is no-longer active, quit hydra
-                (unless (bound-and-true-p magit-blame-mode)
-                  (setq hydra-deactivate t))) "forwards")
-    ("q" (dotimes (i hmb--count)
-           (call-interactively 'magit-blame-quit)) "quit"
-           :color blue)))
+        magit-popup-show-common-commands nil))
+
+(use-package evil-magit
+  :init
+  (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)
+  (setq evil-magit-want-horizontal-movement nil))
 
 (use-package diff-hl
   :defer 2
@@ -854,10 +822,10 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (mmap :keymaps 'visual-line-mode
     "k" 'evil-previous-visual-line
     "j" 'evil-next-visual-line)
+  (nmap :keymaps '(special-mode-map messages-buffer-mode-map)
+    "q" 'quit-window)
   :init
   (add-hook 'visual-line-mode-hook 'evil-normalize-keymaps)
-  (evil-set-initial-state 'messages-buffer-mode 'insert)
-  (evil-set-initial-state 'special-mode 'insert)
   (column-number-mode))
 
 (use-package ws-butler
@@ -906,6 +874,44 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package hungry-delete :defer t)
 
+;;** Window mgmt
+(use-package eyebrowse
+  :disabled t
+  :init
+  (eyebrowse-setup-evil-keys)
+  (eyebrowse-mode t)
+  :general
+  (nmap :keymaps 'eyebrowse-mode-map :prefix "g"
+    "1" 'eyebrowse-switch-to-window-config-1
+    "2" 'eyebrowse-switch-to-window-config-2
+    "3" 'eyebrowse-switch-to-window-config-3
+    "4" 'eyebrowse-switch-to-window-config-4
+    "x" 'eyebrowse-close-window-config)
+  (:keymaps 'eyebrowse-mode-map
+   "s-1" 'eyebrowse-switch-to-window-config-1
+   "s-2" 'eyebrowse-switch-to-window-config-2
+   "s-3" 'eyebrowse-switch-to-window-config-3
+   "s-4" 'eyebrowse-switch-to-window-config-4)
+  :config
+  (setq eyebrowse-wrap-around t
+        eyebrowse-switch-back-and-forth nil))
+
+(use-package window-purpose
+  :disabled t
+  :defer t
+  :config
+  (purpose-mode 1)
+  (setq purpose-use-default-configuration nil)
+  (purpose-compile-user-configuration))
+
+(use-package persp-mode
+  :disabled t
+  :defer t
+  :general
+  ("s-p" '(:keymap persp-key-map))
+  :init (persp-mode 1)
+  :config (setq persp-autokill-buffer-on-remove 'kill-weak))
+
 ;;** Completion and expansion
 (use-package hippie-exp
   :ensure nil
@@ -926,8 +932,8 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (setq company-tooltip-align-annotations t
         company-dabbrev-ignore-case nil
         company-dabbrev-downcase nil
-        company-idle-delay 0.4
-        company-minimum-prefix-length 3
+        company-idle-delay 0.3
+        company-minimum-prefix-length 2
         company-elisp-detect-function-context nil
         company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
                             company-preview-if-just-one-frontend)
@@ -954,3 +960,4 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (put 'scroll-left 'disabled nil)
 
 ;;; init.el ends here
+(put 'dired-find-alternate-file 'disabled nil)
