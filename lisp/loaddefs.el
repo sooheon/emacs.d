@@ -183,7 +183,7 @@ This command does the reverse of `fill-region'.
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22779 12790
+;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22901 43626
 ;;;;;;  0 0))
 ;;; Generated autoloads from modes/soo-org.el
 

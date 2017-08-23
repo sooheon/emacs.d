@@ -1,6 +1,6 @@
 ;;; init.el --- user-init-file
 
-(setq gc-cons-threshold (* 24 1024 1024))
+(setq gc-cons-threshold (* 200 1024 1024))
 
 ;;* loads
 (defvar my-load-paths
@@ -10,12 +10,14 @@
             ;; "lib/org-mode/lisp"
             "lisp/themes"
             "lisp/modes"
+            "lib/emacs-libvterm"
             "lib/clojure-semantic"
             "lib/lpy"
             "lib/no-littering"
             "lib/org-mode"
             "lib/soap"
-            "lib/structured-haskell-mode")))
+            "lib/structured-haskell-mode"
+            "lib/company-simple-complete")))
 
 (mapc (apply-partially 'add-to-list 'load-path) my-load-paths)
 
@@ -60,13 +62,17 @@
       minibuffer-message-timeout 1)
 (minibuffer-depth-indicate-mode 1)
 ;;** editor behavior
+(setq tab-always-indent t)
 (put 'scroll-left 'disabled nil)
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))
+      mouse-wheel-progressive-speed nil)
 (setq scroll-margin 2
       scroll-preserve-screen-position 'always
-      scroll-conservatively 0)
+      scroll-conservatively 100)
 (add-to-list 'default-frame-alist '(width . 90))
+(show-paren-mode 1)
 (progn ;; Deal with large files
-  ;; (setq jit-lock-defer-time 0)
+  (setq jit-lock-defer-time 0)
   (setq-default bidi-display-reordering nil) ; http://tinyurl.com/jc9corx
   (add-hook 'find-file-hook #'my-find-huge-file-literally-hook))
 ;; Don't indent lists starting with keywords
@@ -94,13 +100,12 @@
 (put 'narrow-to-region 'disabled nil)
 
 ;;** shell
-(when (executable-find "fish")
-  (setq shell-file-name "/usr/local/bin/fish"
-        explicit-shell-file-name "/usr/local/bin/fish"))
-(setenv "LANG" "en_US.UTF-8")
+;; (when (executable-find "fish")
+;;   (setq shell-file-name (executable-find "fish")))
 
 ;;* Bootstrap
 ;;** Package init
+(setenv "LANG" "en_US.UTF-8")
 (setq no-littering-etc-directory (expand-file-name ".etc/" user-emacs-directory)
       no-littering-var-directory (expand-file-name ".var/" user-emacs-directory))
 (require 'no-littering)
@@ -116,22 +121,20 @@
   (package-install 'use-package))
 
 (eval-when-compile (require 'use-package))
-(setq use-package-always-ensure t)
-
-(use-package async
-  :after paradox
-  :config
-  (async-bytecomp-package-mode t))
 
 ;;** Set up environment
 (use-package exec-path-from-shell
-  :if (and (eq system-type 'darwin) (display-graphic-p))
+  :ensure t
+  :if (memq window-system '(mac ns x))
+  :commands (shell-command eval-expression)
+  :defer 5
   :config
   (setq exec-path-from-shell-check-startup-files nil)
   (exec-path-from-shell-initialize))
 
 ;;** OSX
 (use-package osx-trash
+  :ensure t
   :if (eq system-type 'darwin)
   :init
   (setq delete-by-moving-to-trash t)
@@ -144,6 +147,7 @@
 
 ;;** keybinds
 (use-package general
+  :ensure t
   :demand t
   :config
   (general-evil-setup t t)
@@ -163,6 +167,7 @@
 
 ;;** general modes config
 (use-package auto-compile
+  :ensure t
   :config
   (auto-compile-on-load-mode)
   (auto-compile-on-save-mode)
@@ -177,10 +182,10 @@
 (defvar sooheon-avy-keys '(?w ?e ?r ?s ?d ?x ?c ?u ?i ?o ?v ?n ?m ?l ?k ?j ?f))
 
 (use-package avy
+  :ensure t
   :commands spacemacs/avy-open-url
   :general
-  ("s-g" 'evil-avy-goto-word-1
-   [remap goto-line] 'evil-avy-goto-line)
+  ([remap goto-line] 'evil-avy-goto-line)
   (nmap :prefix "SPC" "xo" 'spacemacs/avy-open-url)
   :config
   (setq avy-keys sooheon-avy-keys)
@@ -196,19 +201,31 @@
       (browse-url-at-point))))
 
 (use-package ace-link
+  :ensure t
   :commands (ace-link-info ace-link-woman ace-link-help ace-link-custom)
   :general
   (:keymaps 'help-mode-map "o" 'ace-link-help)
   :config
   (ace-link-setup-default))
 
+(use-package link-hint
+  :ensure t
+  :disabled t
+  :defer 6
+  :general
+  (nmap :prefix "SPC" "o" 'link-hint-open-link
+    (:prefix "C-c l" "o" 'link-hint-open-link "c" 'link-hint-copy-link)
+    (:keymaps 'help-mode-map "o" 'link-hint-open-link)))
+
 (use-package ace-window
+  :ensure t
   :general
   ("C-x o" 'ace-window)
   :config
   (setq aw-keys sooheon-avy-keys))
 
 (use-package autorevert
+  :ensure t
   :defer 2
   :diminish auto-revert-mode
   :config
@@ -217,6 +234,7 @@
         auto-revert-verbose nil))
 
 (use-package compile
+  :ensure t
   :defer t
   :init
   (define-key prog-mode-map [f9] #'compile)
@@ -226,37 +244,37 @@
         compilation-skip-threshold 2))
 
 (use-package conf-mode
-  :ensure nil
+  :ensure t
   :mode ("/\\.[^/]*rc" . conf-mode))
 
 (use-package cc-mode
-  :ensure nil
+  :ensure t
   :defer t
   :mode ("\\.h\\'" . c-mode)
   :config
   (c-toggle-auto-hungry-state 1))
 
 (use-package function-args
+  :ensure t
   :defer t
   :config
   (fa-config-default))
 
 (use-package dired
-  :ensure nil
   :commands dired-jump
   :general
   (nmap "-" 'dired-jump)
   :config
   (nmap :keymaps 'dired-mode-map
-    "-" '(lambda () (interactive) (find-alternate-file ".."))
+    "-" '(lambda () (interactive) (find-file ".."))
     "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
     "got" 'soo-terminal-pop
     "gof" 'reveal-in-osx-finder
     "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1))
     "=" 'vinegar/dired-diff
     "I" 'vinegar/dotfiles-toggle
-    "~" '(lambda () (interactive) (find-alternate-file "~/"))
-    "<return>" 'dired-find-alternate-file
+    "~" '(lambda () (interactive) (find-file "~/"))
+    "<return>" 'dired-find-file
     "f" 'counsel-find-file
     "J" 'dired-goto-file
     "C-f" nil                           ; 'find-name-dired
@@ -265,8 +283,9 @@
     "K" 'dired-do-kill-lines
     "r" 'revert-buffer
     "C-r" 'dired-do-redisplay
-    "RET" 'dired-find-alternate-file
-    "e" 'ora-ediff-files)
+    "RET" 'dired-find-file
+    "e" 'ora-ediff-files
+    "Y" 'ora-dired-rsync)
   (setq dired-listing-switches "-alGh1v --group-directories-first")
   (defvar dired-dotfiles-show-p)
   (defun soo--dired-setup ()
@@ -276,6 +295,7 @@
   (add-hook 'dired-mode-hook 'soo--dired-setup))
 
 (use-package ediff
+  :ensure t
   :defer t
   :commands (ediff-buffers ediff)
   :config
@@ -285,12 +305,14 @@
   (add-hook 'ediff-quit-hook #'winner-undo))
 
 (use-package elisp-slime-nav
+  :ensure t
   :diminish elisp-slime-nav-mode
   :general
   (nmap :keymaps '(emacs-lisp-mode-map lisp-interaction-mode-map)
     "K" 'elisp-slime-nav-describe-elisp-thing-at-point))
 
 (use-package circe
+  :ensure t
   :defer t
   :general
   (nmap :prefix "SPC" "i" 'soo--counsel-circe)
@@ -345,6 +367,7 @@ Circe if no buffers open."
   (setq circe-notifications-alert-style 'osx-notifier))
 
 (use-package dabbrev
+  :ensure t
   :defer t
   :config
   (defun soo--dabbrev-friend-buffer (other-buffer)
@@ -364,6 +387,7 @@ friend if it has the same major mode."
   (setq dabbrev-friend-buffer-function #'soo--dabbrev-friend-buffer))
 
 (use-package flycheck
+  :ensure t
   :defer t
   :config
   (evil-set-initial-state 'flycheck-error-list-mode 'insert)
@@ -373,6 +397,7 @@ friend if it has the same major mode."
 (use-package gist :defer t)
 
 (use-package hydra
+  :ensure t
   :general
   (:keymaps 'hydra-base-map
    "C-u" nil
@@ -427,32 +452,35 @@ friend if it has the same major mode."
   (add-hook 'text-mode-hook 'speck-mode))
 
 (use-package help
-  :ensure nil
   :init
   (setq help-window-select t)
   :config
   (add-hook 'help-mode-hook (lambda () (toggle-truncate-lines -1))))
 
 (use-package hl-todo
+  :ensure t
   :defer t
   :init (add-hook 'prog-mode-hook 'hl-todo-mode))
 
 (use-package highlight-escape-sequences
+  :ensure t
   :defer t
   :init (add-hook 'prog-mode-hook 'hes-mode))
 
 (use-package info
-  :ensure nil
+  :ensure t
   :general
   (nmap :prefix "SPC" "hi" 'info)
   :config
   (evil-set-initial-state 'Info-mode 'emacs))
 
 (use-package golden-ratio
+  :ensure t
   :general
   (nmap :prefix "SPC" "tg" 'golden-ratio))
 
 (use-package restclient :defer t
+  :ensure t
   :config
   (use-package company-restclient
     :config
@@ -462,22 +490,20 @@ friend if it has the same major mode."
 
 ;;** Parens and lisp
 (use-package smartparens
+  :ensure t
+  :disabled t
   :diminish (smartparens-mode . "sp")
   :defer t
   :general
   (:keymaps 'smartparens-mode-map
+   ;; "DEL" 'sp-backward-delete-char
+   ;; "C-d" 'sp-delete-char
    "C-M-a" 'sp-beginning-of-sexp "C-M-e" 'sp-end-of-sexp
    "M-r" 'sp-raise-sexp
    [C-backspace] 'sp-backward-kill-sexp
    "C-)" 'sp-forward-slurp-sexp "C-(" 'sp-backward-slurp-sexp
    "C-{" 'sp-backward-barf-sexp "C-}" 'sp-forward-barf-sexp
-   "M-S" 'sp-splice-sexp
-   [M-up] 'sp-splice-sexp-killing-backward
-   [M-down] 'sp-splice-sexp-killing-forward
-   ;; "DEL" 'sp-backward-delete-char
-   ;; "C-d" 'sp-delete-char
-   "M-d" 'sp-kill-word
-   "M-DEL" 'sp-backward-kill-word)
+   "M-S" 'sp-splice-sexp)
   :init
   (add-hook 'prog-mode-hook 'smartparens-mode)
   (add-hook 'smartparens-strict-mode-hook 'show-smartparens-mode)
@@ -496,11 +522,11 @@ friend if it has the same major mode."
         sp-show-pair-from-inside nil
         sp-highlight-pair-overlay nil
         sp-escape-quotes-after-insert nil)
-  (show-paren-mode 1)
   (turn-off-show-smartparens-mode)
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil))
 
 (use-package lispy
+  :ensure t
   :diminish (lispy-mode . "ly")
   :general
   (:keymaps 'lispy-mode-map-c-digits
@@ -508,18 +534,19 @@ friend if it has the same major mode."
    "C-9" 'lispy-parens-down)
   (:keymaps 'lispy-mode-map-special "+" nil)
   :init
-  (defun enable-lispy-for-lisps ()
-    (when (or (member major-mode sp-lisp-modes)
-              (eq this-command 'eval-expression))
+  (defun conditionally-enable-lispy ()
+    (when (eq this-command 'eval-expression)
       (lispy-mode 1)))
-  (add-hook 'smartparens-enabled-hook 'enable-lispy-for-lisps)
-  (add-hook 'smartparens-disabled-hook (lambda () (lispy-mode -1)))
+  (add-hook 'minibuffer-setup-hook 'conditionally-enable-lispy)
+  (add-hook 'emacs-lisp-mode-hook 'lispy-mode)
+  (add-hook 'clojure-mode-hook 'lispy-mode)
+  (add-hook 'clojurescript-mode-hook 'lispy-mode)
+  (add-hook 'cider-repl-mode-hook 'lispy-mode)
+  :config
   (setq iedit-toggle-key-default nil    ; Don't want to use iedit
         lispy-delete-atom-from-within nil)
-  :config
   (with-eval-after-load 'evil
-    (nmap :keymaps 'lispy-mode-map
-      "gd" 'lispy-goto-symbol))
+    (nmap :keymaps 'lispy-mode-map "gd" 'lispy-goto-symbol))
   (lispy-set-key-theme '(special c-digits))
   (setq lispy-compat '(edebug cider)
         lispy-avy-keys sooheon-avy-keys
@@ -530,16 +557,11 @@ friend if it has the same major mode."
   (lispy-define-key lispy-mode-map-special ">" 'lispy-slurp-or-barf-right)
   (lispy-define-key lispy-mode-map-special "<" 'lispy-slurp-or-barf-left)
   (general-define-key :keymaps 'lispy-mode-map
-    ;; "DEL" 'lispy-delete-backward-or-splice-or-slurp
-    ;; "C-d" 'lispy-delete-or-splice-or-slurp
     "DEL" 'lispy-delete-backward
     "C-d" 'lispy-delete
-    ;; "(" 'lispy-parens-auto-wrap
-    ;; "[" 'lispy-brackets-auto-wrap
-    ;; "{" 'lispy-braces-auto-wrap
-    ;; ")" 'lispy-barf-to-point-nostring
-    ;; "]" 'lispy-barf-to-point-nostring
-    ;; "}" 'lispy-barf-to-point-nostring
+    "M-d" 'lispy-kill-word
+    "M-DEL" 'lispy-backward-kill-word
+    [C-backspace] 'lispy-delete-backward
     "(" 'lispy-parens
     "[" 'lispy-brackets
     "{" 'lispy-braces
@@ -559,37 +581,66 @@ friend if it has the same major mode."
     "M-k" 'lispy-kill-sentence
     "C-k" 'lispy-kill
     ";" 'lispy-comment
-    "M-RET" 'lispy-meta-return))
+    "M-RET" 'soo-lispy-meta-return
+    "M-r" 'lispy-raise-sexp)
+  (defun soo-lispy-meta-return ()
+    (interactive)
+    (call-interactively 'lispy-meta-return)
+    (end-of-line)
+    (evil-insert-state 1)))
+
+(use-package parinfer
+  :disabled t
+  :ensure t
+  :general
+  (:keymaps 'parinfer-mode-map
+            "C-," 'parinfer-toggle-mode
+            [tab] 'parinfer-smart-tab:dwim-right-or-complete
+            [backtab] 'parinfer-smart-tab:dwim-left
+            "M-j" 'lispy-split
+            "M-i" 'lispy-iedit
+            "M-k" 'lispy-kill-sentence
+            "C-k" 'lispy-kill
+            [?\r] 'electric-newline-and-maybe-indent
+            "M-(" 'lispy-wrap-round
+            "M-[" 'lispy-wrap-brackets
+            "M-{" 'lispy-wrap-braces
+            "C-a" nil)
+  :init
+  (setq parinfer-extensions
+        '(defaults pretty-parens evil lispy smart-tab paredit))
+  (add-hook 'clojure-mode-hook #'parinfer-mode)
+  (add-hook 'emacs-lisp-mode-hook #'parinfer-mode)
+  (add-hook 'scheme-mode-hook #'parinfer-mode)
+  (add-hook 'lisp-mode-hook #'parinfer-mode))
 
 (use-package lispyville
+  :ensure t
   :diminish lispyville-mode
   :general
   ([remap evil-normal-state] 'lispyville-normal-state)
   (:keymaps 'lispyville-mode-map
-   "M-n" 'lispyville-drag-forward
-   "M-p" 'lispyville-drag-backward)
+   [M-down] 'lispyville-drag-forward
+   [M-up] 'lispyville-drag-backward)
   :init
-  (defun conditionally-enable-lispyville ()
-    "Only turn on lispyville outside of REPLs.
-Keep M-n and M-p reserved for history."
-    (unless (or (memq major-mode '(cider-repl-mode))
-                (eq this-command 'eval-expression))
-      (lispyville-mode 1)))
-  ;; (add-hook 'lispy-mode-hook #'conditionally-enable-lispyville)
   (add-hook 'lispy-mode-hook 'lispyville-mode)
-  (setq lispyville-key-theme '(operators
-                               escape
-                               slurp/barf-cp)
+  (setq lispyville-key-theme '(operators escape slurp/barf-cp)
         lispyville-barf-stay-with-closing t))
 
 ;;*** Emacs lisp
 (use-package suggest
+  :ensure t
   :commands suggest
   :config
   (sp-local-pair 'suggest-mode "'" nil :actions nil))
 
+(use-package elisp-mode
+  :general
+  (:keymaps 'emacs-lisp-mode-map "C-c C-k" 'eval-buffer))
+
 ;;** Git and version control
 (use-package magit
+  :ensure t
   :general
   ("s-9" 'magit-status)
   (nvmap :prefix "SPC" "g" 'magit-status)
@@ -598,11 +649,14 @@ Keep M-n and M-p reserved for history."
         magit-popup-show-common-commands nil))
 
 (use-package evil-magit
+  :ensure t
+  :after magit
   :init
   (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)
   (setq evil-magit-want-horizontal-movement nil))
 
 (use-package diff-hl
+  :ensure t
   :defer 2
   :init
   (setq diff-hl-draw-borders nil)
@@ -612,6 +666,7 @@ Keep M-n and M-p reserved for history."
   (evil-set-initial-state 'diff-mode 'emacs))
 
 (use-package markdown-mode
+  :ensure t
   :mode ("\\.m[k]d" . markdown-mode)
   :general
   (nmap :keymaps 'markdown-mode-map
@@ -622,23 +677,32 @@ Keep M-n and M-p reserved for history."
     "gl" 'outline-next-visible-heading))
 
 (use-package super-save
+  :ensure t
   :diminish super-save-mode
   :init
   (super-save-mode 1))
 
 (use-package woman
-  :ensure nil
+  :ensure t
   :defer t
   :config (evil-set-initial-state 'woman-mode 'emacs)
   (bind-key "s-w" 'Man-quit woman-mode-map))
 
 (use-package paradox
+  :ensure t
   :defer t
   :config
   (setq paradox-execute-asynchronously t)
   (with-eval-after-load 'evil (evil-set-initial-state 'paradox-menu-mode 'emacs)))
 
+(use-package async
+  :ensure t
+  :after paradox
+  :config
+  (async-bytecomp-package-mode t))
+
 (use-package projectile
+  :ensure t
   :diminish projectile-mode
   :general
   ("C-c k" 'soo--projectile-rg
@@ -668,6 +732,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
                                   default-directory))))
 
 (use-package rainbow-mode
+  :ensure t
   :general
   ("C-c t r" 'rainbow-mode)
   (nmap :prefix "SPC" "tr" #'rainbow-mode)
@@ -676,8 +741,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (add-hook 'css-mode-hook #'rainbow-mode))
 
 (use-package recentf
-  :ensure nil
-  :general ("s-e" 'counsel-recentf)
+  :ensure t
   :commands (counsel-recentf)
   :config
   (recentf-mode)
@@ -689,21 +753,23 @@ INITIAL-INPUT can be given as the initial minibuffer input."
         recentf-auto-cleanup 300))
 
 (use-package reveal-in-osx-finder
+  :ensure t
   :if (eq system-type 'darwin)
   :general (nmap "gof" 'reveal-in-osx-finder))
 
 (use-package savehist
-  :ensure nil
+  :ensure t
   :defer 1
   :config (savehist-mode))
 
 (use-package saveplace
-  :ensure nil
+  :ensure t
   :defer 2
   :if (version< "25" emacs-version)
   :config (save-place-mode))
 
 (use-package semantic
+  :ensure t
   :defer t
   :init
   ;; Set semantic to parse only file, local, and project scope.
@@ -715,6 +781,8 @@ INITIAL-INPUT can be given as the initial minibuffer input."
                   (remove-hook 'completion-at-point-functions x))))))
 
 (use-package smart-mode-line
+  :ensure t
+  :disabled t
   :defer t
   :init
   (sml/setup)
@@ -727,6 +795,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (use-package company-sourcekit :defer t)
 
 (use-package term
+  :ensure t
   :general
   (:keymaps 'term-raw-map
    "s-v" 'term-paste
@@ -740,7 +809,19 @@ INITIAL-INPUT can be given as the initial minibuffer input."
                               (set (make-local-variable 'scroll-margin) 0)))
   (evil-set-initial-state 'term-mode 'emacs))
 
+(use-package vterm
+  :commands vterm-create
+  :config
+  (add-to-list 'vterm-keymap-exceptions "s-1")
+  (add-to-list 'vterm-keymap-exceptions "s-j")
+  (add-to-list 'vterm-keymap-exceptions "s-k")
+  (add-to-list 'vterm-keymap-exceptions "s-h")
+  (add-to-list 'vterm-keymap-exceptions "s-l")
+  (add-to-list 'vterm-keymap-exceptions "s-2")
+  (add-to-list 'vterm-keymap-exceptions "s-3"))
+
 (use-package terminal-here
+  :ensure t
   :defer t
   :general
   (nmap "got" #'terminal-here-launch)
@@ -749,6 +830,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
         (lambda (dir) (list "open" "-a" "iTerm.app" dir))))
 
 (use-package undo-tree
+  :ensure t
   :diminish undo-tree-mode
   :general
   ("s-Z" 'undo-tree-redo
@@ -763,23 +845,26 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (use-package wgrep :defer t)
 
 (use-package which-key
+  :ensure t
   :diminish which-key-mode
   :init
   (setq which-key-idle-delay 0.5)
   (which-key-mode 1))
 
 (use-package window-numbering
+  :ensure t
   :general
   (:keymaps 'window-numbering-keymap
    "M-0" nil "M-1" nil "M-2" nil "M-3" nil "M-4" nil
    "M-5" nil "M-6" nil "M-7" nil "M-8" nil "M-9" nil)
-  ("s-0" 'select-window-0 "s-1" 'select-window-1 "s-2" 'select-window-2
+  ("s-1" 'select-window-1 "s-2" 'select-window-2
    "s-3" 'select-window-3 "s-4" 'select-window-4 "s-5" 'select-window-5
    "s-6" 'select-window-6)
   :config
   (window-numbering-mode 1))
 
 (use-package winner
+  :ensure t
   :general
   (nmap :prefix "SPC" "wu" 'winner-undo)
   :init
@@ -790,6 +875,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
                                         "*Ibuffer*"))))
 
 (use-package shackle
+  :ensure t
   :init
   (defun shackle-smart-align ()
     (if (< (window-width) 160) 'below 'right))
@@ -805,6 +891,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (shackle-mode 1))
 
 (use-package vlf
+  :ensure t
   :defer 3
   :config (require 'vlf-setup))
 
@@ -816,7 +903,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (diminish 'auto-fill-function)          ; auto-fill-mode is called this
 
 (use-package simple
-  :ensure nil
   :diminish visual-line-mode
   :general
   (mmap :keymaps 'visual-line-mode
@@ -829,11 +915,13 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (column-number-mode))
 
 (use-package ws-butler
+  :ensure t
   :diminish ws-butler-mode
   :init
   (add-hook 'prog-mode-hook 'ws-butler-mode))
 
 (use-package expand-region
+  :ensure t
   :general
   ("M-2" 'soo-er-and-insert)
   (nmap :prefix "SPC"
@@ -846,6 +934,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (setq expand-region-contract-fast-key "1"))
 
 (use-package multiple-cursors
+  :ensure t
   :preface
   (define-prefix-command 'endless/mc-map)
   :general
@@ -872,16 +961,20 @@ INITIAL-INPUT can be given as the initial minibuffer input."
    "C-a" #'mc/edit-beginnings-of-lines
    "C-e" #'mc/edit-ends-of-lines))
 
-(use-package hungry-delete :defer t)
+(use-package hungry-delete :ensure t :defer t)
+
+(use-package eldoc
+  :diminish (eldoc-mode . " d"))
 
 ;;** Window mgmt
 (use-package eyebrowse
-  :disabled t
+  :ensure t
   :init
   (eyebrowse-setup-evil-keys)
   (eyebrowse-mode t)
   :general
-  (nmap :keymaps 'eyebrowse-mode-map :prefix "g"
+  (nmap :keymaps 'eyebrowse-mode-map
+        :prefix "g"
     "1" 'eyebrowse-switch-to-window-config-1
     "2" 'eyebrowse-switch-to-window-config-2
     "3" 'eyebrowse-switch-to-window-config-3
@@ -891,7 +984,9 @@ INITIAL-INPUT can be given as the initial minibuffer input."
    "s-1" 'eyebrowse-switch-to-window-config-1
    "s-2" 'eyebrowse-switch-to-window-config-2
    "s-3" 'eyebrowse-switch-to-window-config-3
-   "s-4" 'eyebrowse-switch-to-window-config-4)
+   "s-4" 'eyebrowse-switch-to-window-config-4
+   [C-tab] 'eyebrowse-next-window-config
+   [C-S-tab] 'eyebrowse-prev-window-config)
   :config
   (setq eyebrowse-wrap-around t
         eyebrowse-switch-back-and-forth nil))
@@ -914,10 +1009,11 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 ;;** Completion and expansion
 (use-package hippie-exp
-  :ensure nil
+  :ensure t
   :general ([remap dabbrev-expand] 'hippie-expand))
 
 (use-package company
+  :ensure t
   :diminish (company-mode . "co")
   :general
   (:keymaps 'company-active-map
@@ -926,6 +1022,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
    "C-w" nil
    [tab] 'company-complete-common
    "<escape>" 'soo-company-esc)
+  (imap [tab] 'company-indent-or-complete-common)
   :init
   (add-hook 'prog-mode-hook 'company-mode)
   :config
@@ -947,10 +1044,13 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (defun soo-company-esc () (interactive) (company-abort) (evil-normal-state)))
 
 (use-package company-statistics
+  :ensure t
+  :defer t
   :after company
   :config (company-statistics-mode))
 
 (use-package yasnippet
+  :ensure t
   :diminish yas-minor-mode
   :commands (yas-global-mode yas-minor-mode))
 
@@ -961,3 +1061,5 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 ;;; init.el ends here
 (put 'dired-find-alternate-file 'disabled nil)
+
+(setq gc-cons-threshold (car (get 'gc-cons-threshold 'standard-value)))

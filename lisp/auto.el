@@ -148,6 +148,13 @@ already narrowed."
     (message (format "Font height is now %d" new-height))))
 
 ;;;###autoload
+(defun zero-face-height ()
+  (interactive)
+  (let ((new-height 140))
+    (set-face-attribute 'default nil :height new-height)
+    (message (format "Font height is now %d" new-height))))
+
+;;;###autoload
 (defun youtube-dl ()
   (interactive)
   (let* ((str (current-kill 0))
@@ -342,3 +349,33 @@ This command does the reverse of `fill-region'."
                       (setq ediff-after-quit-hook-internal nil)
                       (set-window-configuration wnd))))
       (error "no more than 2 files should be marked"))))
+
+;;;###autoload
+(defun ora-dired-rsync (dest)
+  (interactive
+   (list
+    (expand-file-name
+     (read-file-name
+      "Rsync to:"
+      (dired-dwim-target-directory)))))
+  ;; store all selected files into "files" list
+  (let ((files (dired-get-marked-files
+                nil current-prefix-arg))
+        ;; the rsync command
+        (tmtxt/rsync-command
+         "rsync -arvz --progress "))
+    ;; add all selected file names as arguments
+    ;; to the rsync command
+    (dolist (file files)
+      (setq tmtxt/rsync-command
+            (concat tmtxt/rsync-command
+                    (shell-quote-argument file)
+                    " ")))
+    ;; append the destination
+    (setq tmtxt/rsync-command
+          (concat tmtxt/rsync-command
+                  (shell-quote-argument dest)))
+    ;; run the async shell command
+    (async-shell-command tmtxt/rsync-command "*rsync*")
+    ;; finally, switch to that window
+    (other-window 1)))

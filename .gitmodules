@@ -28,3 +28,6 @@
 [submodule "lib/vim-empty-lines-mode"]
 	path = lib/vim-empty-lines-mode
 	url = git@github.com:hchbaw/vim-empty-lines-mode.git
+[submodule "lib/emacs-libvterm"]
+	path = lib/emacs-libvterm
+	url = https://github.com/akermu/emacs-libvterm.git

@@ -1,5 +1,4 @@
 (use-package python
-  :ensure nil
   :general
   (:keymaps 'python-mode-map
    "C-j" 'newline-and-indent
@@ -25,6 +24,7 @@
 ;;     (python-shell-send-buffer)))
 
 (use-package yapfify
+  :ensure t
   :defer t
   :general
   (nvmap :keymaps 'python-mode-map
@@ -33,6 +33,7 @@
   (add-hook 'python-mode-hook 'yapf-mode))
 
 (use-package jedi
+  :ensure t
   :defer t
   :config
   (setq python-environment-directory "~/.pyenv/versions")
@@ -44,8 +45,10 @@
   ;; (define-key jedi-mode-map (kbd "M-.") 'jedi:goto-definition)
   (define-key jedi-mode-map (kbd "K") 'jedi:show-doc))
 
+(use-package pyenv-mode :defer t)
+(use-package pyenv-mode-auto :defer t)
+
 (use-package lpy
-  :disabled t
   :ensure nil
   :diminish (lpy-mode . "lpy")
   :after lispy

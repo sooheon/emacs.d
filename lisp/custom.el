@@ -10,7 +10,6 @@
  '(ansi-term-color-vector
    [unspecified "#090300" "#db2d20" "#01a252" "#fded02" "#01a0e4" "#a16a94" "#01a0e4" "#a5a2a2"] t)
  '(auto-image-file-mode t)
- '(cider-boot-parameters "cider repl -s wait")
  '(cider-cljs-boot-repl
    "(do (require 'adzerk.boot-cljs-repl) (adzerk.boot-cljs-repl/start-repl))")
  '(cider-cljs-lein-repl
@@ -34,8 +33,7 @@
  '(epa-pinentry-mode (quote loopback))
  '(evil-disable-insert-state-bindings t)
  '(evil-lookup-func (quote man))
- '(evil-magit-want-horizontal-movement nil)
- '(evil-want-C-u-scroll t)
+ '(evil-magit-want-horizontal-movement nil t)
  '(evil-want-C-w-delete t)
  '(eyebrowse-mode t)
  '(eyebrowse-switch-back-and-forth nil)
@@ -78,6 +76,7 @@
  '(nrepl-message-colors
    (quote
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
+ '(org-download-method (quote directory))
  '(org-indent-indentation-per-level 1)
  '(org-latex-classes
    (quote
@@ -109,10 +108,10 @@
  '(org-pomodoro-format "%s")
  '(org-pomodoro-long-break-format "%s")
  '(org-pomodoro-short-break-format "%s")
- '(org-preview-latex-default-process (quote dvisvgm))
+ '(org-preview-latex-default-process (quote dvisvgm) t)
  '(package-selected-packages
    (quote
-    (persp-mode window-purpose yapfify frame company-restclient restclient restclient-mode eyebrowse org-board terminal-here company-sourcekit swift-mode smart-mode-line org-brain org-plus-contrib paradox async hy-mode vim-empty-lines ein circe-notifications vlf hl-todo base16-theme farmhouse-theme yaml-mode doom-themes ace-window rainbow-mode org-download htmlize rust-mode haskell-mode ess-smart-equals ess ess-site lpy tex cdlatex texmathp magithub suggest wgrep general hungry-delete hungry-delete-mode toml-mode soap atom-one-dark-theme ggtags cpputils-cmake irony clang-format company-statistics osx-trash help evil-cleverparens-text-objects dired racer cargo golden-ratio jade yasnippet artbollocks-mode company-quickhelp evil-exchange clj-refactor with-editor undo-tree swiper smartparens queue pyenv-mode projectile magit ivy hydra flycheck finalize evil diminish dash counsel company closql clojure-mode avy anaconda-mode ace-link lispyville auctex exec-path-from-shell evil-mc git-modes function-args zenburn-theme ws-butler worf window-numbering which-key use-package typo term-manager super-save speck spacemacs-theme solarized-theme smex shm shell-pop shackle sentence-navigation reveal-in-osx-finder rainbow-delimiters pyenv-mode-auto py-yapf pdf-tools pandoc-mode osx-dictionary multiple-cursors markdown-mode jedi ivy-hydra intero inf-clojure hindent highlight-escape-sequences gist flyspell-correct flx expand-region evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-multiedit evil-matchit evil-magit evil-commentary epkg elisp-slime-nav diff-hl counsel-projectile company-anaconda circe cider bind-map auto-compile)))
+    (simple elisp-mode lispy org-plus-contrib parinfer undo-tree helm ob-clojure link-hint persp-mode window-purpose yapfify frame company-restclient restclient restclient-mode eyebrowse org-board terminal-here company-sourcekit swift-mode smart-mode-line paradox async hy-mode vim-empty-lines ein circe-notifications vlf hl-todo base16-theme farmhouse-theme yaml-mode doom-themes ace-window rainbow-mode org-download htmlize rust-mode haskell-mode ess-smart-equals ess ess-site lpy tex cdlatex texmathp magithub suggest wgrep general hungry-delete hungry-delete-mode toml-mode soap atom-one-dark-theme ggtags cpputils-cmake irony clang-format company-statistics osx-trash help evil-cleverparens-text-objects dired racer cargo golden-ratio jade yasnippet artbollocks-mode company-quickhelp evil-exchange clj-refactor with-editor swiper smartparens queue pyenv-mode projectile magit ivy hydra flycheck finalize evil diminish dash counsel company closql clojure-mode avy anaconda-mode ace-link lispyville auctex exec-path-from-shell evil-mc git-modes function-args zenburn-theme ws-butler worf window-numbering which-key use-package typo term-manager super-save speck spacemacs-theme solarized-theme smex shm shell-pop shackle sentence-navigation reveal-in-osx-finder rainbow-delimiters pyenv-mode-auto py-yapf pdf-tools pandoc-mode osx-dictionary multiple-cursors markdown-mode jedi ivy-hydra intero inf-clojure hindent highlight-escape-sequences gist flyspell-correct flx expand-region evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-multiedit evil-matchit evil-magit evil-commentary epkg elisp-slime-nav diff-hl counsel-projectile company-anaconda circe cider bind-map auto-compile)))
  '(paradox-automatically-star t)
  '(paradox-github-token t)
  '(pdf-view-midnight-colors (quote ("#DCDCCC" . "#383838")))
@@ -140,7 +139,9 @@
  '(ring-bell-function (quote ignore))
  '(safe-local-variable-values
    (quote
-    ((cider-boot-parameters . "repl -s -H :: wait dev")
+    ((projectile-project-compilation-cmd . "bear make")
+     (projectile-project-run-cmd . "make run")
+     (cider-boot-parameters . "repl -s -H :: wait dev")
      (cider-boot-parameters . "repl -s H :: wait dev")
      (outline-minor-mode)
      (whitespace-style face tabs spaces trailing lines space-before-tab::space newline indentation::space empty space-after-tab::space space-mark tab-mark newline-mark)
@@ -154,7 +155,7 @@
  '(smartrep-mode-line-active-bg (solarized-color-blend "#859900" "#657b83" 0.2))
  '(sml/replacer-regexp-list
    (quote
-    (("^~/code/" ":code:")
+    (("^*/code/" ":code:")
      ("^~/Dropbox/QxBranch/" ":Qx:")
      ("^~/Dropbox/[Ww]ork/" ":Work:")
      ("^~/org/" ":Org:")
@@ -216,7 +217,6 @@
      (backward .
                [201326651]))))
  '(speck-replace-preserve-point (quote after))
- '(tab-always-indent (quote complete))
  '(tool-bar-mode nil)
  '(vc-annotate-background "#2B2B2B")
  '(vc-annotate-background-mode nil)

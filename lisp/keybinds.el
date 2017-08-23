@@ -4,6 +4,7 @@
       mac-option-modifier 'meta)
 
 (general-define-key
+ "C-h C-h" nil
  "C-x C-b" 'ibuffer
  "C-x k" 'kill-this-buffer
  "s-u" 'universal-argument
@@ -14,6 +15,7 @@
  [remap just-one-space] 'oscillate-spacing
  [remap apropos-command] 'apropos
  "s-C" 'count-words
+ "s-g" 'keyboard-quit
  "s-h" 'evil-window-left
  "s-j" 'evil-window-down
  "s-k" 'evil-window-up
@@ -29,10 +31,13 @@
  "s-c" 'kill-ring-save
  "s-a" 'mark-whole-buffer
  "s-x" 'kill-region
+ "s-z" 'undo
  "s-n" 'make-frame
  "C-s-f" 'toggle-frame-fullscreen
+ [C-s-268632070] 'toggle-frame-fullscreen
  "s--" 'dec-face-height
  "s-=" 'inc-face-height
+ "s-0" 'zero-face-height
  "s-[" 'previous-buffer
  "s-]" 'next-buffer
  "M-DEL" 'backward-kill-word

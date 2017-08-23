@@ -1,4 +1,5 @@
 (use-package counsel
+  :ensure t
   :general ([remap execute-extended-command] 'counsel-M-x
             [remap describe-function] 'counsel-describe-function
             [remap describe-variable] 'counsel-describe-variable
@@ -29,11 +30,16 @@
   (use-package smex :config (setq smex-history-length 32)))
 
 (use-package swiper
+  :ensure t
   :general ([remap isearch-forward] 'counsel-grep-or-swiper
             "s-f" 'counsel-grep-or-swiper
-            "C-c u" 'swiper-all))
+            "C-c u" 'swiper-all)
+  :config
+  (setq counsel-grep-base-command
+        "rg -i -M 120 --no-heading --line-number --color never '%s' %s"))
 
 (use-package ivy
+  :ensure t
   :diminish ivy-mode
   :commands (magit-status epkg-describe-package)
   :general ("s-b" 'ivy-switch-buffer
@@ -67,6 +73,7 @@
         ivy-action-wrap t))
 
 (use-package ivy-hydra
+  :ensure t
   :commands soo-ivy/body
   :general (:keymaps 'ivy-minibuffer-map "C-o" 'soo-ivy/body)
   :config
@@ -111,6 +118,7 @@
     ("C" ivy-toggle-case-fold)
     ("o" ivy-occur :exit t)))
 
-(use-package flx)
+(use-package flx
+  :ensure t)
 
 (provide 'soo-ivy)

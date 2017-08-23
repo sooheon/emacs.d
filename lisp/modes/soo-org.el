@@ -42,7 +42,9 @@
         org-highlight-latex-and-related '(latex script entities)
         org-adapt-indentation nil
         org-preview-latex-default-process 'dvisvgm
-        org-directory "~/Dropbox/org/"))
+        org-directory "~/Dropbox/org/")
+  (require 'ob-clojure)
+  (setq org-babel-clojure-backend 'cider))
 
 (use-package org-download
   :after org
@@ -51,6 +53,7 @@
   (setq org-download-method 'attach))
 
 (use-package worf
+  :ensure t
   :after org
   :diminish worf-mode
   :config
@@ -72,11 +75,21 @@
           ("dd" "Insert ddot" "\\ddot{?}"
            cdlatex-position-cursor nil nil t))))
 
+
+
 (use-package org-brain
   :defer t
+  :general
+  ("s-o" 'org-brain-visualize)
+  :init
+  (setq org-brain-path "~/Dropbox/org/brain")
+  ;; (eval-after-load 'evil (evil-set-initial-state 'org-brain-visualize-mode 'insert))
   :config
+  (setq org-id-track-globally t
+        org-id-locations-file "~/.emacs.d/.var/org/id-locations.el"
+        org-brain-visualize-default-choices 'all)
   (when (member 'smart-mode-line package-selected-packages)
-    (add-to-list 'sml/replacer-regexp-list '("^~/Dropbox/brain" ":BRAIN:")))
+    (add-to-list 'sml/replacer-regexp-list '("^~/Dropbox/org/brain" ":BRAIN:")))
   (defhydra org-brain-hydra (:color blue)
     "Org Brain"
     ("o" org-brain-open "open")

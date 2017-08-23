@@ -1,4 +1,5 @@
 (use-package evil
+  :ensure t
   :general
   (imap "C-w" 'evil-delete-backward-word
         "C-r" 'evil-paste-from-register)
@@ -13,7 +14,7 @@
         evil-want-C-i-jump t
         evil-disable-insert-state-bindings t
         evil-search-module 'evil-search
-        evil-ex-search-persistent-highlight t
+        evil-ex-search-persistent-highlight nil
         evil-want-Y-yank-to-eol t
         evil-ex-substitute-global t
         evil-want-C-w-delete t)
@@ -26,45 +27,53 @@
   (add-hook 'prog-mode-hook #'(lambda () (modify-syntax-entry ?_ "w"))))
 
 (use-package evil-commentary
+  :ensure t
   :diminish evil-commentary-mode
   :general (nmap "gc" 'evil-commentary
                  "gy" 'evil-commentary-yank))
 
 (use-package evil-exchange
+  :ensure t
   :diminish evil-exchange
   :general
   (omap "x" 'evil-exchange/cx)
   (vmap "X" 'evil-exchange))
 
 (use-package evil-matchit
+  :ensure t
   :defer t
   :init
   (add-hook 'html-mode-hook 'turn-on-evil-matchit-mode)
   (add-hook 'ruby-mode-hook 'turn-on-evil-matchit-mode))
 
 (use-package evil-textobj-anyblock
+  :ensure t
   :general
   (itomap "b" 'evil-textobj-anyblock-inner-block)
   (otomap "b" 'evil-textobj-anyblock-a-block))
 
 (use-package evil-visualstar
+  :ensure t
   :general
   (vmap "*" 'evil-visualstar/begin-search-forward
         "#" 'evil-visualstar/begin-search-backward))
 
 (use-package evil-snipe
+  :ensure t
   :diminish evil-snipe-local-mode
   :init
   (setq evil-snipe-use-vim-sneak-bindings t
-        evil-snipe-scope 'visible
+        evil-snipe-scope 'buffer
         evil-snipe-repeat-scope 'buffer
         evil-snipe-smart-case t
         evil-snipe-repeat-keys nil
         evil-snipe-char-fold t)
   :config
-  (evil-snipe-override-mode 1))
+  (evil-snipe-mode)
+  (evil-snipe-override-mode))
 
 (use-package evil-surround
+  :ensure t
   :general
   (itomap "$" 'evil-inner-$
           "*" 'evil-inner-*
