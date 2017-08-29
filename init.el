@@ -35,7 +35,7 @@
 (setq tool-bar-mode nil)
 (setq menu-bar-mode nil)
 (setq scroll-bar-mode nil)
-(setq line-spacing 1)
+(setq line-spacing 0.1)
 (setq inhibit-startup-screen t
       inhibit-message nil
       initial-scratch-message nil
@@ -71,6 +71,7 @@
       scroll-conservatively 100)
 (add-to-list 'default-frame-alist '(width . 90))
 (show-paren-mode 1)
+(setq ad-redefinition-action 'accept)
 (progn ;; Deal with large files
   (setq jit-lock-defer-time 0)
   (setq-default bidi-display-reordering nil) ; http://tinyurl.com/jc9corx
@@ -126,9 +127,8 @@
 (use-package exec-path-from-shell
   :ensure t
   :if (memq window-system '(mac ns x))
-  :commands (shell-command eval-expression)
-  :defer 5
-  :config
+  :commands (shell-command eval-expression cider-jack-in)
+  :init
   (setq exec-path-from-shell-check-startup-files nil)
   (exec-path-from-shell-initialize))
 
@@ -264,17 +264,15 @@
   :commands dired-jump
   :general
   (nmap "-" 'dired-jump)
-  :config
   (nmap :keymaps 'dired-mode-map
     "-" '(lambda () (interactive) (find-file ".."))
-    "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 1))
+    "gg" '(lambda () (interactive) (beginning-of-buffer) (dired-next-line 2))
+    "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1))
     "got" 'soo-terminal-pop
     "gof" 'reveal-in-osx-finder
-    "G" '(lambda () (interactive) (end-of-buffer) (dired-next-line -1))
     "=" 'vinegar/dired-diff
     "I" 'vinegar/dotfiles-toggle
     "~" '(lambda () (interactive) (find-file "~/"))
-    "<return>" 'dired-find-file
     "f" 'counsel-find-file
     "J" 'dired-goto-file
     "C-f" nil                           ; 'find-name-dired
@@ -283,13 +281,12 @@
     "K" 'dired-do-kill-lines
     "r" 'revert-buffer
     "C-r" 'dired-do-redisplay
-    "RET" 'dired-find-file
     "e" 'ora-ediff-files
     "Y" 'ora-dired-rsync)
+  :config
   (setq dired-listing-switches "-alGh1v --group-directories-first")
   (defvar dired-dotfiles-show-p)
   (defun soo--dired-setup ()
-    ;; (setq dired-omit-verbose nil)
     (setq dired-hide-details-hide-symlink-targets nil)
     (dired-hide-details-mode -1))
   (add-hook 'dired-mode-hook 'soo--dired-setup))
@@ -527,7 +524,7 @@ friend if it has the same major mode."
 
 (use-package lispy
   :ensure t
-  :diminish (lispy-mode . "ly")
+  :diminish lispy-mode
   :general
   (:keymaps 'lispy-mode-map-c-digits
    "C-8" 'lispy-out-forward-newline
@@ -647,13 +644,6 @@ friend if it has the same major mode."
   :config
   (setq magit-display-buffer-function 'magit-display-buffer-traditional
         magit-popup-show-common-commands nil))
-
-(use-package evil-magit
-  :ensure t
-  :after magit
-  :init
-  (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode)
-  (setq evil-magit-want-horizontal-movement nil))
 
 (use-package diff-hl
   :ensure t
@@ -898,7 +888,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (use-package yaml-mode :defer t)
 
 ;;** Basic Editing
-(setq-default fill-column 90)
+(setq-default fill-column 80)
 (add-hook 'text-mode-hook 'visual-line-mode)
 (diminish 'auto-fill-function)          ; auto-fill-mode is called this
 
@@ -964,7 +954,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 (use-package hungry-delete :ensure t :defer t)
 
 (use-package eldoc
-  :diminish (eldoc-mode . " d"))
+  :diminish eldoc-mode)
 
 ;;** Window mgmt
 (use-package eyebrowse
@@ -991,6 +981,16 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (setq eyebrowse-wrap-around t
         eyebrowse-switch-back-and-forth nil))
 
+(use-package persp-mode
+  :disabled t
+  :ensure t
+  :defer t
+  :general ("s-e" '(:keymap persp-key-map)
+            [C-tab] 'persp-next
+            [C-S-tab] 'persp-prev)
+  :init (persp-mode 1)
+  :config (setq persp-autokill-buffer-on-remove 'kill-weak))
+
 (use-package window-purpose
   :disabled t
   :defer t
@@ -999,14 +999,6 @@ INITIAL-INPUT can be given as the initial minibuffer input."
   (setq purpose-use-default-configuration nil)
   (purpose-compile-user-configuration))
 
-(use-package persp-mode
-  :disabled t
-  :defer t
-  :general
-  ("s-p" '(:keymap persp-key-map))
-  :init (persp-mode 1)
-  :config (setq persp-autokill-buffer-on-remove 'kill-weak))
-
 ;;** Completion and expansion
 (use-package hippie-exp
   :ensure t
@@ -1014,7 +1006,7 @@ INITIAL-INPUT can be given as the initial minibuffer input."
 
 (use-package company
   :ensure t
-  :diminish (company-mode . "co")
+  :diminish company-mode
   :general
   (:keymaps 'company-active-map
    "C-n" 'company-select-next

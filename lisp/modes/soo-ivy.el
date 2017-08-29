@@ -1,5 +1,17 @@
 (use-package counsel
   :ensure t
+  :commands (counsel-M-x
+             counsel-describe-function
+             counsel-describe-variable
+             counsel-descbinds
+             counsel-describe-face
+             counsel-find-file
+             counsel-imenu
+             counsel-load-library
+             counsel-yank-pop
+             counsel-info-lookup-symbol
+             counsel-mark-ring
+             counsel-info-lookup-symbol)
   :general ([remap execute-extended-command] 'counsel-M-x
             [remap describe-function] 'counsel-describe-function
             [remap describe-variable] 'counsel-describe-variable
@@ -16,7 +28,6 @@
             "C-x l" 'counsel-locate
             "C-x C-l" 'find-library
             "C-c o" 'counsel-outline)
-  (:keymaps 'read-expression-map "C-r" 'counsel-expression-history)
   (nmap :prefix "SPC"
     "f" 'counsel-find-file
     "r" 'counsel-recentf
@@ -26,6 +37,8 @@
     "th" 'counsel-load-theme
     "ap" 'counsel-list-processes
     "M-y" 'counsel-yank-pop)
+  :init
+  (setq counsel-mode-override-describe-bindings t)
   :config
   (use-package smex :config (setq smex-history-length 32)))
 
@@ -58,19 +71,27 @@
   (nmap :prefix "SPC" "b" 'ivy-switch-buffer)
   :config
   (ivy-mode 1)
-  (setq ivy-extra-directories '("./")
-        ivy-use-virtual-buffers t
-        ivy-count-format "%d "
-        ivy-height 12
-        ivy-re-builders-alist '((t . ivy--regex-plus)
-                                ;; (t . ivy--regex-fuzzy)
-                                )
-        ivy-initial-inputs-alist '((org-refile . "^")
-                                   (org-agenda-refile . "^")
-                                   (org-capture-refile . "^")
-                                   (man . "^")
-                                   (woman . "^"))
-        ivy-action-wrap t))
+  (setq
+   ivy-extra-directories '("./")
+   ivy-use-virtual-buffers t
+   ivy-count-format "(%d/%d) "
+   ivy-height 12
+   ivy-re-builders-alist '((t . ivy--regex-plus)
+                           ;; (t . ivy--regex-fuzzy)
+                           )
+   ivy-initial-inputs-alist '((org-refile . "^")
+                              (org-agenda-refile . "^")
+                              (org-capture-refile . "^")
+                              (man . "^")
+                              (woman . "^"))
+   ivy-action-wrap t
+   ivy-sort-functions-alist
+   '((read-file-name-internal . ivy-sort-file-function-default)
+     (internal-complete-buffer . ivy-sort-file-function-default)
+     (counsel-git-grep-function)
+     (Man-goto-section)
+     (org-refile)
+     (t . string-lessp))))
 
 (use-package ivy-hydra
   :ensure t

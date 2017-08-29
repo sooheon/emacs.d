@@ -24,6 +24,10 @@
  "C-s-j" 'evil-window-move-very-bottom
  "C-s-k" 'evil-window-move-very-top
  "C-s-l" 'evil-window-move-far-right
+ [C-s-268632072] 'evil-window-move-far-left
+ [C-s-268632074] 'evil-window-move-very-bottom
+ [C-s-268632075] 'evil-window-move-very-top
+ [C-s-268632076] 'evil-window-move-far-right
  "<c-tab>" 'other-window
  "s-s" 'save-buffer
  "s-q" 'save-buffers-kill-terminal

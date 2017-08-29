@@ -5,9 +5,9 @@
         "C-r" 'evil-paste-from-register)
   (nvmap "C-n" 'next-line
          "C-p" 'previous-line)
+  (mmap "C-u" 'evil-scroll-up)
   :init
   (setq evil-want-C-u-scroll t
-        evil-scroll-line-count 2
         evil-cross-lines t
         evil-symbol-word-search t
         evil-move-cursor-back t
@@ -25,6 +25,14 @@
   ;; Let underscores be part of words
   (add-hook 'text-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
   (add-hook 'prog-mode-hook #'(lambda () (modify-syntax-entry ?_ "w"))))
+
+(use-package evil-magit
+  :disabled t
+  :ensure t
+  :after magit
+  :init
+  (setq evil-magit-want-horizontal-movement nil)
+  (add-hook 'magit-mode-hook 'turn-off-evil-snipe-override-mode))
 
 (use-package evil-commentary
   :ensure t
@@ -108,6 +116,7 @@
     (evil-select-paren "\\/" "\\/" beg end type count t)))
 
 (use-package evil-numbers
+  :ensure t
   :general
   (nmap "C-S-a" 'evil-numbers/inc-at-pt
         "C-S-x" 'evil-numbers/dec-at-pt))
@@ -143,9 +152,9 @@
   ("s-d" #'evil-mc-make-cursor-here))
 
 (blink-cursor-mode -1)
+
 (use-package frame
   :disabled t
-  :ensure nil
   :init
   (setq blink-cursor-blinks 0
         blink-cursor-delay 0)

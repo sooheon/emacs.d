@@ -29,15 +29,13 @@
   ;;   "c" (general-key-dispatch 'lispyville-change
   ;;         "r" (general-simulate-keys "s-,")
   ;;         "c" 'evil-change-whole-line))
-  (setq cljr-favor-prefix-notation t
-        cljr-warn-on-eval nil)
-  (setq cljr-magic-require-namespaces
-        '(("io" . "clojure.java.io")
-          ("set" . "clojure.set")
-          ("str" . "clojure.string")
-          ("walk" . "clojure.walk")
-          ("zip" . "clojure.zip")
-          ("r" . "clojure.core.reducers"))))
+  (setq cljr-favor-prefix-notation nil
+        cljr-warn-on-eval nil
+        cljr-magic-require-namespaces '(("io" . "clojure.java.io")
+                                        ("set" . "clojure.set")
+                                        ("walk" . "clojure.walk")
+                                        ("zip" . "clojure.zip")
+                                        ("r" . "clojure.core.reducers"))))
 
 ;;;###autoload
 (defun soo-clojure-hook ()
@@ -48,9 +46,11 @@
   :ensure t
   :defer t
   :general
-  (:keymaps 'cider-mode-map "s-e" 'cider-eval-last-sexp)
   (nmap :keymaps 'cider-mode-map "K" 'cider-doc)
   (nmap :keymaps 'cider-repl-mode-map "," 'cider-repl-handle-shortcut)
+  (:keymaps 'cider-mode-map :prefix "C-c"
+   "M-i" (lambda () (interactive) (progn (cider-inspect)
+                                         (cider-inspector-next-inspectable-object 2))))
   :config
   (setq cider-prompt-for-symbol nil
         nrepl-hide-special-buffers t
@@ -72,8 +72,10 @@
     "j" 'cider-inspector-next-inspectable-object
     "k" 'cider-inspector-previous-inspectable-object
     "h" 'cider-inspector-pop
-    "l" (lambda () (interactive) (progn (cider-inspector-operate-on-point)
-                          (cider-inspector-next-inspectable-object 2))))
+    "l" (lambda ()
+          (interactive)
+          (progn (cider-inspector-operate-on-point)
+                 (cider-inspector-next-inspectable-object 2))))
   (defun soo-cider-repl-hook ()
     (toggle-truncate-lines 1)
     (company-mode)

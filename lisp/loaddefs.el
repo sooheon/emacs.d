@@ -183,8 +183,7 @@ This command does the reverse of `fill-region'.
 
 ;;;***
 
-;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (22901 43626
-;;;;;;  0 0))
+;;;### (autoloads nil "modes/soo-org" "modes/soo-org.el" (0 0 0 0))
 ;;; Generated autoloads from modes/soo-org.el
 
 (autoload 'soo-org-hook "modes/soo-org" "\
@@ -196,6 +195,8 @@ This command does the reverse of `fill-region'.
 
 
 \(fn)" t nil)
+
+(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "modes/soo-org" '(#("hot-expand" 0 10 (fontified nil)) #("org-metaright2" 0 14 (face font-lock-function-name-face fontified nil)) #("latexify-line" 0 13 (face font-lock-function-name-face fontified nil)))))
 
 ;;;***
 

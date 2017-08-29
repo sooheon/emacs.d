@@ -18,7 +18,6 @@
  '(cider-repl-display-help-banner nil)
  '(cider-save-file-on-load (quote t))
  '(cljr-clojure-test-namespace-under-test-alias "")
- '(cljr-favor-prefix-notation t)
  '(compilation-message-face (quote default))
  '(cua-global-mark-cursor-color "#2aa198")
  '(cua-normal-cursor-color "#657b83")
@@ -33,9 +32,9 @@
  '(epa-pinentry-mode (quote loopback))
  '(evil-disable-insert-state-bindings t)
  '(evil-lookup-func (quote man))
- '(evil-magit-want-horizontal-movement nil t)
+ '(evil-magit-want-horizontal-movement nil)
  '(evil-want-C-w-delete t)
- '(eyebrowse-mode t)
+ '(eyebrowse-mode nil)
  '(eyebrowse-switch-back-and-forth nil)
  '(eyebrowse-wrap-around t)
  '(fci-rule-color "#383838")
@@ -68,7 +67,6 @@
  '(indent-tabs-mode nil)
  '(indicate-empty-lines t)
  '(lispy-eval-display-style (quote message))
- '(mac-right-option-modifier nil)
  '(magit-branch-arguments nil)
  '(magit-diff-use-overlays nil)
  '(mark-even-if-inactive t)
@@ -76,6 +74,7 @@
  '(nrepl-message-colors
    (quote
     ("#CC9393" "#DFAF8F" "#F0DFAF" "#7F9F7F" "#BFEBBF" "#93E0E3" "#94BFF3" "#DC8CC3")))
+ '(ns-right-alternate-modifier nil)
  '(org-download-method (quote directory))
  '(org-indent-indentation-per-level 1)
  '(org-latex-classes
@@ -108,7 +107,7 @@
  '(org-pomodoro-format "%s")
  '(org-pomodoro-long-break-format "%s")
  '(org-pomodoro-short-break-format "%s")
- '(org-preview-latex-default-process (quote dvisvgm) t)
+ '(org-preview-latex-default-process (quote dvisvgm))
  '(package-selected-packages
    (quote
     (simple elisp-mode lispy org-plus-contrib parinfer undo-tree helm ob-clojure link-hint persp-mode window-purpose yapfify frame company-restclient restclient restclient-mode eyebrowse org-board terminal-here company-sourcekit swift-mode smart-mode-line paradox async hy-mode vim-empty-lines ein circe-notifications vlf hl-todo base16-theme farmhouse-theme yaml-mode doom-themes ace-window rainbow-mode org-download htmlize rust-mode haskell-mode ess-smart-equals ess ess-site lpy tex cdlatex texmathp magithub suggest wgrep general hungry-delete hungry-delete-mode toml-mode soap atom-one-dark-theme ggtags cpputils-cmake irony clang-format company-statistics osx-trash help evil-cleverparens-text-objects dired racer cargo golden-ratio jade yasnippet artbollocks-mode company-quickhelp evil-exchange clj-refactor with-editor swiper smartparens queue pyenv-mode projectile magit ivy hydra flycheck finalize evil diminish dash counsel company closql clojure-mode avy anaconda-mode ace-link lispyville auctex exec-path-from-shell evil-mc git-modes function-args zenburn-theme ws-butler worf window-numbering which-key use-package typo term-manager super-save speck spacemacs-theme solarized-theme smex shm shell-pop shackle sentence-navigation reveal-in-osx-finder rainbow-delimiters pyenv-mode-auto py-yapf pdf-tools pandoc-mode osx-dictionary multiple-cursors markdown-mode jedi ivy-hydra intero inf-clojure hindent highlight-escape-sequences gist flyspell-correct flx expand-region evil-visualstar evil-textobj-anyblock evil-surround evil-snipe evil-numbers evil-multiedit evil-matchit evil-magit evil-commentary epkg elisp-slime-nav diff-hl counsel-projectile company-anaconda circe cider bind-map auto-compile)))
@@ -139,7 +138,10 @@
  '(ring-bell-function (quote ignore))
  '(safe-local-variable-values
    (quote
-    ((projectile-project-compilation-cmd . "bear make")
+    ((eval progn
+           (pp-buffer)
+           (indent-buffer))
+     (projectile-project-compilation-cmd . "bear make")
      (projectile-project-run-cmd . "make run")
      (cider-boot-parameters . "repl -s -H :: wait dev")
      (cider-boot-parameters . "repl -s H :: wait dev")
@@ -254,5 +256,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(persp-face-lighter-buffer-not-in-persp ((t (:background "gray90" :foreground "#F00"))))
  '(speck-mouse ((t (:background "thistle" :foreground "black"))))
  '(speck-query ((t (:background "yellow" :foreground "black")))))

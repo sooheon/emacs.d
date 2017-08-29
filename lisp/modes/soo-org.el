@@ -75,8 +75,6 @@
           ("dd" "Insert ddot" "\\ddot{?}"
            cdlatex-position-cursor nil nil t))))
 
-
-
 (use-package org-brain
   :defer t
   :general
